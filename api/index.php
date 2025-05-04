@@ -34,8 +34,6 @@ $route->post("/add", "Users:createUser");
 // http://localhost:8080/inf-3am-2025/api/users/update
 $route->put("/update", "Users:updateUser");
 
-$route->delete("/delete", "Users:deleteUser");
-
 $route->group("null");
 
 $route->dispatch();

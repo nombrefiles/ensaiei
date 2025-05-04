@@ -77,26 +77,6 @@ class Users extends Api
        ///var_dump($data);
        $this->call(200,"create","Usuário alterado com sucesso!")->back($data);
     }
-    
-    public function deleteUser(array $data): void
-    {
-        if (!isset($data["id"])) {
-            $this->call(400, "bad_request", "ID não informado", "error")->back();
-            return;
-        }
 
-        if (!filter_var($data["id"], FILTER_VALIDATE_INT)) {
-            $this->call(400, "bad_request", "ID inválido", "error")->back();
-            return;
-        }
-
-        $user = new User();
-        if (!$user->deleteById((int)$data["id"])) {
-            $this->call(404, "not_found", "Usuário não encontrado ou erro ao excluir", "error")->back();
-            return;
-        }
-
-        $this->call(200, "success", "Usuário deletado com sucesso", "success")->back();
-    }
 
 }

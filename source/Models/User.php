@@ -99,10 +99,10 @@ class User extends Model
     public function insert (): bool
     {
 
-        // if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-        //     $this->errorMessage = "E-mail inválido";
-        //     return false;
-        // }
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            $this->errorMessage = "E-mail inválido";
+            return false;
+        }
 
         $sql = "SELECT * FROM users WHERE email = :email";
         $stmt = Connect::getInstance()->prepare($sql);
