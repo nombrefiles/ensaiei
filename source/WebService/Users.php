@@ -6,7 +6,7 @@ use Source\Models\User;
 
 class Users extends Api
 {
-    public function listUsers(): void
+    public function listUsers (): void
     {
         $users = new User();
         //var_dump($users->findAll());
@@ -18,7 +18,7 @@ class Users extends Api
     {
 
         // verifica se os dados estão preenchidos
-        if (in_array("", $data)) {
+        if(in_array("", $data)){
             $this->call(400, "bad_request", "Dados inválidos", "error")->back();
             return;
         }
@@ -31,7 +31,7 @@ class Users extends Api
             $data["password"] ?? null
         );
 
-        if (!$user->insert()) {
+        if(!$user->insert()){
             $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
             return;
         }
@@ -47,21 +47,21 @@ class Users extends Api
 
     }
 
-    public function listUserById(array $data): void
+    public function listUserById (array $data): void
     {
 
-        if (!isset($data["id"])) {
+        if(!isset($data["id"])) {
             $this->call(400, "bad_request", "ID inválido", "error")->back();
             return;
         }
 
-        if (!filter_var($data["id"], FILTER_VALIDATE_INT)) {
+        if(!filter_var($data["id"], FILTER_VALIDATE_INT)) {
             $this->call(400, "bad_request", "ID inválido", "error")->back();
             return;
         }
 
         $user = new User();
-        if (!$user->findById($data["id"])) {
+        if(!$user->findById($data["id"])){
             $this->call(200, "error", "Usuário não encontrado", "error")->back();
             return;
         }
@@ -72,12 +72,12 @@ class Users extends Api
         $this->call(200, "success", "Encontrado com sucesso", "success")->back($response);
     }
 
-    public function updateUser(array $data): void
+    public function updateUser (array $data): void
     {
-        ///var_dump($data);
-        $this->call(200, "create", "Usuário alterado com sucesso!")->back($data);
+       ///var_dump($data);
+       $this->call(200,"create","Usuário alterado com sucesso!")->back($data);
     }
-
+    
     public function deleteUser(array $data): void
     {
         if (!isset($data["id"])) {
@@ -98,7 +98,5 @@ class Users extends Api
 
         $this->call(200, "success", "Usuário deletado com sucesso", "success")->back();
     }
-
-
 
 }
