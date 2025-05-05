@@ -17,7 +17,6 @@ class Users extends Api
     public function createUser(array $data)
     {
 
-        // verifica se os dados estão preenchidos
         if(in_array("", $data)){
             $this->call(400, "bad_request", "Dados inválidos", "error")->back();
             return;
@@ -35,7 +34,7 @@ class Users extends Api
             $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
             return;
         }
-        // montar $response com as informações necessárias para mostrar no front
+
         $response = [
             "name" => $user->getName(),
             "email" => $user->getEmail(),
@@ -46,7 +45,6 @@ class Users extends Api
             ->back($response);
 
     }
-
     public function listUserById (array $data): void
     {
 
