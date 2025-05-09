@@ -1,12 +1,12 @@
 {
-  "name": "fabio3268/inf-3at-2025",
+  "name": "nombrefiles/ensaiei",
   "description": "Estrutura básica de uma aplicação MVC",
   "minimum-stability": "stable",
   "authors": [
     {
-      "name": "Fábio Santos",
-      "email": "fabiosantos@ifsul.edu.br",
-      "homepage": "https://www.ifsul.edu.br",
+      "name": "Pedro Files",
+      "email": "particular.files@gmail.edu.br",
+      "homepage": "https://github.com/nombrefiles",
       "role": "Developer"
     }
   ],
@@ -20,6 +20,7 @@
   },
   "require": {
     "php": ">=8.0",
-    "coffeecode/router" : "2.0.2"
+    "coffeecode/router" : "2.0.2",
+    "firebase/php-jwt": "v6.11.1"
   }
 }
