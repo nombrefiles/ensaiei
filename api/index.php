@@ -28,7 +28,7 @@ $route->group("/users");
 $route->post("/login", "Users:login");
 
 $route->get("/", "Users:listUsers");
-$route->get("/id/{id}", "Users:listUserById");
+$route->get("/{id}", "Users:listUserById");
 
 // http://localhost:8080/inf-3am-2025/api/users/add
 $route->post("/add", "Users:createUser");
