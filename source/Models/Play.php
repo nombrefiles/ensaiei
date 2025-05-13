@@ -2,7 +2,6 @@
 
 namespace Source\Models;
 
-use Source\Core\Connect;
 use Source\Core\Model;
 
 class Play extends Model{
@@ -11,17 +10,17 @@ class Play extends Model{
     protected $genre;
     protected $script;
     protected $costumes;
-    protected $directorId;
+    protected $director;
     protected $actors;
 
-    public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, array $costumes = null, int $directorId = null, array $actors){
+    public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, array $costumes = null, User $director = null, array $actors = null){
         $this->table = "actors";
         $this->id = $id;
         $this->name = $name;
         $this->genre = $genre;
         $this->script = $script;
         $this->costumes = $costumes;
-        $this->directorId = $directorId;
+        $this->director = $director;
         $this->actors = $actors;
     }
 
@@ -45,8 +44,8 @@ class Play extends Model{
         return $this->costumes;
     }
 
-    public function getDirectorId(){
-        return $this->directorId;
+    public function getDirector(): User{
+        return $this->director;
     }
 
     public function getActors(){
@@ -73,8 +72,8 @@ class Play extends Model{
         $this->costumes = $costumes;
     }
 
-    public function setDirectorId($directorId){
-        $this->directorId = $directorId;
+    public function setDirector($director){
+        $this->director = $director;
     }
 
     public function setActors($actors){
