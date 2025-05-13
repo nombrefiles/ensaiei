@@ -4,7 +4,6 @@ ob_start();
 
 require  __DIR__ . "/../vendor/autoload.php";
 
-// os headers abaixo são necessários para permitir o acesso a API por clientes externos ao domínio
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -29,10 +28,7 @@ $route->post("/login", "Users:login");
 
 $route->get("/", "Users:listUsers");
 $route->get("/{id}", "Users:listUserById");
-
-// http://localhost:8080/inf-3am-2025/api/users/add
 $route->post("/add", "Users:createUser");
-// http://localhost:8080/inf-3am-2025/api/users/update
 $route->put("/update", "Users:updateUser");
 
 /* PLAYS */
