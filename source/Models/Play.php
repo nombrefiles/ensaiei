@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Source\Models;
 
@@ -14,7 +14,7 @@ class Play extends Model{
     protected $actors;
 
     public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, array $costumes = null, User $director = null, array $actors = null){
-        $this->table = "actors";
+        $this->table = "plays";
         $this->id = $id;
         $this->name = $name;
         $this->genre = $genre;

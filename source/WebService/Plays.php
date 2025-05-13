@@ -28,7 +28,7 @@ class Plays extends Api
             $data["genre"] ?? null,
             $data["script"] ?? null,
             $data["costumes"] ?? null,
-            $data["directorId"] ?? null,
+            $data["director"] ?? null,
             $data["actors"] ?? null
         );
 

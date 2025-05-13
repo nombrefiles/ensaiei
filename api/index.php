@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 use CoffeeCode\Router\Router;
 
-$route = new Router("http://localhost:8080/ensaiei/api",":");
+$route = new Router("http://localhost/ensaiei/api",":");
 
 $route->namespace("Source\WebService");
 
@@ -39,7 +39,7 @@ $route->put("/update", "Users:updateUser");
 $route->group("/plays");
 
 $route->get("/", "Plays:listPlays");
-$route->get("/id/{id}", "Plays:listUserById");
+$route->get("/{id}", "Plays:listPlayById");
 
 $route->post("/add", "Plays:createPlay");
 $route->put("/update", "Plays:updatePlay");
