@@ -15,36 +15,46 @@ class Plays extends Api
 
     public function createPlay(array $data)
     {
+        $data["actors"] = explode(",", $data["actors"]);
+        $data["costumes"] = explode(",", $data["costumes"]);
 
-        // verifica se os dados estão preenchidos
-        if(in_array("", $data)){
-            $this->call(400, "bad_request", "Dados inválidos", "error")->back();
+        // ✅ VERIFICAÇÃO GERAL DOS DADOS
+        if (empty($data["name"]) || empty($data["genre"]) || empty($data["script"]) || empty($data["directorId"]) || empty($data["actors"])) {
+            $this->call(400, "bad_request", "Todos os campos são obrigatórios", "error")->back();
+            return;
+        }
+
+        // ✅ TRATAR O CAMPO ACTORS PARA VIRAR ARRAY
+
+        if (!is_array($data['actors'])) {
+            $this->call(400, "bad_request", "Campo 'actors' deve ser um array válido", "error")->back();
             return;
         }
 
         $play = new Play(
             null,
-            $data["name"] ?? null,
-            $data["genre"] ?? null,
-            $data["script"] ?? null,
-            $data["costumes"] ?? null,
-            $data["director"] ?? null,
-            $data["actors"] ?? null
+            $data["name"],
+            $data["genre"],
+            $data["script"],
+            null,
+            $data["directorId"],
+            $data["actors"]
         );
 
-        if(!$play->insert()){
+        if (!$play->insertWithActors()) {
             $this->call(500, "internal_server_error", $play->getErrorMessage(), "error")->back();
             return;
         }
-        // montar $response com as informações necessárias para mostrar no front
+
+        // ✅ RESPOSTA DE SUCESSO
         $response = [
+            "id" => $play->getId(),
             "name" => $play->getName(),
             "actors" => $play->getActors()
         ];
 
         $this->call(201, "created", "Peça criada com sucesso", "success")
             ->back($response);
-
     }
 
     public function listPlayById (array $data): void

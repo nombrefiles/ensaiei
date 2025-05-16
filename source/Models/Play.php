@@ -2,6 +2,8 @@
 
 namespace Source\Models;
 
+use PDOException;
+use Source\Core\Connect;
 use Source\Core\Model;
 
 class Play extends Model{
@@ -10,17 +12,17 @@ class Play extends Model{
     protected $genre;
     protected $script;
     protected $costumes;
-    protected $director;
+    protected $directorId;
     protected $actors;
 
-    public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, array $costumes = null, User $director = null, array $actors = null){
+    public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, array $costumes = null, int $directorId = null, array $actors = null){
         $this->table = "plays";
         $this->id = $id;
         $this->name = $name;
         $this->genre = $genre;
         $this->script = $script;
         $this->costumes = $costumes;
-        $this->director = $director;
+        $this->directorId = $directorId;
         $this->actors = $actors;
     }
 
@@ -44,8 +46,8 @@ class Play extends Model{
         return $this->costumes;
     }
 
-    public function getDirector(): User{
-        return $this->director;
+    public function getDirectorId(): int{
+        return $this->directorId;
     }
 
     public function getActors(){
@@ -72,13 +74,55 @@ class Play extends Model{
         $this->costumes = $costumes;
     }
 
-    public function setDirector($director){
-        $this->director = $director;
+    public function setDirectorId($directorId){
+        $this->directorId = $directorId;
     }
 
     public function setActors($actors){
         $this->actors = $actors;
     }
+
+    public function insertWithActors(): bool
+    {
+        $conn = \Source\Core\Connect::getInstance();
+        $conn->beginTransaction();
+
+        try {
+            // 1. Inserir a peça na tabela plays
+            $stmt = $conn->prepare("
+            INSERT INTO plays (name, genre, script, directorId)
+            VALUES (?, ?, ?, ?)
+        ");
+            $stmt->execute([
+                $this->name,
+                $this->genre,
+                $this->script,
+                $this->directorId // ← Atenção: aqui você está passando o ID direto, não um objeto
+            ]);
+
+            $this->id = $conn->lastInsertId();
+
+            // 2. Inserir os atores relacionados
+            if (!empty($this->actors) && is_array($this->actors)) {
+                $stmtActor = $conn->prepare("
+                INSERT INTO actors_plays (actorId, playId)
+                VALUES (?, ?)
+            ");
+
+                foreach ($this->actors as $actorId) {
+                    $stmtActor->execute([$actorId, $this->id]);
+                }
+            }
+
+            $conn->commit();
+            return true;
+        } catch (\PDOException $e) {
+            $conn->rollBack();
+            $this->errorMessage = $e->getMessage();
+            return false;
+        }
+    }
+
 }
 
 ?>
