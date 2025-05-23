@@ -14,8 +14,11 @@ class Play extends Model{
     protected $costumes;
     protected $directorId;
     protected $actors;
+    protected $deleted;
 
-    public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, array $costumes = null, int $directorId = null, array $actors = null){
+
+    public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, array $costumes = null, int $directorId = null, array $actors = null,         bool $deleted = false,
+    ){
         $this->table = "plays";
         $this->id = $id;
         $this->name = $name;
@@ -24,62 +27,72 @@ class Play extends Model{
         $this->costumes = $costumes;
         $this->directorId = $directorId;
         $this->actors = $actors;
+        $this->deleted = $deleted;
+
     }
 
-    public function getId(){
+    public function getId(): ?int{
         return $this->id;
     }
 
-    public function getName(){
+    public function getName(): ?string{
         return $this->name;
     }
 
-    public function getGenre(){
+    public function getGenre(): ?string{
         return $this->genre;
     }
 
-    public function getScript(){
+    public function getScript(): ?string{
         return $this->script;
     }
 
-    public function getCostumes(){
+    public function getCostumes(): ?array{
         return $this->costumes;
     }
 
-    public function getDirectorId(): int{
+    public function getDirectorId(): ?int{
         return $this->directorId;
     }
 
-    public function getActors(){
+    public function getActors(): ?array{
         return $this->actors;
     }
 
-    public function setId($id){
+    public function setId(?int $id): void{
         $this->id = $id;
     }
 
-    public function setName($name){
+    public function setName(?string $name): void{
         $this->name = $name;
     }
 
-    public function setGenre($genre){
+    public function setGenre(?string $genre): void{
         $this->genre = $genre;
     }
 
-    public function setScript($script){
+    public function setScript(?string $script): void{
         $this->script = $script;
     }
 
-    public function setCostumes($costumes){
+    public function setCostumes(?array$costumes): void{
         $this->costumes = $costumes;
     }
 
-    public function setDirectorId($directorId){
+    public function setDirectorId(?int $directorId): void{
         $this->directorId = $directorId;
     }
 
-    public function setActors($actors){
+    public function setActors(?array$actors): void{
         $this->actors = $actors;
+    }
+
+    public function getDeleted(): ?bool{
+        return $this->deleted;
+    }
+
+    public function setDeleted(?bool $deleted): void{
+        $this->deleted = $deleted;
     }
 
     public function insertWithActors(): bool
@@ -88,7 +101,7 @@ class Play extends Model{
         $conn->beginTransaction();
 
         try {
-            // 1. Inserir a peça na tabela plays
+          
             $stmt = $conn->prepare("
             INSERT INTO plays (name, genre, script, directorId)
             VALUES (?, ?, ?, ?)
@@ -97,12 +110,11 @@ class Play extends Model{
                 $this->name,
                 $this->genre,
                 $this->script,
-                $this->directorId // ← Atenção: aqui você está passando o ID direto, não um objeto
+                $this->directorId 
             ]);
 
             $this->id = $conn->lastInsertId();
 
-            // 2. Inserir os atores relacionados
             if (!empty($this->actors) && is_array($this->actors)) {
                 $stmtActor = $conn->prepare("
                 INSERT INTO actors_plays (actorId, playId)

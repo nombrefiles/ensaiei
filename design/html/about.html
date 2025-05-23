@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ - Ensaiei</title>
+    <link rel="stylesheet" href="../css/about.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="topnav">
+    <div class="topnav-left">
+        <img src="../assets/images/bicolor.png" alt="Ensaiei" class="logo">
+    </div>
+    <div class="topnav-right">
+        <div class="add-button">+</div>
+        <nav>
+            <a href="plays.html">peças</a>
+            <a href="profile.php">perfil</a>
+            <a href="about.html">sobre</a>
+            <a href="faq.html">faq</a>
+        </nav>
+    </div>
+</div>
+
+<div class="container">
+    <div class="faq-section">
+        <h2>Sobre nós</h2>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Desenvolvedores<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Oi! Somos Pedro Files e Luísa Borba, estudantes do Ensino Técnico Integrado de Informática, no IFSul Campus Charqueadas. Atualmente estamos no terceiro ano do curso, e desenvolvendo o projeto Ensaiei, programado em PHP e JavaScript.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">O projeto<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                O projeto Ensaiei é um software de gerenciador de peças de teatro, principalmente para grupos de teatro independentes, oferecendi funcionalidades como agendamento de ensaios, divisão de falas, controle de figurino e cronograma de apresentações.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Redes Sociais<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Instagram -- @ensaiei
+                Facebook -- Ensaiei
+                Twitter -- @ensaiei
+                LinkedIn -- @ensaiei
+                GitHub -- @ensaiei
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+</div>
+
+<script>
+    function toggleFAQ(element) {
+        const content = element.nextElementSibling;
+        const arrow = element.querySelector('.arrow');
+
+        if (content.classList.contains('show')) {
+            content.classList.remove('show');
+            arrow.style.transform = 'rotate(0deg)';
+        } else {
+            document.querySelectorAll('.faq-content').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+            content.classList.add('show');
+            arrow.style.transform = 'rotate(180deg)';
+        }
+    }
+</script>
+
+</body>
+</html>

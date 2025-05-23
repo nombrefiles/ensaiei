@@ -2,6 +2,9 @@
 
 namespace Source\WebService;
 
+use Exception;
+use PDO;
+use Source\Core\Connect;
 use Source\Models\User;
 use Source\Core\JWTToken;
 
@@ -29,7 +32,9 @@ class Users extends Api
             $data["idType"] ?? null,
             $data["name"] ?? null,
             $data["email"] ?? null,
-            $data["password"] ?? null
+            $data["password"] ?? null,
+            $data["photo"] ?? null,
+            username: $data["username"] ?? null,
         );
 
         if(!$user->insert()){
@@ -48,37 +53,110 @@ class Users extends Api
 
     }
 
-    public function listUserById (array $data): void
+    public function listUserByUsername(array $data): void
     {
-
-        if(!isset($data["id"])) {
-            $this->call(400, "bad_request", "ID inválido", "error")->back();
-            return;
-        }
-
-        if(!filter_var($data["id"], FILTER_VALIDATE_INT)) {
-            $this->call(400, "bad_request", "ID inválido", "error")->back();
+        if (!isset($data["username"])) {
+            $this->call(400, "bad_request", "Username inválido", "error")->back();
             return;
         }
 
         $user = new User();
-        if(!$user->findById($data["id"])){
-            $this->call(200, "error", "Usuário não encontrado", "error")->back();
+
+        if (!$user->findByUsername($data["username"])) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
             return;
         }
-        $response = [
-            "name" => $user->getName(),
-            "email" => $user->getEmail()
-        ];
-        $this->call(200, "success", "Encontrado com sucesso", "success")->back($response);
+
+        // Dados do usuário
+        $name = $user->getName();
+        $username = $data["username"];
+        $email = $user->getEmail();
+        $photo = $user->getPhoto() ?? "../assets/images/default-profile.png";
+        $followers = 0;
+        $following = 0;
+        $bio = "Sem biografia";
+
+        header('Content-Type: text/html; charset=utf-8');
+
+        // Renderiza o HTML com os dados
+        include __DIR__ . "/../../design/html/profile.php";
     }
 
-    public function updateUser (array $data): void
+
+    public function updateUser(array $data): void
     {
         $this->auth();
-        var_dump($data);
-        var_dump( $this->userAuth);
-        var_dump($this->userAuth->name, $this->userAuth->email);
+
+        if (!isset($this->userAuth->id)) {
+            $this->call(400, "bad_request", "ID do usuário não encontrado", "error")->back();
+            return;
+        }
+
+        $user = new User();
+        if (!$user->findById($this->userAuth->id)) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        if (isset($data["idType"])) {
+            if (!filter_var($data["idType"], FILTER_VALIDATE_INT)) {
+                $this->call(400, "bad_request", "Tipo de usuário inválido", "error")->back();
+                return;
+            }
+            $user->setIdType($data["idType"]);
+        }
+
+        if (isset($data["name"])) {
+            if (empty($data["name"])) {
+                $this->call(400, "bad_request", "Nome não pode ser vazio", "error")->back();
+                return;
+            }
+            $user->setName($data["name"]);
+        }
+
+        if (isset($data["email"])) {
+            if (!filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+                $this->call(400, "bad_request", "Email inválido", "error")->back();
+                return;
+            }
+            $user->setEmail($data["email"]);
+        }
+
+        if (isset($data["password"])) {
+            if (empty($data["password"])) {
+                $this->call(400, "bad_request", "Senha não pode ser vazia", "error")->back();
+                return;
+            }
+            $user->setPassword(password_hash($data["password"], PASSWORD_DEFAULT));
+        }
+
+        if (isset($data["photo"])) {
+            $user->setPhoto($data["photo"]);
+        }
+
+        if (isset($data["deleted"])) {
+            if (!is_bool($data["deleted"]) && !in_array($data["deleted"], [0, 1, '0', '1'])) {
+                $this->call(400, "bad_request", "Valor inválido para deleted", "error")->back();
+                return;
+            }
+            $user->setDeleted((bool)$data["deleted"]);
+        }
+
+        if (!$user->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao atualizar usuário: " . $user->getErrorMessage(), "error")->back();
+            return;
+        }
+
+        $response = [
+            "id" => $user->getId(),
+            "idType" => $user->getIdType(),
+            "name" => $user->getName(),
+            "email" => $user->getEmail(),
+            "photo" => $user->getPhoto(),
+            "deleted" => $user->getDeleted()
+        ];
+
+        $this->call(200, "success", "Usuário atualizado com sucesso", "success")->back($response);
     }
 
     public function login(array $data): void
@@ -120,6 +198,13 @@ class Users extends Api
                     "photo" => $user->getPhoto()
                 ]
             ]);
+
+    }
+
+    public function deleteUser(array $data)
+    {
+        $data["deleted"] = true;
+        $this->updateUser($data);
 
     }
 

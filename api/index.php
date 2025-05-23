@@ -27,9 +27,14 @@ $route->group("/users");
 $route->post("/login", "Users:login");
 
 $route->get("/", "Users:listUsers");
-$route->get("/{id}", "Users:listUserById");
+$route->get("/{username}", "Users:listUserByUsername");
+
 $route->post("/add", "Users:createUser");
+
 $route->put("/update", "Users:updateUser");
+
+$route->delete("/delete/{id}", "Users:deleteUser"); //fazer metodo SOFTDELETE
+
 
 /* PLAYS */
 $route->group("/plays");
@@ -38,13 +43,43 @@ $route->get("/", "Plays:listPlays");
 $route->get("/{id}", "Plays:listPlayById");
 
 $route->post("/add", "Plays:createPlay");
+
 $route->put("/update", "Plays:updatePlay");
+
+$route->delete("/delete/{id}", "Plays:deletePlay"); //fazer metodo
+
+
+/* ACTORS  */
+$route->group("/actors");
+
+$route->get("/", "Actors:listActors");
+$route->get("/{id}", "Actors:listActorById");
+
+$route->post("/add", "Actors:createActor");
+
+$route->put("/update", "Actors:updateActor");
+
+$route->delete("/delete/{id}", "Actors:deleteActor"); //fazer metodo
+
+
+/*  COSTUMES  */
+$route->group("/costumes");
+
+$route->get("/", "Costumes:listCostumes");
+$route->get("/{id}", "Costumes:listCostumeById");
+
+$route->post("/add", "Costumes:createCostume");
+
+$route->put("/update", "Costumes:updateCostume");
+
+$route->delete("/delete/{id}", "Costumes:deleteCostumeById"); //fazer metodo
 
 $route->group("null");
 
 $route->dispatch();
 
-/** ERROR REDIRECT */
+
+
 if ($route->error()) {
     header('Content-Type: application/json; charset=UTF-8');
     http_response_code(404);

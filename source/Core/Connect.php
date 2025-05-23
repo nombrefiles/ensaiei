@@ -6,7 +6,7 @@ use PDO;
 use PDOException;
 
 const CONF_DB_HOST = "localhost"; // localhost
-const CONF_DB_NAME = "db-inf-3am";
+const CONF_DB_NAME = "ENSAIEI";
 const CONF_DB_USER = "root";
 const CONF_DB_PASS = ""; // nada
 

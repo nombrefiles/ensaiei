@@ -1,4 +1,4 @@
-USE `db-inf-3am`;
+USE ENSAIEI;
 
 -- Tabela de tipos de usuário
 CREATE TABLE `users_types` (
@@ -14,7 +14,9 @@ CREATE TABLE `users` (
                          `name` varchar(255) NOT NULL,
                          `email` varchar(255) NOT NULL,
                          `password` varchar(255) NOT NULL,
-                         `photo` varchar(255) DEFAULT NULL,
+                         `photo` varchar(255) DEFAULT 'https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png',
+                         `username` varchar(60) NOT NULL,
+                         `deleted` bool DEFAULT FALSE,
                          PRIMARY KEY (`id`),
                          KEY `fk_users_users_types1_idx` (`idType`),
                          CONSTRAINT `fk_users_users_types1` FOREIGN KEY (`idType`) REFERENCES `users_types` (`id`)
@@ -28,6 +30,7 @@ CREATE TABLE `addresses` (
                              `street` varchar(255) NOT NULL,
                              `number` varchar(10) NOT NULL,
                              `complement` varchar(255) DEFAULT NULL,
+                             `deleted` bool DEFAULT FALSE,
                              PRIMARY KEY (`id`),
                              KEY `fk_addresses_users1_idx` (`idForeign`),
                              CONSTRAINT `fk_addresses_users1` FOREIGN KEY (`idForeign`) REFERENCES `users` (`id`)
@@ -40,6 +43,7 @@ CREATE TABLE `plays` (
                          `genre` varchar(100) NOT NULL,
                          `script` text NOT NULL,
                          `directorId` int NOT NULL,
+                         `deleted` bool DEFAULT FALSE,
                          PRIMARY KEY (`id`),
                          KEY `fk_plays_users1_idx` (`directorId`),
                          CONSTRAINT `fk_plays_users1` FOREIGN KEY (`directorId`) REFERENCES `users` (`id`)
@@ -49,6 +53,7 @@ CREATE TABLE `plays` (
 CREATE TABLE `actors` (
                           `id` int NOT NULL AUTO_INCREMENT,
                           `name` varchar(255) NOT NULL,
+                          `deleted` bool DEFAULT FALSE,
                           PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -75,6 +80,7 @@ CREATE TABLE `questions` (
                              `idType` int NOT NULL,
                              `question` varchar(255) NOT NULL,
                              `answer` text NOT NULL,
+                             `deleted` bool DEFAULT FALSE,
                              PRIMARY KEY (`id`),
                              KEY `fk_questions_types_idx` (`idType`),
                              CONSTRAINT `fk_questions_types` FOREIGN KEY (`idType`) REFERENCES `questions_types` (`id`)
@@ -85,6 +91,7 @@ CREATE TABLE `costumes` (
                             `id` int NOT NULL AUTO_INCREMENT,
                             `playId` int NOT NULL,
                             `description` text NOT NULL,
+                            `deleted` bool DEFAULT FALSE,
                             PRIMARY KEY (`id`),
                             KEY `fk_costumes_plays1_idx` (`playId`),
                             CONSTRAINT `fk_costumes_plays1` FOREIGN KEY (`playId`) REFERENCES `plays` (`id`)

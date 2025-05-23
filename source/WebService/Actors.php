@@ -9,14 +9,13 @@ class Actors extends Api
     public function listActors (): void
     {
         $actor = new Actor();
-        $this->call(200, "success", "Lista de peças", "success")
+        $this->call(200, "success", "Lista de Atores", "success")
             ->back($actor->findAll());
     }
 
     public function createActors(array $data)
     {
 
-        // verifica se os dados estão preenchidos
         if(in_array("", $data)){
             $this->call(400, "bad_request", "Dados inválidos", "error")->back();
             return;
@@ -33,7 +32,6 @@ class Actors extends Api
             $this->call(500, "internal_server_error", $actor->getErrorMessage(), "error")->back();
             return;
         }
-        // montar $response com as informações necessárias para mostrar no front
         $response = [
             "name" => $actor->getName(),
             "play" => $actor->getPlays(),

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ - Ensaiei</title>
+    <link rel="stylesheet" href="../css/faq.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="topnav">
+    <div class="topnav-left">
+        <img src="../assets/images/bicolor.png" alt="Ensaiei" class="logo">
+    </div>
+    <div class="topnav-right">
+        <div class="add-button">+</div>
+        <nav>
+            <a href="plays.html">peças</a>
+            <a href="profile.php">perfil</a>
+            <a href="about.html">sobre</a>
+            <a href="faq.html">faq</a>
+        </nav>
+    </div>
+</div>
+
+<div class="container">
+    <div class="faq-section">
+        <h2>Conta e acesso</h2>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Como criar uma nova conta?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Basta clicar no botão de cadastro na página inicial e preencher as informações básicas: nome, e-mail e senha. Após isso, você receberá um link de confirmação.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Esqueci minha senha, como recuperar?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Na tela de login, clique em "Esqueci minha senha". Um e-mail com um link de redefinição será enviado para você.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Como atualizar meus dados de perfil?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Para atualizar seus dados, é necessário estar logado e com um token JWT válido. Envie uma requisição PUT com os dados que deseja modificar: nome, email, senha ou foto.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Como encontrar um usuário específico?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Use a barra de pesquisa na aba "perfil" e digite o nome ou e-mail do usuário desejado.
+            </div>
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <h2 class="section-title">Gerenciamento de peças</h2>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Como cadastrar uma nova peça?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Vá até a aba “peças” e clique em “Nova Peça”. Preencha o nome, sinopse, autores, datas e elenco para finalizar o cadastro.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">É possível importar elenco de outra peça?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Sim! Ao criar uma nova peça, você pode importar o elenco de peças anteriores e fazer ajustes conforme necessário.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Como funciona o agendamento de ensaios?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Você pode agendar ensaios acessando o menu da peça e clicando em “Agendar Ensaio”. Escolha data, hora, local e participantes.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Posso acompanhar a frequência dos participantes?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Sim, na aba de ensaios, você pode marcar presença e visualizar relatórios de frequência por usuário ou por peça.
+            </div>
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <h2 class="section-title">Erros comuns</h2>
+
+        <div class="faq-item">
+            <div class="faq-title" onclick="toggleFAQ(this)">Por que recebo "Token expirado"?<span class="arrow">▼</span></div>
+            <div class="faq-content">
+                Seu token de autenticação dura 90 minutos. Após esse tempo, será necessário fazer login novamente para continuar utilizando o sistema.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFAQ(element) {
+        const content = element.nextElementSibling;
+        const arrow = element.querySelector('.arrow');
+
+        if (content.classList.contains('show')) {
+            content.classList.remove('show');
+            arrow.style.transform = 'rotate(0deg)';
+        } else {
+            document.querySelectorAll('.faq-content').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.arrow').forEach(a => a.style.transform = 'rotate(0deg)');
+            content.classList.add('show');
+            arrow.style.transform = 'rotate(180deg)';
+        }
+    }
+</script>
+
+</body>
+</html>

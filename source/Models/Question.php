@@ -10,12 +10,16 @@ class Question extends Model
     private $idType;
     private $question;
     private $answer;
+    protected $deleted;
+
 
     public function __construct (
         int $id = null,
         int $idType = null,
         string $question = null,
-        string $answer = null
+        string $answer = null,
+        bool $deleted = false,
+
     )
     {
         $this->table = "questions";
@@ -23,6 +27,8 @@ class Question extends Model
         $this->idType = $idType;
         $this->question = $question;
         $this->answer = $answer;
+        $this->deleted = $deleted;
+
     }
 
     public function getId(): ?int
@@ -63,6 +69,13 @@ class Question extends Model
     public function setAnswer(?string $answer): void
     {
         $this->answer = $answer;
+    }
+    public function getDeleted(): ?bool{
+        return $this->deleted;
+    }
+
+    public function setDeleted(?bool $deleted): void{
+        $this->deleted = $deleted;
     }
 
 }

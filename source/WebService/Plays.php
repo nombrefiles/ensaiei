@@ -18,13 +18,12 @@ class Plays extends Api
         $data["actors"] = explode(",", $data["actors"]);
         $data["costumes"] = explode(",", $data["costumes"]);
 
-        // ✅ VERIFICAÇÃO GERAL DOS DADOS
         if (empty($data["name"]) || empty($data["genre"]) || empty($data["script"]) || empty($data["directorId"]) || empty($data["actors"])) {
             $this->call(400, "bad_request", "Todos os campos são obrigatórios", "error")->back();
             return;
         }
 
-        // ✅ TRATAR O CAMPO ACTORS PARA VIRAR ARRAY
+
 
         if (!is_array($data['actors'])) {
             $this->call(400, "bad_request", "Campo 'actors' deve ser um array válido", "error")->back();
@@ -46,7 +45,6 @@ class Plays extends Api
             return;
         }
 
-        // ✅ RESPOSTA DE SUCESSO
         $response = [
             "id" => $play->getId(),
             "name" => $play->getName(),
@@ -89,5 +87,10 @@ class Plays extends Api
         var_dump( $this->userAuth);
         var_dump($this->userAuth->name, $this->userAuth->email);
     }
+
+    public function listPlaysByUser (array $data): void{
+
+    }
+
 
 }

@@ -10,11 +10,13 @@ use PDOException;
 class User extends Model
 {
     protected $id;
+    protected $username;
     protected $idType;
     protected $name;
     protected $email;
     protected $password;
     protected $photo;
+    protected $deleted;
 
     public function __construct(
         int $id = null,
@@ -22,7 +24,9 @@ class User extends Model
         string $name = null,
         string $email = null,
         string $password = null,
-        string $photo = null
+        string $photo = null,
+        bool $deleted = false,
+        string $username = null,
     )
     {
         $this->table = "users";
@@ -32,12 +36,14 @@ class User extends Model
         $this->email = $email;
         $this->password = $password;
         $this->photo = $photo;
+        $this->deleted = $deleted;
+        $this->username = $username;
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
+    }   
 
     public function setId(?int $id): void
     {
@@ -94,9 +100,24 @@ class User extends Model
         $this->photo = $photo;
     }
 
-    public function login () {
-        echo "Olá, {$this->name}! Você está logado!";
+    public function getDeleted(): ?bool{
+        return $this->deleted;
     }
+
+    public function setDeleted(?bool $deleted): void{
+        $this->deleted = $deleted;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(?string $username): void
+    {
+        $this->username = $username;
+    }
+
 
     public function insert (): bool
     {
@@ -113,6 +134,16 @@ class User extends Model
 
         if ($stmt->rowCount() > 0) {
             $this->errorMessage = "E-mail já cadastrado";
+            return false;
+        }
+
+        $sql = "SELECT * FROM users WHERE username = :username";
+        $stmt = Connect::getInstance()->prepare($sql);
+        $stmt->bindValue(":username", $this->username);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $this->errorMessage = "Username já cadastrado";
             return false;
         }
 
@@ -144,6 +175,35 @@ class User extends Model
             $this->email = $result->email;
             $this->password = $result->password;
             $this->photo = $result->photo;
+            $this->username = $result->username;
+
+            return true;
+        } catch (PDOException $e) {
+            $this->errorMessage = "Erro ao buscar o registro: {$e->getMessage()}";
+            return false;
+        }
+
+    }
+
+    public function findByUsername (string $username): bool
+    {
+        $sql = "SELECT * FROM users WHERE username = :username";
+        $stmt = Connect::getInstance()->prepare($sql);
+        $stmt->bindValue(":username", $username);
+
+        try {
+            $stmt->execute();
+            $result = $stmt->fetch();
+            if (!$result) {
+                return false;
+            }
+            $this->id = $result->id;
+            $this->idType = $result->idType;
+            $this->name = $result->name;
+            $this->email = $result->email;
+            $this->password = $result->password;
+            $this->photo = $result->photo;
+            $this->username = $result->username;
 
             return true;
         } catch (PDOException $e) {
