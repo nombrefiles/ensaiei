@@ -18,7 +18,6 @@
 </head>
 <body>
 <div class="deleted-profile">
-    <img src="../assets/images/deleted-user.png" alt="Perfil Deletado" style="width: 100px;">
     <div class="deleted-message">
         <h2>Este perfil não está mais disponível</h2>
         <p>O usuário <?php echo htmlspecialchars($username); ?> excluiu sua conta.</p>

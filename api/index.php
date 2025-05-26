@@ -22,18 +22,20 @@ $route->namespace("Source\WebService");
 
 /* USERS */
 
+// PROBLEMA NO FIND DO USER!!! NAO TA PESQUISANDO POR E-MAIL
+
 $route->group("/users");
 
-$route->post("/login", "Users:login"); //ok
+$route->post("/login", "Users:login"); // falta so botar quando faz o login, reativa o user
 
 $route->get("/", "Users:listUsers"); //ok
 $route->get("/{username}", "Users:listUserByUsername"); //ok
 
 $route->post("/add", "Users:createUser"); //ok
 
-$route->put("/update", "Users:updateUser"); // nao sei
+$route->put("/update", "Users:updateUser"); // ok
 
-$route->delete("/delete", "Users:deleteUser"); // problemas com o soft delete
+$route->delete("/delete", "Users:deleteUser"); // ok
 
 
 /* PLAYS */

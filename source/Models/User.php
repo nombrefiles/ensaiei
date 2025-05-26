@@ -40,8 +40,6 @@ class User
         $this->deleted = $deleted;
     }
 
-    // ===== CRUD METHODS =====
-
     public function findAll()
     {
         $stmt = Connect::getInstance()->query("SELECT * FROM users");
@@ -149,8 +147,6 @@ class User
         }
     }
 
-    // ===== FILL OBJECT FROM ARRAY =====
-
     public function fill(array $data)
     {
         $this->id       = $data["id"] ?? null;
@@ -163,8 +159,6 @@ class User
         $this->bio      = $data["bio"] ?? null;
         $this->deleted  = isset($data["deleted"]) ? (bool)$data["deleted"] : false;
     }
-
-// ===== GETTERS =====
 
     public function getId()
     {

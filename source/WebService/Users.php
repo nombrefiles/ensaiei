@@ -203,6 +203,17 @@ class Users extends Api
             return;
         }
 
+        if($user->getDeleted() === true){
+            $user->setDeleted(false);
+
+            if (!$user->updateById()) {
+                $this->call(500, "internal_server_error", "Erro ao reativar o usuário", "error")->back();
+                return;
+            }
+
+            $this->call(200, "success", "Usuário reativado com sucesso", "success")->back();
+        }
+
         // Gerar o token JWT
         $jwt = new JWTToken();
         $token = $jwt->create([

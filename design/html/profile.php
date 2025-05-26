@@ -65,12 +65,12 @@
         .add-button {
             background-color: #eee;
             border-radius: 4px;
-            width: 30px;
+            width: auto;
             height: 30px;
-            font-weight: bold;
             cursor: pointer;
-            font-family: 'jakarta-bold', sans-serif;
-            font-size: 18px;
+            font-family: 'jakarta', sans-serif;
+            padding: 5px;
+            font-size: 12px;
             transition: background-color 0.3s ease;
             text-align: center;
             line-height: 30px;
@@ -169,7 +169,7 @@
         <img src="http://localhost/ENSAIEI/design/assets/images/bicolor.png" alt="Ensaiei" class="logo">
     </div>
     <div class="topnav-right">
-        <div class="add-button">+</div>
+        <div class="add-button">editar perfil</div>
         <nav>
             <a href="plays.html">peças</a>
             <a href="profile.html">perfil</a>
