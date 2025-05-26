@@ -138,15 +138,6 @@ class Users extends Api
             $user->setBio($data["bio"]);
         }
 
-
-        if (isset($data["deleted"])) {
-            if (!is_bool($data["deleted"]) && !in_array($data["deleted"], [0, 1, '0', '1'])) {
-                $this->call(400, "bad_request", "Valor inválido para deleted", "error")->back();
-                return;
-            }
-            $user->setDeleted((bool)$data["deleted"]);
-        }
-
         if (!$user->updateById()) {
             $this->call(500, "internal_server_error", "Erro ao atualizar usuário: " . $user->getErrorMessage(), "error")->back();
             return;
@@ -168,14 +159,19 @@ class Users extends Api
 
     public function login(array $data): void
     {
-        if (empty($data["email"]) || empty($data["password"])) {
+        if (( empty($data["username"]) && empty($data["email"]) )|| empty($data["password"])) {
             $this->call(400, "bad_request", "Credenciais inválidas", "error")->back();
             return;
         }
 
         $user = new User();
 
-        if(!$user->findByEmail($data["email"])){
+        if(isset($data['email']) && !$user->findByEmail($data["email"])){
+            $this->call(401, "unauthorized", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        if(isset($data["username"]) && !$user->findByUsername($data["username"])){
             $this->call(401, "unauthorized", "Usuário não encontrado", "error")->back();
             return;
         }
@@ -189,6 +185,7 @@ class Users extends Api
         $jwt = new JWTToken();
         $token = $jwt->create([
             "id" => $user->getId(),
+            "email" => $user->getEmail(),
             "email" => $user->getEmail(),
             "name" => $user->getName()
         ]);
@@ -207,11 +204,24 @@ class Users extends Api
 
     }
 
-    public function deleteUser(array $data)
+    public function deleteUser()
     {
-        $data["deleted"] = true;
-        $this->updateUser($data);
+        $this->auth();
 
+        $user = new User();
+        if (!$user->findById($this->userAuth->id)) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        $user->setDeleted(true);
+
+        if (!$user->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao deletar usuário", "error")->back();
+            return;
+        }
+
+        $this->call(200, "success", "Usuário deletado com sucesso", "success")->back();
     }
 
 }

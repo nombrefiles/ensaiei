@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
-        'name' => 'fabio3268/inf-3at-2025',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => NULL,
+        'name' => 'nombrefiles/ensaiei',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '9c4e7368670ec63433952cbd97410fafd42a558c',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -19,10 +19,19 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'fabio3268/inf-3at-2025' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => NULL,
+        'firebase/php-jwt' => array(
+            'pretty_version' => 'v6.11.1',
+            'version' => '6.11.1.0',
+            'reference' => 'd1e91ecf8c598d073d0995afa8cd5c75c6e19e66',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../firebase/php-jwt',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'nombrefiles/ensaiei' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '9c4e7368670ec63433952cbd97410fafd42a558c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
