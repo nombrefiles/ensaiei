@@ -169,7 +169,7 @@
         <img src="http://localhost/ENSAIEI/design/assets/images/bicolor.png" alt="Ensaiei" class="logo">
     </div>
     <div class="topnav-right">
-        <div class="add-button">editar perfil</div>
+        <button class="add-button"><a href="http://localhost/ENSAIEI/design/html/update.html">editar perfil</a></button>
         <nav>
             <a href="plays.html">peças</a>
             <a href="profile.html">perfil</a>
