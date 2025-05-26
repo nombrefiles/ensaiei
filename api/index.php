@@ -24,55 +24,55 @@ $route->namespace("Source\WebService");
 
 $route->group("/users");
 
-$route->post("/login", "Users:login");
+$route->post("/login", "Users:login"); //ok
 
-$route->get("/", "Users:listUsers");
-$route->get("/{username}", "Users:listUserByUsername");
+$route->get("/", "Users:listUsers"); //ok
+$route->get("/{username}", "Users:listUserByUsername"); //ok
 
-$route->post("/add", "Users:createUser");
+$route->post("/add", "Users:createUser"); //ok
 
-$route->put("/update", "Users:updateUser");
+$route->put("/update", "Users:updateUser"); // nao sei
 
-$route->delete("/delete/{id}", "Users:deleteUser"); //fazer metodo SOFTDELETE
+$route->delete("/delete", "Users:deleteUser"); // problemas com o soft delete
 
 
 /* PLAYS */
 $route->group("/plays");
 
-$route->get("/", "Plays:listPlays");
-$route->get("/{id}", "Plays:listPlayById");
+$route->get("/", "Plays:listPlays"); // nao sei
+$route->get("/{id}", "Plays:listPlayById"); // nao sei
 
-$route->post("/add", "Plays:createPlay");
+$route->post("/add", "Plays:createPlay"); // nao sei
 
-$route->put("/update", "Plays:updatePlay");
+$route->put("/update", "Plays:updatePlay"); // falta fazer
 
-$route->delete("/delete/{id}", "Plays:deletePlay"); //fazer metodo
+$route->delete("/delete/{id}", "Plays:deletePlay");  // nem fiz
 
 
 /* ACTORS  */
 $route->group("/actors");
 
-$route->get("/", "Actors:listActors");
-$route->get("/{id}", "Actors:listActorById");
+$route->get("/", "Actors:listActors");  // nao sei
+$route->get("/{id}", "Actors:listActorById"); // nao sei
 
-$route->post("/add", "Actors:createActor");
+$route->post("/add", "Actors:createActor"); // nao sei
 
-$route->put("/update", "Actors:updateActor");
+$route->put("/update", "Actors:updateActor"); // falta fazer
 
-$route->delete("/delete/{id}", "Actors:deleteActor"); //fazer metodo
+$route->delete("/delete/{id}", "Actors:deleteActor"); // falta fazer
 
 
 /*  COSTUMES  */
 $route->group("/costumes");
 
-$route->get("/", "Costumes:listCostumes");
-$route->get("/{id}", "Costumes:listCostumeById");
+$route->get("/", "Costumes:listCostumes"); // nao sei
+$route->get("/{id}", "Costumes:listCostumeById"); // nao sei
 
-$route->post("/add", "Costumes:createCostume");
+$route->post("/add", "Costumes:createCostume"); // nao sei
 
-$route->put("/update", "Costumes:updateCostume");
+$route->put("/update", "Costumes:updateCostume"); // falta fazer
 
-$route->delete("/delete/{id}", "Costumes:deleteCostumeById"); //fazer metodo
+$route->delete("/delete/{id}", "Costumes:deleteCostumeById"); // falta fazer
 
 $route->group("null");
 

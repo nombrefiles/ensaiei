@@ -67,15 +67,37 @@ class Users extends Api
             return;
         }
 
-        $name = $user->getName();
-        $username = $data["username"];
-        $email = $user->getEmail();
-        $photo = $user->getPhoto() ?? "../assets/images/default-profile.png";
-        $bio = $user->getBio() ?? "Eu amo teatro!";;
+        ob_clean();
+
+        error_log("Status deleted: " . var_export($user->getDeleted(), true));
+
+        if ($user->getDeleted()) {
+            header('Content-Type: text/html; charset=utf-8');
+
+            $deletedProfilePath = __DIR__ . "/../../design/html/deleted-profile.php";
+
+            if (!file_exists($deletedProfilePath)) {
+                error_log("Arquivo não encontrado: " . $deletedProfilePath);
+                $this->call(500, "internal_server_error", "Template não encontrado", "error")->back();
+                return;
+            }
+
+            $username = htmlspecialchars($data["username"]);
+            include $deletedProfilePath;
+            return;
+        }
+
+        $name = htmlspecialchars($user->getName());
+        $username = htmlspecialchars($data["username"]);
+        $email = htmlspecialchars($user->getEmail());
+        $photo = htmlspecialchars($user->getPhoto() ?? "../assets/images/default-profile.png");
+        $bio = htmlspecialchars($user->getBio() ?? "Eu amo teatro!");
 
         header('Content-Type: text/html; charset=utf-8');
 
-        include __DIR__ . "/../../design/html/profile.php";
+        $profilePath = __DIR__ . "/../../design/html/profile.php";
+
+        include $profilePath;
     }
 
 
@@ -185,7 +207,6 @@ class Users extends Api
         $jwt = new JWTToken();
         $token = $jwt->create([
             "id" => $user->getId(),
-            "email" => $user->getEmail(),
             "email" => $user->getEmail(),
             "name" => $user->getName()
         ]);
