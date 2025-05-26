@@ -33,7 +33,7 @@ class Users extends Api
             $data["name"] ?? null,
             $data["email"] ?? null,
             $data["password"] ?? null,
-            $data["photo"] ?? null,
+            $data["photo"] ?? "https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png",
             username: $data["username"] ?? null,
         );
 
@@ -50,7 +50,6 @@ class Users extends Api
 
         $this->call(201, "created", "Usuário criado com sucesso", "success")
             ->back($response);
-
     }
 
     public function listUserByUsername(array $data): void
