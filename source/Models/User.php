@@ -27,7 +27,7 @@ class User extends Model
         string $password = null,
         string $photo = null,
         string $username = null,
-        string $bio = "Eu amo teatro!",
+        string $bio = null,
         bool $deleted = false,
     )
     {
@@ -121,7 +121,7 @@ class User extends Model
         $this->username = $username;
     }
 
-    public function getBio(): string
+    public function getBio(): ?string
     {
         return $this->bio;
     }
@@ -188,6 +188,7 @@ class User extends Model
             $this->password = $result->password;
             $this->photo = $result->photo;
             $this->username = $result->username;
+            $this->bio = $result->bio;
 
             return true;
         } catch (PDOException $e) {
@@ -216,6 +217,7 @@ class User extends Model
             $this->password = $result->password;
             $this->photo = $result->photo;
             $this->username = $result->username;
+            $this->bio = $result->bio;
 
             return true;
         } catch (PDOException $e) {

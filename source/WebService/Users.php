@@ -34,7 +34,7 @@ class Users extends Api
             $data["password"] ?? null,
             $data["photo"] ?? "https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png",
             $data["username"] ?? null,
-            $data["bio"] ?? null,
+            $data["bio"] ?? "Eu amo teatro!",
             false
         );
 
