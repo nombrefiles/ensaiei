@@ -13,7 +13,6 @@ class Users extends Api
     public function listUsers (): void
     {
         $users = new User();
-        //var_dump($users->findAll());
         $this->call(200, "success", "Lista de usuários", "success")
             ->back($users->findAll());
     }
@@ -34,18 +33,20 @@ class Users extends Api
             $data["email"] ?? null,
             $data["password"] ?? null,
             $data["photo"] ?? "https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png",
-            username: $data["username"] ?? null,
+            $data["username"] ?? null,
+            $data["bio"] ?? null,
+            false
         );
 
         if(!$user->insert()){
             $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
             return;
         }
-        // montar $response com as informações necessárias para mostrar no front
+
         $response = [
             "name" => $user->getName(),
             "email" => $user->getEmail(),
-            "photo" => $user->getPhoto()
+            "username" => $user->getUsername(),
         ];
 
         $this->call(201, "created", "Usuário criado com sucesso", "success")
@@ -66,18 +67,14 @@ class Users extends Api
             return;
         }
 
-        // Dados do usuário
         $name = $user->getName();
         $username = $data["username"];
         $email = $user->getEmail();
         $photo = $user->getPhoto() ?? "../assets/images/default-profile.png";
-        $followers = 0;
-        $following = 0;
-        $bio = "Sem biografia";
+        $bio = $user->getBio() ?? "Eu amo teatro!";;
 
         header('Content-Type: text/html; charset=utf-8');
 
-        // Renderiza o HTML com os dados
         include __DIR__ . "/../../design/html/profile.php";
     }
 
@@ -133,6 +130,15 @@ class Users extends Api
             $user->setPhoto($data["photo"]);
         }
 
+        if (isset($data["bio"])) {
+            if (empty($data["bio"])) {
+                $this->call(400, "bad_request", "Biografia não pode estar em branco!", "error")->back();
+                return;
+            }
+            $user->setBio($data["bio"]);
+        }
+
+
         if (isset($data["deleted"])) {
             if (!is_bool($data["deleted"]) && !in_array($data["deleted"], [0, 1, '0', '1'])) {
                 $this->call(400, "bad_request", "Valor inválido para deleted", "error")->back();
@@ -152,6 +158,8 @@ class Users extends Api
             "name" => $user->getName(),
             "email" => $user->getEmail(),
             "photo" => $user->getPhoto(),
+            "bio" => $user->getBio(),
+            "username" => $user->getUsername(),
             "deleted" => $user->getDeleted()
         ];
 
@@ -160,7 +168,6 @@ class Users extends Api
 
     public function login(array $data): void
     {
-        // Verificar se os dados de login foram fornecidos
         if (empty($data["email"]) || empty($data["password"])) {
             $this->call(400, "bad_request", "Credenciais inválidas", "error")->back();
             return;

@@ -147,12 +147,6 @@
             font-family: jakarta, sans-serif;
         }
 
-        .seguidores {
-            font-size: 0.8rem;
-            color: #555;
-            font-family: jakarta, sans-serif;
-        }
-
         h2 {
             font-size: larger;
             margin-top: 30px;
@@ -165,18 +159,6 @@
             font-size: 0.9rem;
             color: #333;
             margin-bottom: 30px;
-            font-family: jakarta, sans-serif;
-        }
-
-        .seguir {
-            background: #e5005a;
-            color: white;
-            padding: 12px 0;
-            width: 100%;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            cursor: pointer;
             font-family: jakarta, sans-serif;
         }
     </style>
@@ -202,22 +184,9 @@
         <img class="foto-perfil" src="<?= $photo ?>" alt="<?= $name ?>">
         <h1><?= $name ?></h1>
         <p class="arroba">@<?= $username ?></p>
-        <p class="seguidores"><?= $followers ?> seguidores • <?= $following ?> seguidos</p>
         <h2>Biografia</h2>
         <p class="bio"><?= $bio ?></p>
-        <button class="seguir">Seguir</button>
     </section>
 </main>
-<script>
-    const seguirBtn = document.querySelector('.seguir');
-
-    seguirBtn.addEventListener('click', () => {
-        seguirBtn.textContent = 'Seguindo';
-        seguirBtn.style.backgroundColor = '#ccc';
-        seguirBtn.style.color = '#333';
-        seguirBtn.style.cursor = 'default';
-        seguirBtn.disabled = true;
-    });
-</script>
 </body>
 </html>

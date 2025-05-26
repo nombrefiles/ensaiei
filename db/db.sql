@@ -1,3 +1,5 @@
+# DROP DATABASE ENSAIEI;
+CREATE DATABASE IF NOT EXISTS ENSAIEI;
 USE ENSAIEI;
 
 -- Tabela de tipos de usuário
@@ -16,6 +18,7 @@ CREATE TABLE `users` (
                          `password` varchar(255) NOT NULL,
                          `photo` varchar(255) DEFAULT 'https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png',
                          `username` varchar(60) NOT NULL,
+                        `bio` varchar(300) NOT NULL,
                          `deleted` bool DEFAULT FALSE,
                          PRIMARY KEY (`id`),
                          KEY `fk_users_users_types1_idx` (`idType`),

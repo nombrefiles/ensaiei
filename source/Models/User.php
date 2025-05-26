@@ -16,6 +16,7 @@ class User extends Model
     protected $email;
     protected $password;
     protected $photo;
+    protected $bio;
     protected $deleted;
 
     public function __construct(
@@ -25,8 +26,9 @@ class User extends Model
         string $email = null,
         string $password = null,
         string $photo = null,
-        bool $deleted = false,
         string $username = null,
+        string $bio = "Eu amo teatro!",
+        bool $deleted = false,
     )
     {
         $this->table = "users";
@@ -38,6 +40,7 @@ class User extends Model
         $this->photo = $photo;
         $this->deleted = $deleted;
         $this->username = $username;
+        $this->bio = $bio;
     }
 
     public function getId(): ?int
@@ -118,6 +121,15 @@ class User extends Model
         $this->username = $username;
     }
 
+    public function getBio(): string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(string $bio): void
+    {
+        $this->bio = $bio;
+    }
 
     public function insert (): bool
     {
