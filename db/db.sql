@@ -1,4 +1,4 @@
-#  DROP DATABASE ENSAIEI;
+# DROP DATABASE ENSAIEI;
 CREATE DATABASE IF NOT EXISTS ENSAIEI;
 USE ENSAIEI;
 
@@ -85,17 +85,6 @@ CREATE TABLE `costumes` (
                             PRIMARY KEY (`id`),
                             KEY `fk_costumes_plays1_idx` (`playId`),
                             CONSTRAINT `fk_costumes_plays1` FOREIGN KEY (`playId`) REFERENCES `plays` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- Tabela de relacionamento entre figurinos e peças
-CREATE TABLE `costumes_plays` (
-                                  `costumeId` int NOT NULL,
-                                  `playId` int NOT NULL,
-                                  PRIMARY KEY (`costumeId`, `playId`),
-                                  KEY `fk_costumes_plays_costumes1_idx` (`costumeId`),
-                                  KEY `fk_costumes_plays_plays1_idx` (`playId`),
-                                  CONSTRAINT `fk_costumes_plays_costumes1` FOREIGN KEY (`costumeId`) REFERENCES `costumes` (`id`),
-                                  CONSTRAINT `fk_costumes_plays_plays1` FOREIGN KEY (`playId`) REFERENCES `plays` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 
