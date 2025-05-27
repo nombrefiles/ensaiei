@@ -1,4 +1,4 @@
-# DROP DATABASE ENSAIEI;
+#  DROP DATABASE ENSAIEI;
 CREATE DATABASE IF NOT EXISTS ENSAIEI;
 USE ENSAIEI;
 
@@ -10,6 +10,7 @@ CREATE TABLE `users_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Tabela de usuários
+
 CREATE TABLE `users` (
                          `id` int NOT NULL AUTO_INCREMENT,
                          `idType` int NOT NULL,
@@ -23,20 +24,6 @@ CREATE TABLE `users` (
                          PRIMARY KEY (`id`),
                          KEY `fk_users_users_types1_idx` (`idType`),
                          CONSTRAINT `fk_users_users_types1` FOREIGN KEY (`idType`) REFERENCES `users_types` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- Tabela de endereços
-CREATE TABLE `addresses` (
-                             `id` int NOT NULL AUTO_INCREMENT,
-                             `idForeign` int NOT NULL,
-                             `zipCode` varchar(10) NOT NULL,
-                             `street` varchar(255) NOT NULL,
-                             `number` varchar(10) NOT NULL,
-                             `complement` varchar(255) DEFAULT NULL,
-                             `deleted` bool DEFAULT FALSE,
-                             PRIMARY KEY (`id`),
-                             KEY `fk_addresses_users1_idx` (`idForeign`),
-                             CONSTRAINT `fk_addresses_users1` FOREIGN KEY (`idForeign`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Tabela de peças teatrais
