@@ -2,6 +2,7 @@
 
 namespace Source\WebService;
 
+use Source\Models\Actor;
 use Source\Models\Play;
 use Source\Models\User;
 
@@ -77,6 +78,15 @@ class Plays extends Api
         $user = new User();
         $user->findById($play->getDirectorId());
 
+        $actors = [];
+
+        foreach ($play->getActors() as $actorId) {
+            $actor = new Actor();
+            if ($actor->findById($actorId)) {
+                    $actors[] = $actor->getName();
+            }
+        }
+
         $response = [
             "name" => $play->getName(),
             "genre" => $play->getGenre(),
@@ -84,7 +94,8 @@ class Plays extends Api
                 "id" => $user->getId(),
                 "username" => $user->getUsername(),
                 "name" => $user->getName()
-            ]
+            ],
+            "actors" => $actors
         ];
         $this->call(200, "success", "Encontrado com sucesso", "success")->back($response);
     }

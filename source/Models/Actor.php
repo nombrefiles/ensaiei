@@ -2,6 +2,7 @@
 
 namespace Source\Models;
 
+use PDO;
 use Source\Core\Connect;
 use Source\Core\Model;
 
@@ -44,7 +45,25 @@ class Actor extends Model{
         $this->deleted = $deleted;
     }
 
+    public function findById(int $id): bool
+    {
+        $stmt = Connect::getInstance()->prepare("SELECT * FROM actors WHERE id = :id LIMIT 1");
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
 
+        if ($actor = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $this->fill($actor);
+            return true;
+        }
+
+        return false;
+    }
+
+    private function fill(array $data)
+    {
+        $this->id = $data["id"] ?? null;
+        $this->name = $data["name"] ?? null;
+    }
 
 
 }

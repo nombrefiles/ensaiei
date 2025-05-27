@@ -104,11 +104,20 @@ class Play extends Model{
 
         if ($play = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $this->fill($play);
+
+            $stmtActors = Connect::getInstance()->prepare("SELECT actorId FROM actors_plays WHERE playId = :playId");
+            $stmtActors->bindParam(":playId", $id);
+            $stmtActors->execute();
+            $actors = $stmtActors->fetchAll(PDO::FETCH_COLUMN);
+
+            $this->actors = $actors ?: [];
+
             return true;
         }
 
         return false;
     }
+
 
     public function insertWithActors(): bool
     {
@@ -152,11 +161,12 @@ class Play extends Model{
 
     private function fill(array $data)
     {
-        $this->id       = $data["id"] ?? null;
-        $this->name   = $data["name"] ?? null;
-        $this->genre   = $data["genre"] ?? null;
-        $this->directorId     = $data["directorId"] ?? null;
-        $this->actors    = $data["actors"] ?? null;
+        $this->id = $data["id"] ?? null;
+        $this->name = $data["name"] ?? null;
+        $this->genre = $data["genre"] ?? null;
+        $this->directorId = $data["directorId"] ?? null;
+        $this->actors = $data["actors"] ?? null;
+        $this->costumes = $data["costumes"] ?? null;
     }
 
 }
