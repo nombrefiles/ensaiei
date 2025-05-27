@@ -181,14 +181,19 @@ class Users extends Api
 
     public function login(array $data): void
     {
-        if (empty($data["user"]) && empty($data["password"])) {
+        if (( empty($data["username"]) && empty($data["email"]) )|| empty($data["password"])) {
             $this->call(400, "bad_request", "Credenciais inválidas", "error")->back();
             return;
         }
 
         $user = new User();
 
-        if (!$user->findByUsername($data["user"]) && !$user->findByEmail($data["user"])) {
+        if(isset($data['email']) && !$user->findByEmail($data["email"])){
+            $this->call(401, "unauthorized", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        if(isset($data["username"]) && !$user->findByUsername($data["username"])){
             $this->call(401, "unauthorized", "Usuário não encontrado", "error")->back();
             return;
         }
@@ -209,6 +214,7 @@ class Users extends Api
             $this->call(200, "success", "Usuário reativado com sucesso", "success")->back();
         }
 
+        // Gerar o token JWT
         $jwt = new JWTToken();
         $token = $jwt->create([
             "id" => $user->getId(),
@@ -216,6 +222,7 @@ class Users extends Api
             "name" => $user->getName()
         ]);
 
+        // Retornar o token JWT na resposta
         $this->call(200, "success", "Login realizado com sucesso", "success")
             ->back([
                 "token" => $token,

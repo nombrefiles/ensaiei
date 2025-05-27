@@ -9,14 +9,16 @@ class Actor extends Model{
 
     protected $id;
     protected $name;
+    protected $plays;
     protected $deleted;
 
 
-    public function __construct(int $id = null, string $name = null, bool $deleted = false,
+    public function __construct(int $id = null, string $name = null, array $plays = null,         bool $deleted = false,
     ){
         $this->table = "actors";
         $this->id = $id;
         $this->name = $name;
+        $this->plays = $plays;
         $this->deleted = $deleted;
     }
 
@@ -28,6 +30,10 @@ class Actor extends Model{
         return $this->name;
     }
 
+    function getPlays(): ?array{
+        return $this->plays;
+    }
+
     function setId(?int $id): void{
         $this->id = $id;
     }
@@ -36,6 +42,9 @@ class Actor extends Model{
         $this->name = $name;
     }
 
+    function setPlays(?array $plays): void{
+        $this->plays = $plays;
+    }
     public function getDeleted(): ?bool{
         return $this->deleted;
     }

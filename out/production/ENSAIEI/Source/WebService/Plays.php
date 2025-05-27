@@ -3,7 +3,6 @@
 namespace Source\WebService;
 
 use Source\Models\Play;
-use Source\Models\User;
 
 class Plays extends Api
 {
@@ -17,6 +16,7 @@ class Plays extends Api
     public function createPlay(array $data)
     {
         $data["actors"] = explode(",", $data["actors"]);
+        $data["costumes"] = explode(",", $data["costumes"]);
 
         if (empty($data["name"]) || empty($data["genre"]) || empty($data["script"]) || empty($data["directorId"]) || empty($data["actors"])) {
             $this->call(400, "bad_request", "Todos os campos são obrigatórios", "error")->back();
@@ -73,18 +73,9 @@ class Plays extends Api
             $this->call(200, "error", "Peça não encontrada", "error")->back();
             return;
         }
-
-        $user = new User();
-        $user->findById($play->getDirectorId());
-
         $response = [
             "name" => $play->getName(),
-            "genre" => $play->getGenre(),
-            "director" => [
-                "id" => $user->getId(),
-                "username" => $user->getUsername(),
-                "name" => $user->getName()
-            ]
+            "director" => $play->getDirector()->getName()
         ];
         $this->call(200, "success", "Encontrado com sucesso", "success")->back($response);
     }
@@ -96,5 +87,10 @@ class Plays extends Api
         var_dump( $this->userAuth);
         var_dump($this->userAuth->name, $this->userAuth->email);
     }
+
+    public function listPlaysByUser (array $data): void{
+
+    }
+
 
 }

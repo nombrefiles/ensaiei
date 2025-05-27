@@ -13,7 +13,7 @@ class Actors extends Api
             ->back($actor->findAll());
     }
 
-    public function createActor(array $data)
+    public function createActors(array $data)
     {
 
         if(in_array("", $data)){
@@ -24,7 +24,7 @@ class Actors extends Api
         $actor = new Actor(
             null,
             $data["name"] ?? null,
-            false
+            $data["plays"] ?? null,
 
         );
 
@@ -34,9 +34,10 @@ class Actors extends Api
         }
         $response = [
             "name" => $actor->getName(),
+            "play" => $actor->getPlays(),
         ];
 
-        $this->call(201, "created", "Ator criado com sucesso", "success")
+        $this->call(201, "created", "Ator criada com sucesso", "success")
             ->back($response);
 
     }
@@ -60,7 +61,8 @@ class Actors extends Api
             return;
         }
         $response = [
-            "name" => $actor->getName()
+            "name" => $actor->getName(),
+            "plays" => $actor->getPlays()
         ];
         $this->call(200, "success", "Encontrado com sucesso", "success")->back($response);
     }

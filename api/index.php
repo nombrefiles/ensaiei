@@ -22,11 +22,9 @@ $route->namespace("Source\WebService");
 
 /* USERS */
 
-// PROBLEMA NO FIND DO USER!!! NAO TA PESQUISANDO POR E-MAIL
-
 $route->group("/users");
 
-$route->post("/login", "Users:login"); // falta so botar quando faz o login, reativa o user
+$route->post("/login", "Users:login"); // ok
 
 $route->get("/", "Users:listUsers"); //ok
 $route->get("/{username}", "Users:listUserByUsername"); //ok
@@ -41,23 +39,25 @@ $route->delete("/delete", "Users:deleteUser"); // ok
 /* PLAYS */
 $route->group("/plays");
 
-$route->get("/", "Plays:listPlays"); // nao sei
-$route->get("/{id}", "Plays:listPlayById"); // nao sei
+$route->get("/", "Plays:listPlays"); // ok
+$route->get("/{id}", "Plays:listPlayById"); // ok
 
-$route->post("/add", "Plays:createPlay"); // nao sei
+$route->post("/add", "Plays:createPlay"); // falta fazer a costumes
 
 $route->put("/update", "Plays:updatePlay"); // falta fazer
 
 $route->delete("/delete/{id}", "Plays:deletePlay");  // nem fiz
 
-
 /* ACTORS  */
+
+// acho que pode tudo ser um user por sinal... acho meio inutil ter uma classe actors
+// ou isso ou fazer uma forma de mostrar as peças que os atores estão no listActors
 $route->group("/actors");
 
-$route->get("/", "Actors:listActors");  // nao sei
-$route->get("/{id}", "Actors:listActorById"); // nao sei
+$route->get("/", "Actors:listActors");  // ok
+$route->get("/{id}", "Actors:listActorById"); // ok
 
-$route->post("/add", "Actors:createActor"); // nao sei
+$route->post("/add", "Actors:createActor"); // falta adicionar para a tabela actors caso eles ja estejam em alguma peca
 
 $route->put("/update", "Actors:updateActor"); // falta fazer
 

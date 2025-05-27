@@ -2,7 +2,6 @@
 
 namespace Source\Models;
 
-use PDO;
 use PDOException;
 use Source\Core\Connect;
 use Source\Core\Model;
@@ -96,20 +95,6 @@ class Play extends Model{
         $this->deleted = $deleted;
     }
 
-    public function findById(int $id): bool
-    {
-        $stmt = Connect::getInstance()->prepare("SELECT * FROM plays WHERE id = :id LIMIT 1");
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-
-        if ($play = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $this->fill($play);
-            return true;
-        }
-
-        return false;
-    }
-
     public function insertWithActors(): bool
     {
         $conn = \Source\Core\Connect::getInstance();
@@ -148,15 +133,6 @@ class Play extends Model{
             $this->errorMessage = $e->getMessage();
             return false;
         }
-    }
-
-    private function fill(array $data)
-    {
-        $this->id       = $data["id"] ?? null;
-        $this->name   = $data["name"] ?? null;
-        $this->genre   = $data["genre"] ?? null;
-        $this->directorId     = $data["directorId"] ?? null;
-        $this->actors    = $data["actors"] ?? null;
     }
 
 }
