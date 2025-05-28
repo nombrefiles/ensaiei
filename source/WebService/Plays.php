@@ -42,7 +42,6 @@ class Plays extends Api
             $data["name"],
             $data["genre"],
             $data["script"],
-            null,
             $this->userAuth->id, // Usando o id diretamente ao invés de getDirectorId()
             $data["actors"]
         );
@@ -205,6 +204,45 @@ class Plays extends Api
         ];
 
         $this->call(200, "success", "Peça atualizada com sucesso", "success")->back($response);
+    }
+
+    public function deletePlay(array $data): void {
+        $this->auth();
+
+        if(!isset($data['id'])){
+            $this->call(400, "bad_request", "ID da peça não fornecido", "error")->back();
+            return;
+        }
+
+        if (!filter_var($data["id"], FILTER_VALIDATE_INT)) {
+            $this->call(400, "bad_request", "ID inválido", "error")->back();
+            return;
+        }
+
+        $play = new Play();
+        if(!$play->findById($data['id'])){
+            $this->call(404, 'not_found', 'Peça não encontrada', "error")->back();
+            return;
+        }
+
+        if($this->userAuth->id !== $play->getDirectorId()){
+            $this->call(401, 'forbidden', 'Você não tem autorização para alterar essa peça!', 'error')->back();
+            return;
+        }
+
+        $play->setDeleted(true);
+
+        if (!$play->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao deletar a peça", "error")->back();
+            return;
+        }
+
+        $response = [
+            "id" => $play->getId(),
+            "name" => $play->getName(),
+        ];
+
+        $this->call(200, "success", "Peça deletada com sucesso", "success")->back($response);
     }
 
 

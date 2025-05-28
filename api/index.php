@@ -42,11 +42,11 @@ $route->group("/plays");
 $route->get("/", "Plays:listPlays"); // ok
 $route->get("/{id}", "Plays:listPlayById"); // ok
 
-$route->post("/add", "Plays:createPlay"); // falta fazer a costumes
+$route->post("/add", "Plays:createPlay"); // ok
 
-$route->put("/update/{id}", "Plays:updatePlay"); // falta fazer
+$route->put("/update/{id}", "Plays:updatePlay"); // ok
 
-$route->delete("/delete/{id}", "Plays:deletePlay");  // nem fiz
+$route->delete("/delete/{id}", "Plays:deletePlay");  // ok
 
 /* ACTORS  */
 
@@ -65,16 +65,17 @@ $route->delete("/delete/{id}", "Actors:deleteActor"); // falta fazer
 
 
 /*  COSTUMES  */
-$route->group("/costumes");
-
-$route->get("/", "Costumes:listCostumes"); // nao sei
-$route->get("/{id}", "Costumes:listCostumeById"); // nao sei
-
-$route->post("/add", "Costumes:createCostume"); // nao sei
-
-$route->put("/update", "Costumes:updateCostume"); // falta fazer
-
-$route->delete("/delete/{id}", "Costumes:deleteCostumeById"); // falta fazer
+//$route->group("/costumes");
+//
+//$route->get("/", "Costumes:listCostumes"); // nao sei
+//$route->get("/{id}", "Costumes:listCostumeById"); // nao sei
+//
+//$route->post("/add", "Costumes:createCostume"); // nao sei
+//
+//$route->put("/update", "Costumes:updateCostume"); // falta fazer
+//
+//$route->delete("/delete/{id}", "Costumes:deleteCostumeById"); // falta fazer
+//
 
 $route->group("null");
 
