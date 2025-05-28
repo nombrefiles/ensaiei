@@ -7,7 +7,7 @@ require  __DIR__ . "/../vendor/autoload.php";
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header('Access-Control-Allow-Credentials: true'); // Permitir credenciais
+header('Access-Control-Allow-Credentials: true');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -44,7 +44,7 @@ $route->get("/{id}", "Plays:listPlayById"); // ok
 
 $route->post("/add", "Plays:createPlay"); // falta fazer a costumes
 
-$route->put("/update", "Plays:updatePlay"); // falta fazer
+$route->put("/update/{id}", "Plays:updatePlay"); // falta fazer
 
 $route->delete("/delete/{id}", "Plays:deletePlay");  // nem fiz
 

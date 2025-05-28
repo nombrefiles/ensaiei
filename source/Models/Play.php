@@ -12,24 +12,21 @@ class Play extends Model{
     protected $name;
     protected $genre;
     protected $script;
-    protected $costumes;
     protected $directorId;
     protected $actors;
     protected $deleted;
 
 
-    public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, array $costumes = null, int $directorId = null, array $actors = null,         bool $deleted = false,
+    public function __construct(int $id = null, string $name = null, string $genre = null, string $script = null, int $directorId = null, array $actors = null, bool $deleted = false,
     ){
         $this->table = "plays";
         $this->id = $id;
         $this->name = $name;
         $this->genre = $genre;
         $this->script = $script;
-        $this->costumes = $costumes;
         $this->directorId = $directorId;
         $this->actors = $actors;
         $this->deleted = $deleted;
-
     }
 
     public function getId(): ?int{
@@ -47,11 +44,6 @@ class Play extends Model{
     public function getScript(): ?string{
         return $this->script;
     }
-
-    public function getCostumes(): ?array{
-        return $this->costumes;
-    }
-
     public function getDirectorId(): ?int{
         return $this->directorId;
     }
@@ -75,11 +67,6 @@ class Play extends Model{
     public function setScript(?string $script): void{
         $this->script = $script;
     }
-
-    public function setCostumes(?array$costumes): void{
-        $this->costumes = $costumes;
-    }
-
     public function setDirectorId(?int $directorId): void{
         $this->directorId = $directorId;
     }
@@ -159,6 +146,36 @@ class Play extends Model{
         }
     }
 
+    public function updateWithActors(): bool
+    {
+        $conn = \Source\Core\Connect::getInstance();
+        try {
+            $conn->beginTransaction();
+
+            // Deleta as associações atuais dessa peça
+            $stmtDelete = $conn->prepare("DELETE FROM actors_plays WHERE playId = ?");
+            $stmtDelete->execute([$this->id]);
+
+            // Insere as novas associações da peça com os atores
+            if (!empty($this->actors) && is_array($this->actors)) {
+                $stmtInsert = $conn->prepare("INSERT INTO actors_plays (actorId, playId) VALUES (?, ?)");
+
+                foreach ($this->actors as $actorId) {
+                    $stmtInsert->execute([$actorId, $this->id]);
+                }
+            }
+
+            $conn->commit();
+
+            return true;
+        } catch (\PDOException $e) {
+            $conn->rollBack();
+            $this->errorMessage = "Erro ao atualizar atores da peça: " . $e->getMessage();
+            return false;
+        }
+    }
+
+
     private function fill(array $data)
     {
         $this->id = $data["id"] ?? null;
@@ -166,7 +183,7 @@ class Play extends Model{
         $this->genre = $data["genre"] ?? null;
         $this->directorId = $data["directorId"] ?? null;
         $this->actors = $data["actors"] ?? null;
-        $this->costumes = $data["costumes"] ?? null;
+        $this->script = $data["script"] ?? null;
     }
 
 }

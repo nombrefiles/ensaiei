@@ -17,17 +17,23 @@ class Plays extends Api
 
     public function createPlay(array $data)
     {
-        $data["actors"] = explode(",", $data["actors"]);
+        $this->auth();
 
-        if (empty($data["name"]) || empty($data["genre"]) || empty($data["script"]) || empty($data["directorId"]) || empty($data["actors"])) {
+        if (empty($data["name"]) || empty($data["genre"]) || empty($data["script"]) || empty($data["actors"])) {
             $this->call(400, "bad_request", "Todos os campos são obrigatórios", "error")->back();
             return;
         }
 
-
-
+        $data["actors"] = explode(",", $data["actors"]);
+        
         if (!is_array($data['actors'])) {
             $this->call(400, "bad_request", "Campo 'actors' deve ser um array válido", "error")->back();
+            return;
+        }
+
+        // Verifica se o usuário está autenticado
+        if (!$this->userAuth) {
+            $this->call(401, "unauthorized", "Usuário não autenticado", "error")->back();
             return;
         }
 
@@ -37,7 +43,7 @@ class Plays extends Api
             $data["genre"],
             $data["script"],
             null,
-            $data["directorId"],
+            $this->userAuth->id, // Usando o id diretamente ao invés de getDirectorId()
             $data["actors"]
         );
 
@@ -79,11 +85,13 @@ class Plays extends Api
         $user->findById($play->getDirectorId());
 
         $actors = [];
-
         foreach ($play->getActors() as $actorId) {
             $actor = new Actor();
             if ($actor->findById($actorId)) {
-                    $actors[] = $actor->getName();
+                $actors[] = [
+                    'id' => $actor->getId(),
+                    'name' => $actor->getName()
+                ];
             }
         }
 
@@ -100,12 +108,104 @@ class Plays extends Api
         $this->call(200, "success", "Encontrado com sucesso", "success")->back($response);
     }
 
-    public function updatePlay (array $data): void
+    public function updatePlay(array $data): void
     {
         $this->auth();
-        var_dump($data);
-        var_dump( $this->userAuth);
-        var_dump($this->userAuth->name, $this->userAuth->email);
+
+        if (!isset($data["id"])) {
+            $this->call(400, "bad_request", "ID da peça não fornecido", "error")->back();
+            return;
+        }
+
+        if (!filter_var($data["id"], FILTER_VALIDATE_INT)) {
+            $this->call(400, "bad_request", "ID inválido", "error")->back();
+            return;
+        }
+
+        $play = new Play();
+        if (!$play->findById($data["id"])) {
+            $this->call(404, "not_found", "Peça não encontrada", "error")->back();
+            return;
+        }
+
+        if ($this->userAuth->id !== $play->getDirectorId()) {
+            $this->call(403, "forbidden", "Você não tem permissão para atualizar essa peça", "error")->back();
+            return;
+        }
+
+        if (isset($data["name"])) {
+            if (empty($data["name"])) {
+                $this->call(400, "bad_request", "Nome da peça não pode ser vazio", "error")->back();
+                return;
+            }
+            $play->setName($data["name"]);
+        }
+
+        if (isset($data["genre"])) {
+            if (empty($data["genre"])) {
+                $this->call(400, "bad_request", "Gênero não pode ser vazio", "error")->back();
+                return;
+            }
+            $play->setGenre($data["genre"]);
+        }
+
+        if (isset($data["script"])) {
+            if (empty($data["script"])) {
+                $this->call(400, "bad_request", "Roteiro não pode ser vazio", "error")->back();
+                return;
+            }
+            $play->setScript($data["script"]);
+        }
+
+        if (isset($data["actors"])) {
+            if (is_string($data["actors"])) {
+                $data["actors"] = explode(",", $data["actors"]);
+            }
+            $play->setActors($data["actors"]);
+
+            if (!$play->updateWithActors()) {
+                $this->call(500, "internal_server_error", $play->getErrorMessage(), "error")->back();
+                return;
+            }
+        }
+
+        $actorsBackup = $play->getActors();
+        $play->setActors(null);
+
+        if (!$play->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao atualizar peça: " . $play->getErrorMessage(), "error")->back();
+            return;
+        }
+
+        // Restaura o campo actors para a resposta
+        $play->setActors($actorsBackup);
+
+        $user = new User();
+
+        $play->findById($data["id"]);
+
+        $actors = [];
+        foreach ($play->getActors() as $actorId) {
+            $actor = new Actor();
+            if ($actor->findById($actorId)) {
+                $actors[] = [
+                    'id' => $actor->getId(),
+                    'name' => $actor->getName()
+                ];
+            }
+        }
+
+        $response = [
+            "id" => $play->getId(),
+            "name" => $play->getName(),
+            "genre" => $play->getGenre(),
+            "script" => $play->getScript(),
+            "directorId" => $this->userAuth->id,
+            "actors" => $actors
+        ];
+
+        $this->call(200, "success", "Peça atualizada com sucesso", "success")->back($response);
     }
+
 
 }

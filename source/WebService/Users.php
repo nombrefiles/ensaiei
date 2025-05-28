@@ -31,7 +31,7 @@ class Users extends Api
             $data["idType"] ?? null,
             $data["name"] ?? null,
             $data["email"] ?? null,
-            $data["password"] ?? null,
+            isset($data["password"]) ? password_hash($data["password"], PASSWORD_DEFAULT) : null,
             $data["photo"] ?? "https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png",
             $data["username"] ?? null,
             $data["bio"] ?? "Eu amo teatro!",

@@ -62,18 +62,23 @@ abstract class Model
         }
     }
 
-    public function updateById (): bool
+    public function updateById(): bool
     {
         $reflection = new ReflectionClass($this);
         $properties = $reflection->getProperties();
         $columns = [];
         $values = [];
 
+        // Lista de propriedades que devem ser ignoradas no UPDATE
+        $ignoredProperties = ['table', 'errorMessage', 'actors'];
+
         foreach ($properties as $property) {
             $property->setAccessible(true);
             $name = $property->getName();
             $value = $property->getValue($this);
-            if ($name !== "table" && $name !== "errorMessage") {
+
+            // Ignora propriedades que não devem ser incluídas na query
+            if (!in_array($name, $ignoredProperties)) {
                 $columns[] = "{$name} = :{$name}";
                 $values[$name] = $value;
             }
@@ -86,7 +91,7 @@ abstract class Model
             $stmt = Connect::getInstance()->prepare($sql);
             foreach ($values as $column => $value) {
                 if(is_null($value)){
-                    $stmt->bindValue($column, 'NULL', PDO::PARAM_NULL);
+                    $stmt->bindValue($column, null, PDO::PARAM_NULL);
                 } else if(is_int($value)) {
                     $stmt->bindValue($column, $value, PDO::PARAM_INT);
                 } else {
@@ -98,7 +103,6 @@ abstract class Model
             $this->errorMessage = "Erro ao inserir o registro: {$e->getMessage()}";
             return false;
         }
-
     }
 
     public function findAll(): array
@@ -137,30 +141,6 @@ abstract class Model
             return false;
         }
     }
-
-//    public function deleteById (int $id): bool
-//    {
-//        try {
-//            $stmt = Connect::getInstance()->prepare("DELETE FROM {$this->table} WHERE id = :id");
-//            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-//
-//            if (!$stmt->execute()) {
-//                $error = $stmt->errorInfo();
-//                $this->errorMessage = "Erro ao excluir o registro: " . ($error[2] ?? 'Erro desconhecido');
-//                return false;
-//            }
-//
-//            if ($stmt->rowCount() === 0) {
-//                $this->errorMessage = "Nenhum registro foi afetado pela exclusão";
-//                return false;
-//            }
-//
-//            return true;
-//        } catch (PDOException $e) {
-//            $this->errorMessage = "Erro ao excluir o registro: {$e->getMessage()}";
-//            return false;
-//        }
-//    }
 
     public function getErrorMessage (): ?string
     {
