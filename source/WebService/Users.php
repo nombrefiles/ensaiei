@@ -249,4 +249,5 @@ class Users extends Api
         $this->call(200, "success", "Usuário deletado com sucesso", "success")->back();
     }
 
+    // FAZER: caralho irma tu nunca sabe nada
 }

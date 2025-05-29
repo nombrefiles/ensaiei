@@ -39,8 +39,8 @@ $route->delete("/delete", "Users:deleteUser"); // ok
 /* ATTRACTIONS */
 $route->group("/attraction");
 
-$route->get("/", "Attraction:listAttractions"); // ok
-$route->get("/{id}", "Attraction:listAttractionById"); // ok
+$route->get("/", "Attractions:listAttractions"); // ok
+$route->get("/{id}", "Attractions:listAttractionById"); // ok
 //$route->get("/{search}", "Plays:listPlayByName"); // FAZER
 
 $route->post("/{eventId}/add", "Attractions:createAttraction"); // ok

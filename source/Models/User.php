@@ -252,4 +252,6 @@ class User
         $this->deleted = (bool)$deleted;
     }
 
+    // FAZER: sei la sinto que tem que fazer algo aqui... a qualquer momento descubro oq é
+
 }

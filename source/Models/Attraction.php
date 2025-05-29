@@ -2,6 +2,7 @@
 
 namespace Source\Models;
 
+use DateTime;
 use PDO;
 use Source\Core\Connect;
 use Source\Core\Model;
@@ -19,7 +20,7 @@ class Attraction extends Model
     protected $performers;
     protected $deleted;
 
-    public function __construct( int $id = null, string $name = null, Type $type = Type::OTHER, $eventId = null, $startDatetime = null, $endDatetime = null, $specificLocation = null, $performers = null, $deleted = false)
+    public function __construct( int $id = null, string $name = null, Type $type = Type::OTHER, int $eventId = null, DateTime $startDatetime = null, DateTime $endDatetime = null, string $specificLocation = null, array $performers = null, bool $deleted = false)
     {
         $this->table = "attractions";
         $this->id = $id;
@@ -220,7 +221,6 @@ class Attraction extends Model
         $stmtDelete = $conn->prepare("DELETE FROM attractions_performers WHERE attractionId = ?");
         $stmtDelete->execute([$this->id]);
 
-            // Insere novos performers
         if (!empty($this->performers) && is_array($this->performers)) {
             $stmtInsert = $conn->prepare("INSERT INTO attractions_performers (attractionId, userId) VALUES (?, ?)");
             

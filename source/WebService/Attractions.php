@@ -5,6 +5,7 @@ namespace Source\WebService;
 use Source\enums\Type;
 use Source\Models\Attraction;
 use Source\Models\User;
+use ValueError;
 
 class Attractions extends Api
 {
@@ -74,7 +75,7 @@ class Attractions extends Api
 
         try {
             $type = isset($data["type"]) ? Type::from($data["type"]) : Type::OTHER;
-        } catch (\ValueError $e) {
+        } catch (ValueError $e) {
             $this->call(400, "bad_request", "Tipo de atração inválido", "error")->back();
             return;
         }
@@ -160,7 +161,7 @@ class Attractions extends Api
             try {
                 $type = Type::from($data["type"]);
                 $attraction->setType($type);
-            } catch (\ValueError $e) {
+            } catch (ValueError $e) {
                 $this->call(400, "bad_request", "Tipo de atração inválido", "error")->back();
                 return;
             }
@@ -275,4 +276,59 @@ class Attractions extends Api
 
         $this->call(200, "success", "Atração deletada com sucesso", "success")->back($response);
     }
+
+public function listAttractionsByEvent(array $data): void 
+{
+    if (!isset($data["eventId"])) {
+        $this->call(400, "bad_request", "ID do evento não fornecido", "error")->back();
+        return;
+    }
+
+    if (!filter_var($data["eventId"], FILTER_VALIDATE_INT)) {
+        $this->call(400, "bad_request", "ID do evento inválido", "error")->back();
+        return;
+    }
+
+    $attraction = new Attraction();
+    $stmt = Connect::getInstance()->prepare("
+        SELECT * FROM attractions 
+        WHERE eventId = :eventId AND deleted = false
+    ");
+    $stmt->bindParam(":eventId", $data["eventId"]);
+    $stmt->execute();
+    
+    $attractions = [];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $attraction = new Attraction();
+        $attraction->findById($row["id"]);
+        
+        $performers = [];
+        foreach ($attraction->getPerformers() as $performerId) {
+            $performer = new User();
+            if ($performer->findById($performerId)) {
+                $performers[] = [
+                    'id' => $performer->getId(),
+                    'name' => $performer->getName()
+                ];
+            }
+        }
+
+        $attractions[] = [
+            "id" => $attraction->getId(),
+            "name" => $attraction->getName(),
+            "type" => $attraction->getType(),
+            "startDatetime" => $attraction->getStartDatetime(),
+            "endDatetime" => $attraction->getEndDatetime(),
+            "specificLocation" => $attraction->getSpecificLocation(),
+            "performers" => $performers
+        ];
+    }
+
+    $this->call(
+        200, 
+        "success", 
+        "Lista de atrações do evento recuperada com sucesso", 
+        "success"
+    )->back($attractions);
+}
 }
