@@ -40,12 +40,12 @@ $route->delete("/delete", "Users:deleteUser"); // ok
 $route->group("/attraction");
 
 $route->get("/", "Attraction:listAttractions"); // ok
-$route->get("/{eventId}/{id}", "Attraction:listAttractionById"); // ok
+$route->get("/{id}", "Attraction:listAttractionById"); // ok
 //$route->get("/{search}", "Plays:listPlayByName"); // FAZER
 
-$route->post("/add", "Attractions:createAttraction"); // ok
+$route->post("/{eventId}/add", "Attractions:createAttraction"); // ok
 
-$route->put("/update/{id}", "Attractions:updateAttraction"); // ok
+$route->put("/update/{eventId}/{id}", "Attractions:updateAttraction"); // ok
 
 $route->delete("/delete/{id}", "Attractions:deleteAttraction");  // ok
 

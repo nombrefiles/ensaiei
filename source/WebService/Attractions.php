@@ -65,7 +65,6 @@ class Attractions extends Api
             return;
         }
 
-        // Validação de datas
         $start = strtotime($data["startDatetime"]);
         $end = strtotime($data["endDatetime"]);
         if ($start >= $end) {
@@ -73,7 +72,6 @@ class Attractions extends Api
             return;
         }
 
-        // Validação do tipo
         try {
             $type = isset($data["type"]) ? Type::from($data["type"]) : Type::OTHER;
         } catch (\ValueError $e) {
@@ -82,15 +80,18 @@ class Attractions extends Api
         }
 
         if (empty($data["performers"])) {
-            $data["performers"] = [$this->userAuth->username];
+            $data["performers"] = [$this->userAuth->id];
         } else {
-            $data["performers"] = explode(",", $data["performers"]);
-            $data["performers"][] = $this->userAuth->username;
-        }
+            if (is_string($data["performers"])) {
+                $data["performers"] = explode(",", $data["performers"]);
+            }
 
-        if (!is_array($data['performers'])) {
-            $this->call(400, "bad_request", "Campo 'performers' deve ser um array válido", "error")->back();
-            return;
+            if (!is_array($data["performers"])) {
+                $this->call(400, "bad_request", "Campo 'performers' deve ser um array ou string separada por vírgulas", "error")->back();
+                return;
+            }
+
+            $data["performers"][] = $this->userAuth->id;
         }
 
         if (!$this->userAuth) {
@@ -102,7 +103,7 @@ class Attractions extends Api
             null,
             $data["name"],
             $type,
-            null,
+            $data["eventId"],
             $data["startDatetime"],
             $data["endDatetime"],
             $data["specificLocation"],
@@ -145,7 +146,7 @@ class Attractions extends Api
             return;
         }
 
-        if (!in_array($this->userAuth->username, $attraction->getPerformers())) {
+        if (!in_array($this->userAuth->id, $attraction->getPerformers())) {
             $this->call(403, "forbidden", "Você não tem permissão para atualizar essa atração", "error")->back();
             return;
         }
@@ -165,7 +166,6 @@ class Attractions extends Api
             }
         }
 
-        // Validação de datas se ambas estiverem presentes
         if (isset($data["startDatetime"]) && isset($data["endDatetime"])) {
             $start = strtotime($data["startDatetime"]);
             $end = strtotime($data["endDatetime"]);
@@ -181,8 +181,8 @@ class Attractions extends Api
         if (isset($data["startDatetime"])) {
             $attraction->setStartDatetime($data["startDatetime"]);
         }
-        if (isset($data["endDateTime"])) {
-            $attraction->setEndDatetime($data["endDateTime"]);
+        if (isset($data["endDatetime"])) {
+            $attraction->setEndDatetime($data["endDatetime"]);
         }
         if (isset($data["specificLocation"])) {
             $attraction->setSpecificLocation($data["specificLocation"]);
@@ -236,10 +236,11 @@ class Attractions extends Api
         $this->call(200, "success", "Atração atualizada com sucesso", "success")->back($response);
     }
 
-    public function deleteAttraction(array $data): void {
+    public function deleteAttraction(array $data): void
+    {
         $this->auth();
 
-        if(!isset($data['id'])){
+        if (!isset($data['id'])) {
             $this->call(400, "bad_request", "ID da atração não fornecido", "error")->back();
             return;
         }
@@ -250,12 +251,12 @@ class Attractions extends Api
         }
 
         $attraction = new Attraction();
-        if(!$attraction->findById($data['id'])){
+        if (!$attraction->findById($data['id'])) {
             $this->call(404, 'not_found', 'Atração não encontrada', "error")->back();
             return;
         }
 
-        if (!in_array($this->userAuth->username, $attraction->getPerformers())) {
+        if (!in_array($this->userAuth->id, $attraction->getPerformers())) {
             $this->call(403, "forbidden", "Você não tem permissão para deletar essa atração", "error")->back();
             return;
         }
