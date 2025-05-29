@@ -28,7 +28,7 @@ class Users extends Api
 
         $user = new User(
             null,
-            $data["idType"] ?? null,
+            4,
             $data["name"] ?? null,
             $data["email"] ?? null,
             isset($data["password"]) ? password_hash($data["password"], PASSWORD_DEFAULT) : null,

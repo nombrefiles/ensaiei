@@ -31,7 +31,6 @@ class Plays extends Api
             return;
         }
 
-        // Verifica se o usuário está autenticado
         if (!$this->userAuth) {
             $this->call(401, "unauthorized", "Usuário não autenticado", "error")->back();
             return;
@@ -42,7 +41,7 @@ class Plays extends Api
             $data["name"],
             $data["genre"],
             $data["script"],
-            $this->userAuth->id, // Usando o id diretamente ao invés de getDirectorId()
+            $this->userAuth->id,
             $data["actors"]
         );
 
@@ -176,7 +175,6 @@ class Plays extends Api
             return;
         }
 
-        // Restaura o campo actors para a resposta
         $play->setActors($actorsBackup);
 
         $user = new User();

@@ -98,7 +98,7 @@ class User
                     (:idType, :name, :email, :password, :photo, :username, :bio, :deleted)
             ");
 
-            $stmt->bindValue(":idType", $this->idType);
+            $stmt->bindValue(":idType", 4);
             $stmt->bindValue(":name", $this->name);
             $stmt->bindValue(":email", $this->email);
             $stmt->bindValue(":password", $this->password);
@@ -150,7 +150,7 @@ class User
     public function fill(array $data)
     {
         $this->id       = $data["id"] ?? null;
-        $this->idType   = $data["idType"] ?? null;
+        $this->idType   = 4;
         $this->name     = $data["name"] ?? null;
         $this->email    = $data["email"] ?? null;
         $this->password = $data["password"] ?? null;

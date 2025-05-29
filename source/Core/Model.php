@@ -70,7 +70,7 @@ abstract class Model
         $values = [];
 
         // Lista de propriedades que devem ser ignoradas no UPDATE
-        $ignoredProperties = ['table', 'errorMessage', 'actors'];
+        $ignoredProperties = ['table', 'errorMessage', 'performers'];
 
         foreach ($properties as $property) {
             $property->setAccessible(true);

@@ -1,70 +1,63 @@
-DROP DATABASE ENSAIEI;
-CREATE DATABASE IF NOT EXISTS ENSAIEI;
+DROP DATABASE IF EXISTS ENSAIEI;
+CREATE DATABASE ENSAIEI;
 USE ENSAIEI;
-
--- Tabela de tipos de usuário
-CREATE TABLE `users_types` (
-                               `id` int NOT NULL AUTO_INCREMENT,
-                               `description` varchar(255) NOT NULL,
-                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- Tabela de usuários
 
 CREATE TABLE `users` (
                          `id` int NOT NULL AUTO_INCREMENT,
-                         `idType` int NOT NULL,
                          `name` varchar(255) NOT NULL,
                          `email` varchar(255) NOT NULL,
                          `password` varchar(255) NOT NULL,
                          `photo` varchar(255) DEFAULT 'https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png',
                          `username` varchar(60) NOT NULL,
-                        `bio` varchar(300) NOT NULL,
+                         `bio` varchar(300) NOT NULL,
+                         `role` ENUM('ADMIN', 'ORGANIZER', 'PERFORMER', 'STANDARD') NOT NULL,
                          `deleted` bool DEFAULT FALSE,
-                         PRIMARY KEY (`id`),
-                         KEY `fk_users_users_types1_idx` (`idType`),
-                         CONSTRAINT `fk_users_users_types1` FOREIGN KEY (`idType`) REFERENCES `users_types` (`id`)
+                         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Tabela de peças teatrais
-CREATE TABLE `plays` (
+CREATE TABLE `events` (
+                          `id` int NOT NULL AUTO_INCREMENT,
+                          `title` varchar(200) NOT NULL,
+                          `description` text,
+                          `location` varchar(255),
+                          `latitude` decimal(10, 8),
+                          `longitude` decimal(11, 8),
+                          `startDatetime` datetime NOT NULL,
+                          `endDatetime` datetime NOT NULL,
+                          `deleted` bool DEFAULT FALSE,
+                          `organizerId` int not null,
+                          PRIMARY KEY (`id`),
+                          FOREIGN KEY (`organizerId`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE `attractions` (
                          `id` int NOT NULL AUTO_INCREMENT,
                          `name` varchar(255) NOT NULL,
-                         `genre` varchar(100) NOT NULL,
-                         `script` text NOT NULL,
-                         `directorId` int NOT NULL,
+                         `type` ENUM('MUSIC', 'VISUAL', 'THEATER', 'DANCE', 'CINEMA', 'OTHER') NOT NULL,
+                         `eventId` int NOT NULL,
+                         `startDatetime` datetime NOT NULL,
+                         `endDatetime` datetime NOT NULL,
+                         `specificLocation` varchar(255),
                          `deleted` bool DEFAULT FALSE,
                          PRIMARY KEY (`id`),
-                         KEY `fk_plays_users1_idx` (`directorId`),
-                         CONSTRAINT `fk_plays_users1` FOREIGN KEY (`directorId`) REFERENCES `users` (`id`)
+                         FOREIGN KEY (`eventId`) REFERENCES `events` (`id`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Tabela de atores
-CREATE TABLE `actors` (
-                          `id` int NOT NULL AUTO_INCREMENT,
-                          `name` varchar(255) NOT NULL,
-                          `deleted` bool DEFAULT FALSE,
-                          PRIMARY KEY (`id`)
+CREATE TABLE `attractions_performers` (
+                          `id` INT NOT NULL AUTO_INCREMENT,
+                          `attractionId` INT NOT NULL,
+                          `userId` INT NOT NULL,
+                          PRIMARY KEY (`id`),
+                          FOREIGN KEY (`attractionId`) REFERENCES `attractions` (`id`),
+                          FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Tabela de relacionamento entre atores e peças
-CREATE TABLE `actors_plays` (
-                                `actorId` int NOT NULL,
-                                `playId` int NOT NULL,
-                                PRIMARY KEY (`actorId`,`playId`),
-                                KEY `fk_actors_plays_plays1_idx` (`playId`),
-                                CONSTRAINT `fk_actors_plays_actors1` FOREIGN KEY (`actorId`) REFERENCES `actors` (`id`),
-                                CONSTRAINT `fk_actors_plays_plays1` FOREIGN KEY (`playId`) REFERENCES `plays` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- Tabela de tipos de perguntas
 CREATE TABLE `questions_types` (
                                    `id` int NOT NULL AUTO_INCREMENT,
                                    `description` varchar(255) NOT NULL,
                                    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Tabela de perguntas
 CREATE TABLE `questions` (
                              `id` int NOT NULL AUTO_INCREMENT,
                              `idType` int NOT NULL,
@@ -75,29 +68,3 @@ CREATE TABLE `questions` (
                              KEY `fk_questions_types_idx` (`idType`),
                              CONSTRAINT `fk_questions_types` FOREIGN KEY (`idType`) REFERENCES `questions_types` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
--- Tabela de figurinos
-CREATE TABLE `costumes` (
-                            `id` int NOT NULL AUTO_INCREMENT,
-                            `playId` int NOT NULL,
-                            `description` text NOT NULL,
-                            `deleted` bool DEFAULT FALSE,
-                            PRIMARY KEY (`id`),
-                            KEY `fk_costumes_plays1_idx` (`playId`),
-                            CONSTRAINT `fk_costumes_plays1` FOREIGN KEY (`playId`) REFERENCES `plays` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
-
--- Inserir tipos de usuário básicos
-INSERT INTO `users_types` (`description`) VALUES
-                                              ('Administrador'),
-                                              ('Diretor'),
-                                              ('Ator'),
-                                              ('Usuário');
-
--- Inserir tipos de perguntas básicos
-INSERT INTO `questions_types` (`description`) VALUES
-                                                  ('Geral'),
-                                                  ('Técnico'),
-                                                  ('Financeiro'),
-                                                  ('Suporte');

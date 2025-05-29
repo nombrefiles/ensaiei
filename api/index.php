@@ -41,6 +41,7 @@ $route->group("/plays");
 
 $route->get("/", "Plays:listPlays"); // ok
 $route->get("/{id}", "Plays:listPlayById"); // ok
+$route->get("/{search}", "Plays:listPlayByName"); // FAZER
 
 $route->post("/add", "Plays:createPlay"); // ok
 
@@ -56,26 +57,14 @@ $route->group("/actors");
 
 $route->get("/", "Actors:listActors");  // ok
 $route->get("/{id}", "Actors:listActorById"); // ok
+$route->get("/{actors}", "Plays:listPlayByName"); // FAZER
+
 
 $route->post("/add", "Actors:createActor"); // falta adicionar para a tabela actors caso eles ja estejam em alguma peca
 
 $route->put("/update", "Actors:updateActor"); // falta fazer
 
 $route->delete("/delete/{id}", "Actors:deleteActor"); // falta fazer
-
-
-/*  COSTUMES  */
-//$route->group("/costumes");
-//
-//$route->get("/", "Costumes:listCostumes"); // nao sei
-//$route->get("/{id}", "Costumes:listCostumeById"); // nao sei
-//
-//$route->post("/add", "Costumes:createCostume"); // nao sei
-//
-//$route->put("/update", "Costumes:updateCostume"); // falta fazer
-//
-//$route->delete("/delete/{id}", "Costumes:deleteCostumeById"); // falta fazer
-//
 
 $route->group("null");
 
