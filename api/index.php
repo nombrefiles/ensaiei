@@ -36,35 +36,18 @@ $route->put("/update", "Users:updateUser"); // ok
 $route->delete("/delete", "Users:deleteUser"); // ok
 
 
-/* PLAYS */
-$route->group("/plays");
+/* ATTRACTIONS */
+$route->group("/attraction");
 
-$route->get("/", "Plays:listPlays"); // ok
-$route->get("/{id}", "Plays:listPlayById"); // ok
-$route->get("/{search}", "Plays:listPlayByName"); // FAZER
+$route->get("/", "Attraction:listAttractions"); // ok
+$route->get("/{eventId}/{id}", "Attraction:listAttractionById"); // ok
+//$route->get("/{search}", "Plays:listPlayByName"); // FAZER
 
-$route->post("/add", "Plays:createPlay"); // ok
+$route->post("/add", "Attractions:createAttraction"); // ok
 
-$route->put("/update/{id}", "Plays:updatePlay"); // ok
+$route->put("/update/{id}", "Attractions:updateAttraction"); // ok
 
-$route->delete("/delete/{id}", "Plays:deletePlay");  // ok
-
-/* ACTORS  */
-
-// acho que pode tudo ser um user por sinal... acho meio inutil ter uma classe actors
-// ou isso ou fazer uma forma de mostrar as peças que os atores estão no listActors
-$route->group("/actors");
-
-$route->get("/", "Actors:listActors");  // ok
-$route->get("/{id}", "Actors:listActorById"); // ok
-$route->get("/{actors}", "Plays:listPlayByName"); // FAZER
-
-
-$route->post("/add", "Actors:createActor"); // falta adicionar para a tabela actors caso eles ja estejam em alguma peca
-
-$route->put("/update", "Actors:updateActor"); // falta fazer
-
-$route->delete("/delete/{id}", "Actors:deleteActor"); // falta fazer
+$route->delete("/delete/{id}", "Attractions:deleteAttraction");  // ok
 
 $route->group("null");
 

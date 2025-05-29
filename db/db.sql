@@ -40,7 +40,7 @@ CREATE TABLE `attractions` (
                          `specificLocation` varchar(255),
                          `deleted` bool DEFAULT FALSE,
                          PRIMARY KEY (`id`),
-                         FOREIGN KEY (`eventId`) REFERENCES `events` (`id`),
+                         FOREIGN KEY (`eventId`) REFERENCES `events` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `attractions_performers` (

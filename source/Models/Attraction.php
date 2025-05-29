@@ -134,7 +134,7 @@ class Attraction extends Model
         if ($attraction = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $this->fill($attraction);
 
-            $stmtPerformers = Connect::getInstance()->prepare("SELECT actorId FROM attractions_performers WHERE attractionId = :attractionId");
+            $stmtPerformers = Connect::getInstance()->prepare("SELECT userId FROM attractions_performers WHERE attractionId = :attractionId");
             $stmtPerformers->bindParam(":attractionId", $id);
             $stmtPerformers->execute();
             $performers = $stmtPerformers->fetchAll(PDO::FETCH_COLUMN);
@@ -171,7 +171,7 @@ class Attraction extends Model
 
             if (!empty($this->performers) && is_array($this->performers)) {
                 $stmtPerformer = $conn->prepare("
-                INSERT INTO attractions_performers (attractionId, performerId)
+                INSERT INTO attractions_performers (attractionId, userId)
                 VALUES (?, ?)
             ");
 
@@ -222,7 +222,7 @@ class Attraction extends Model
 
             // Insere novos performers
         if (!empty($this->performers) && is_array($this->performers)) {
-            $stmtInsert = $conn->prepare("INSERT INTO attractions_performers (attractionId, performerId) VALUES (?, ?)");
+            $stmtInsert = $conn->prepare("INSERT INTO attractions_performers (attractionId, userId) VALUES (?, ?)");
             
             foreach ($this->performers as $performerId) {
                 $stmtInsert->execute([$this->id, $performerId]);
