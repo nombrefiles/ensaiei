@@ -51,6 +51,21 @@ $route->delete("/delete/{id}", "Attractions:deleteAttraction");  // ok
 
 $route->group("null");
 
+$route->group("/event");
+
+$route->get("/", "Events:listEvents"); // ok
+$route->get("/{id}", "Events:listEventById"); // ok
+//$route->get("/{search}", "Plays:listPlayByName"); // FAZER
+
+$route->post("/{eventId}/add", "Events:createEvent"); // ok
+
+$route->put("/update/{eventId}/{id}", "Events:updateEvent"); // ok
+
+$route->delete("/delete/{id}", "Events:deleteEvent");  // ok
+
+$route->group("null");
+
+
 $route->dispatch();
 
 

@@ -7,10 +7,11 @@ use PDO;
 use Source\Core\Connect;
 use Source\Models\User;
 use Source\Core\JWTToken;
+use Source\Enums\Role;
 
 class Users extends Api
 {
-    public function listUsers (): void
+    public function listUsers(): void
     {
         $users = new User();
         $this->call(200, "success", "Lista de usuários", "success")
@@ -19,16 +20,21 @@ class Users extends Api
 
     public function createUser(array $data)
     {
-
-        // verifica se os dados estão preenchidos
-        if(in_array("", $data)){
+        if (in_array("", $data)) {
             $this->call(400, "bad_request", "Dados inválidos", "error")->back();
+            return;
+        }
+
+        try {
+            $role = isset($data["role"]) ? Role::from($data["role"]) : Role::USER;
+        } catch (\ValueError $e) {
+            $this->call(400, "bad_request", "Tipo de usuário inválido", "error")->back();
             return;
         }
 
         $user = new User(
             null,
-            4,
+            $role,
             $data["name"] ?? null,
             $data["email"] ?? null,
             isset($data["password"]) ? password_hash($data["password"], PASSWORD_DEFAULT) : null,
@@ -38,7 +44,7 @@ class Users extends Api
             false
         );
 
-        if(!$user->insert()){
+        if (!$user->insert()) {
             $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
             return;
         }
@@ -69,15 +75,12 @@ class Users extends Api
 
         ob_clean();
 
-        error_log("Status deleted: " . var_export($user->getDeleted(), true));
-
         if ($user->getDeleted()) {
             header('Content-Type: text/html; charset=utf-8');
 
             $deletedProfilePath = __DIR__ . "/../../design/html/deleted-profile.php";
 
             if (!file_exists($deletedProfilePath)) {
-                error_log("Arquivo não encontrado: " . $deletedProfilePath);
                 $this->call(500, "internal_server_error", "Template não encontrado", "error")->back();
                 return;
             }
@@ -100,7 +103,6 @@ class Users extends Api
         include $profilePath;
     }
 
-
     public function updateUser(array $data): void
     {
         $this->auth();
@@ -117,11 +119,12 @@ class Users extends Api
         }
 
         if (isset($data["idType"])) {
-            if (!filter_var($data["idType"], FILTER_VALIDATE_INT)) {
+            try {
+                $user->setRole(Role::from($data["idType"]));
+            } catch (\ValueError $e) {
                 $this->call(400, "bad_request", "Tipo de usuário inválido", "error")->back();
                 return;
             }
-            $user->setIdType($data["idType"]);
         }
 
         if (isset($data["name"])) {
@@ -167,7 +170,7 @@ class Users extends Api
 
         $response = [
             "id" => $user->getId(),
-            "idType" => $user->getIdType(),
+            "idType" => $user->getRole()?->value,
             "name" => $user->getName(),
             "email" => $user->getEmail(),
             "photo" => $user->getPhoto(),
@@ -193,12 +196,12 @@ class Users extends Api
             return;
         }
 
-        if(!password_verify($data["password"], $user->getPassword())){
+        if (!password_verify($data["password"], $user->getPassword())) {
             $this->call(401, "unauthorized", "Senha inválida", "error")->back();
             return;
         }
 
-        if($user->getDeleted() === true){
+        if ($user->getDeleted() === true) {
             $user->setDeleted(false);
 
             if (!$user->updateById()) {
@@ -226,7 +229,6 @@ class Users extends Api
                     "photo" => $user->getPhoto()
                 ]
             ]);
-
     }
 
     public function deleteUser()
@@ -248,6 +250,4 @@ class Users extends Api
 
         $this->call(200, "success", "Usuário deletado com sucesso", "success")->back();
     }
-
-    // FAZER: caralho irma tu nunca sabe nada
 }
