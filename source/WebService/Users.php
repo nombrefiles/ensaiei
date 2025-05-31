@@ -26,7 +26,7 @@ class Users extends Api
         }
 
         try {
-            $role = isset($data["role"]) ? Role::from($data["role"]) : Role::USER;
+            $role = isset($data["role"]) ? Role::from($data["role"]) : Role::STANDARD;
         } catch (\ValueError $e) {
             $this->call(400, "bad_request", "Tipo de usuário inválido", "error")->back();
             return;

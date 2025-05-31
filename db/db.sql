@@ -10,7 +10,7 @@ CREATE TABLE `users` (
                          `photo` varchar(255) DEFAULT 'https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png',
                          `username` varchar(60) NOT NULL,
                          `bio` varchar(300) NOT NULL,
-                         `role` ENUM('ADMIN', 'ORGANIZER', 'PERFORMER', 'STANDARD') NOT NULL,
+                         `role` ENUM('ADMIN', 'STANDARD') NOT NULL,
                          `deleted` bool DEFAULT FALSE,
                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;

@@ -166,7 +166,7 @@ class User
         return $this->id;
     }
 
-    public function getIdType()
+    public function getRole()
     {
         return $this->role;
     }
