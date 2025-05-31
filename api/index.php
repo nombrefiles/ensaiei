@@ -24,16 +24,16 @@ $route->namespace("Source\WebService");
 
 $route->group("/users");
 
-$route->post("/login", "Users:login"); // ok
+$route->post("/login", "Users:login"); // funciona
 
-$route->get("/", "Users:listUsers"); //ok
-$route->get("/{username}", "Users:listUserByUsername"); //ok
+$route->get("/", "Users:listUsers"); // funciona
+$route->get("/{username}", "Users:listUserByUsername"); //funciona
 
-$route->post("/add", "Users:createUser"); //ok
+$route->post("/add", "Users:createUser"); // funciona
 
-$route->put("/update", "Users:updateUser"); // ok
+$route->put("/update", "Users:updateUser"); // funciona
 
-$route->delete("/delete", "Users:deleteUser"); // ok
+$route->delete("/delete", "Users:deleteUser"); // funciona
 
 
 /* ATTRACTIONS */
@@ -57,9 +57,9 @@ $route->get("/", "Events:listEvents"); // ok
 $route->get("/{id}", "Events:listEventById"); // ok
 //$route->get("/{search}", "Plays:listPlayByName"); // FAZER
 
-$route->post("/{eventId}/add", "Events:createEvent"); // ok
+$route->post("/add", "Events:createEvent"); // ok
 
-$route->put("/update/{eventId}/{id}", "Events:updateEvent"); // ok
+$route->put("/update/{id}", "Events:updateEvent"); // ok
 
 $route->delete("/delete/{id}", "Events:deleteEvent");  // ok
 

@@ -6,7 +6,8 @@ use DateTime;
 use PDO;
 use PDOException;
 use Source\Core\Connect;
-use source\Core\Model;
+use Source\Core\Model;
+use Source\Utils\DateBr;
 
 class Event extends Model {
     private $id;
@@ -86,14 +87,27 @@ class Event extends Model {
         return $this->organizerId;
     }
 
-    /**
-     * @return array
-     */
     public function getAttractions(): array {
         if (empty($this->attractions)) {
             $this->loadAttractions();
         }
         return $this->attractions;
+    }
+
+    public function getStartDate(): string {
+        return $this->startDatetime ? $this->startDatetime->format('d/m/Y') : '';
+    }
+
+    public function getStartTime(): string {
+        return $this->startDatetime ? $this->startDatetime->format('H:i:s') : '';
+    }
+
+    public function getEndDate(): string {
+        return $this->endDatetime ? $this->endDatetime->format('d/m/Y') : '';
+    }
+
+    public function getEndTime(): string {
+        return $this->endDatetime ? $this->endDatetime->format('H:i:s') : '';
     }
 
     // Setters
@@ -121,12 +135,19 @@ class Event extends Model {
         $this->longitude = $longitude;
     }
 
-    public function setStartDatetime(DateTime $startDatetime): void {
-        $this->startDatetime = $startDatetime;
+    public function setStartDatetime(string $date, ?string $time = null): void {
+        $datetime = DateBr::convertToDateTime($date, $time);
+        if ($datetime) {
+            $this->startDatetime = $datetime;
+        }
     }
 
-    public function setEndDatetime(DateTime $endDatetime): void {
-        $this->endDatetime = $endDatetime;
+
+    public function setEndDatetime(string $date, ?string $time = null): void {
+        $datetime = DateBr::convertToDateTime($date, $time);
+        if ($datetime) {
+            $this->endDatetime = $datetime;
+        }
     }
 
     public function setDeleted(bool $deleted): void {
@@ -137,16 +158,10 @@ class Event extends Model {
         $this->organizerId = $organizerId;
     }
 
-    /**
-     * @param array $attractions
-     */
     public function setAttractions(array $attractions): void {
         $this->attractions = $attractions;
     }
 
-    /**
-     * Carrega as atrações do evento do banco de dados
-     */
     private function loadAttractions(): void {
         try {
             $stmt = Connect::getInstance()->prepare("
@@ -166,36 +181,20 @@ class Event extends Model {
         }
     }
 
-    /**
-     * Adiciona uma atração ao evento
-     * @param array $attraction
-     */
     public function addAttraction(array $attraction): void {
         $this->attractions[] = $attraction;
     }
 
-    /**
-     * Remove uma atração do evento pelo ID
-     * @param int $attractionId
-     */
     public function removeAttraction(int $attractionId): void {
         $this->attractions = array_filter($this->attractions, function($attraction) use ($attractionId) {
             return $attraction['id'] !== $attractionId;
         });
     }
 
-    /**
-     * Verifica se o evento tem atrações
-     * @return bool
-     */
     public function hasAttractions(): bool {
         return !empty($this->getAttractions());
     }
 
-    /**
-     * Conta o número de atrações do evento
-     * @return int
-     */
     public function countAttractions(): int {
         return count($this->getAttractions());
     }

@@ -4,10 +4,10 @@ namespace Source\Enums;
 
 enum Type: string
 {
-    case MUSIC = 'Apresentação musical';
-    case VISUAL = 'Exposição visual';
-    case CINEMA = 'Apresentação cinematográfica';
-    case THEATER = 'Apresentação teatral';
-    case DANCE = 'Apresentação de dança';
-    case OTHER = 'Apresentação diversa';
+    case MUSIC = 'MUSIC';
+    case VISUAL = 'VISUAL';
+    case CINEMA = 'CINEMA';
+    case THEATER = 'THEATER';
+    case DANCE = 'DANCE';
+    case OTHER = 'OTHER';
 }
