@@ -1,6 +1,6 @@
 <?php
 
-namespace Source\enums;
+namespace Source\Enums;
 
 enum Type: string
 {

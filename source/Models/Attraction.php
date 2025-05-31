@@ -6,7 +6,7 @@ use DateTime;
 use PDO;
 use Source\Core\Connect;
 use Source\Core\Model;
-use Source\enums\Type;
+use Source\Enums\Type;
 
 class Attraction extends Model
 {

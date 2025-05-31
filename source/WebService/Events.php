@@ -2,7 +2,6 @@
 
 namespace Source\WebService;
 
-use Source\enums\Type;
 use Source\Models\Attraction;
 use Source\Models\Event;
 use Source\Models\User;
@@ -30,13 +29,13 @@ class Events extends Api
 
         $event = new Event();
         if (!$event->findById($data["id"])) {
-            $this->call(404, "not_found", "Atração não encontrada", "error")->back();
+            $this->call(404, "not_found", "Evento não encontrada", "error")->back();
             return;
         }
 
         $event = new Event();
         $event->findById($data['id']);
-        $attractions = $event->getEventAttractions();
+        $attractions = $event->getAttractions();
 
         foreach ($attractions as $attractionId) {
             $attraction = new Attraction();
@@ -132,7 +131,7 @@ class Events extends Api
 
         $event = new Event();
         if (!$event->findById($data["id"])) {
-            $this->call(404, "not_found", "Atração não encontrada", "error")->back();
+            $this->call(404, "not_found", "Evento não encontrada", "error")->back();
             return;
         }
 
@@ -146,13 +145,24 @@ class Events extends Api
             return;
         }
 
+        if (isset($data["location"]) && empty($data["location"])) {
+            $this->call(400, "bad_request", "Local do evento não pode ser vazio", "error")->back();
+            return;
+        }
+
         if (isset($data["description"]) && empty($data["description"])) {
             $this->call(400, "bad_request", "Descrição do evento não pode ser vazio", "error")->back();
             return;
         }
 
-        // FAZER: faz o resto aq bb
 
+
+        if (isset($data["startDatetime"])) {
+            $event->setStartDatetime($data["startDatetime"]);
+        }
+        if (isset($data["endDatetime"])) {
+            $event->setEndDatetime($data["endDatetime"]);
+        }
         if (isset($data["startDatetime"]) && isset($data["endDatetime"])) {
             $start = strtotime($data["startDatetime"]);
             $end = strtotime($data["endDatetime"]);
@@ -162,64 +172,87 @@ class Events extends Api
             }
         }
 
-        if (isset($data["name"])) {
-            $event->setName($data["name"]);
-        }
-        if (isset($data["startDatetime"])) {
-            $attraction->setStartDatetime($data["startDatetime"]);
-        }
-        if (isset($data["endDatetime"])) {
-            $attraction->setEndDatetime($data["endDatetime"]);
-        }
-        if (isset($data["specificLocation"])) {
-            $attraction->setSpecificLocation($data["specificLocation"]);
-        }
-
-        if (isset($data["performers"])) {
-            if (is_string($data["performers"])) {
-                $data["performers"] = explode(",", $data["performers"]);
+        if (isset($data["attractions"])) {
+            if (is_string($data["attractions"])) {
+                $data["attractions"] = explode(",", $data["attractions"]);
             }
-            $attraction->setPerformers($data["performers"]);
-
-            if (!$attraction->updateWithPerformers()) {
-                $this->call(500, "internal_server_error", $attraction->getErrorMessage(), "error")->back();
-                return;
-            }
+            $event->setAttractions($data["attractions"]);
         }
 
-        $performersBackup = $attraction->getPerformers();
-        $attraction->setPerformers(null);
+        $attractionsBackup = $event->getAttractions();
+        $event->setAttractions([]);
 
-        if (!$attraction->updateById()) {
-            $this->call(500, "internal_server_error", "Erro ao atualizar atração: " . $attraction->getErrorMessage(), "error")->back();
+        if (!$event->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao atualizar evento: " . $event->getErrorMessage(), "error")->back();
             return;
         }
 
-        $attraction->setPerformers($performersBackup);
-        $attraction->findById($data["id"]);
+        $event->setAttractions($attractionsBackup);
+        $event->findById($data["id"]);
 
-        $performers = [];
-        foreach ($attraction->getPerformers() as $performerId) {
-            $performer = new User();
-            if ($performer->findById($performerId)) {
-                $performers[] = [
-                    'id' => $performer->getId(),
-                    'name' => $performer->getName()
+        $attractions = [];
+        foreach ($event->getAttractions() as $attractionId) {
+            $attraction = new Attraction();
+            if ($attraction->findById($attractionId)) {
+                $attractions[] = [
+                    'id' => $attraction->getId(),
+                    'name' => $attraction->getName()
                 ];
             }
         }
 
         $response = [
-            "id" => $attraction->getId(),
-            "name" => $attraction->getName(),
-            "type" => $attraction->getType(),
-            "eventId" => $attraction->getEventId(),
-            "startDatetime" => $attraction->getStartDatetime(),
-            "endDatetime" => $attraction->getEndDatetime(),
-            "specificLocation" => $attraction->getSpecificLocation(),
-            "performers" => $performers,
+            "id" => $event->getId(),
+            "title" => $event->getTitle(),
+            "description" => $event->getDescription(),
+            "location" => $event->getLocation(),
+            "startDatetime" => $event->getStartDatetime(),
+            "endDatetime" => $event->getEndDatetime(),
+            "organizerId" => $event->getOrganizerId(),
+            "attractions" => $attractions,
         ];
 
-        $this->call(200, "success", "Atração atualizada com sucesso", "success")->back($response);
+        $this->call(200, "success", "Evento atualizada com sucesso", "success")->back($response);
     }
+
+
+    public function deleteEvent(array $data): void
+    {
+        $this->auth();
+
+        if (!isset($data['id'])) {
+            $this->call(400, "bad_request", "ID do evento não fornecido", "error")->back();
+            return;
+        }
+
+        if (!filter_var($data["id"], FILTER_VALIDATE_INT)) {
+            $this->call(400, "bad_request", "ID inválido", "error")->back();
+            return;
+        }
+
+        $event = new Event();
+        if (!$event->findById($data['id'])) {
+            $this->call(404, 'not_found', 'Evento não encontrado', "error")->back();
+            return;
+        }
+        if ($this->userAuth->id != $event->getOrganizerId()) {
+            $this->call(403, "forbidden", "Você não tem permissão para deletar esse evento", "error")->back();
+            return;
+        }
+
+        $event->setDeleted(true);
+
+        if (!$event->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao deletar o evento", "error")->back();
+            return;
+        }
+
+        $response = [
+            "id" => $event->getId(),
+            "title" => $event->getTitle(),
+        ];
+
+        $this->call(200, "success", "Atração deletada com sucesso", "success")->back($response);
+    }
+
 }

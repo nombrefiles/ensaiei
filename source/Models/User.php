@@ -4,11 +4,12 @@ namespace Source\Models;
 
 use PDO;
 use Source\Core\Connect;
+use Source\Enums\Role;
 
 class User
 {
     private $id;
-    private $idType;
+    private $role;
     private $name;
     private $email;
     private $password;
@@ -19,18 +20,18 @@ class User
     private $errorMessage;
 
     public function __construct(
-        $id = null,
-        $idType = null,
-        $name = null,
-        $email = null,
-        $password = null,
-        $photo = null,
-        $username = null,
-        $bio = null,
-        $deleted = false
+        int $id = null,
+        Role $role = null,
+        string $name = null,
+        string $email = null,
+        string $password = null,
+        string $photo = null,
+        string $username = null,
+        string $bio = null,
+        bool $deleted = false
     ) {
         $this->id = $id;
-        $this->idType = $idType;
+        $this->role = $role;
         $this->name = $name;
         $this->email = $email;
         $this->password = $password;
@@ -93,12 +94,12 @@ class User
         try {
             $stmt = Connect::getInstance()->prepare("
                 INSERT INTO users 
-                    (idType, name, email, password, photo, username, bio, deleted)
+                    (role, name, email, password, photo, username, bio, deleted)
                 VALUES 
-                    (:idType, :name, :email, :password, :photo, :username, :bio, :deleted)
+                    (:role, :name, :email, :password, :photo, :username, :bio, :deleted)
             ");
 
-            $stmt->bindValue(":idType", 4);
+            $stmt->bindValue(":role", $this->role->value);
             $stmt->bindValue(":name", $this->name);
             $stmt->bindValue(":email", $this->email);
             $stmt->bindValue(":password", $this->password);
@@ -119,7 +120,7 @@ class User
         try {
             $stmt = Connect::getInstance()->prepare("
                 UPDATE users SET
-                    idType = :idType,
+                    role = :role,
                     name = :name,
                     email = :email,
                     password = :password,
@@ -130,7 +131,7 @@ class User
                 WHERE id = :id
             ");
 
-            $stmt->bindValue(":idType", $this->idType);
+            $stmt->bindValue(":role", $this->role->value);
             $stmt->bindValue(":name", $this->name);
             $stmt->bindValue(":email", $this->email);
             $stmt->bindValue(":password", $this->password);
@@ -150,7 +151,7 @@ class User
     public function fill(array $data)
     {
         $this->id       = $data["id"] ?? null;
-        $this->idType   = 4;
+        $this->role     = isset($data["role"]) ? Role::from($data["role"]) : null;
         $this->name     = $data["name"] ?? null;
         $this->email    = $data["email"] ?? null;
         $this->password = $data["password"] ?? null;
@@ -167,7 +168,7 @@ class User
 
     public function getIdType()
     {
-        return $this->idType;
+        return $this->role;
     }
 
     public function getName()
@@ -210,11 +211,11 @@ class User
         return $this->errorMessage;
     }
 
-// ===== SETTERS =====
+    // ===== SETTERS =====
 
-    public function setIdType($idType)
+    public function setRole($role)
     {
-        $this->idType = $idType;
+        $this->role = $role;
     }
 
     public function setName($name)
@@ -251,7 +252,4 @@ class User
     {
         $this->deleted = (bool)$deleted;
     }
-
-    // FAZER: sei la sinto que tem que fazer algo aqui... a qualquer momento descubro oq é
-
 }

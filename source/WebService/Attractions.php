@@ -2,7 +2,7 @@
 
 namespace Source\WebService;
 
-use Source\enums\Type;
+use Source\Enums\Type;
 use Source\Models\Attraction;
 use Source\Models\User;
 use ValueError;
