@@ -74,7 +74,7 @@ abstract class Model
         $values = [];
 
         // Lista de propriedades que devem ser ignoradas no UPDATE
-        $ignoredProperties = ['table', 'errorMessage', 'performers'];
+        $ignoredProperties = ['table', 'errorMessage', 'performers', 'attractions'];
 
         foreach ($properties as $property) {
             $property->setAccessible(true);
@@ -98,13 +98,15 @@ abstract class Model
                     $stmt->bindValue($column, null, PDO::PARAM_NULL);
                 } else if(is_int($value)) {
                     $stmt->bindValue($column, $value, PDO::PARAM_INT);
+                } else if ($value instanceof DateTime) {
+                    $stmt->bindValue($column, $value->format('Y-m-d H:i:s'));
                 } else {
-                    $stmt->bindValue($column, $value, PDO::PARAM_STR);
+                    $stmt->bindValue($column, $value);
                 }
             }
             return $stmt->execute();
         } catch (PDOException $e) {
-            $this->errorMessage = "Erro ao inserir o registro: {$e->getMessage()}";
+            $this->errorMessage = "Erro ao atualizar o registro: {$e->getMessage()}";
             return false;
         }
     }

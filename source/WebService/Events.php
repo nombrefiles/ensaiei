@@ -116,14 +116,9 @@ class Events extends Api
             return;
         }
 
-        if (!filter_var($data["id"], FILTER_VALIDATE_INT)) {
-            $this->call(400, "bad_request", "ID inválido", "error")->back();
-            return;
-        }
-
         $event = new Event();
         if (!$event->findById($data["id"])) {
-            $this->call(404, "not_found", "Evento não encontrada", "error")->back();
+            $this->call(404, "not_found", "Evento não encontrado", "error")->back();
             return;
         }
 
@@ -132,45 +127,61 @@ class Events extends Api
             return;
         }
 
-        if (isset($data["title"]) && empty($data["title"])) {
-            $this->call(400, "bad_request", "Título do evento não pode ser vazio", "error")->back();
-            return;
+        // Atualizar campos básicos
+        if (isset($data["title"])) {
+            if (empty($data["title"])) {
+                $this->call(400, "bad_request", "Título do evento não pode ser vazio", "error")->back();
+                return;
+            }
+            $event->setTitle($data["title"]);
         }
 
-        if (isset($data["location"]) && empty($data["location"])) {
-            $this->call(400, "bad_request", "Local do evento não pode ser vazio", "error")->back();
-            return;
+        if (isset($data["location"])) {
+            if (empty($data["location"])) {
+                $this->call(400, "bad_request", "Local do evento não pode ser vazio", "error")->back();
+                return;
+            }
+            $event->setLocation($data["location"]);
         }
 
-        if (isset($data["description"]) && empty($data["description"])) {
-            $this->call(400, "bad_request", "Descrição do evento não pode ser vazio", "error")->back();
-            return;
+        if (isset($data["description"])) {
+            if (empty($data["description"])) {
+                $this->call(400, "bad_request", "Descrição do evento não pode ser vazio", "error")->back();
+                return;
+            }
+            $event->setDescription($data["description"]);
         }
 
-
-
-        if (isset($data["startDatetime"])) {
-            $event->setStartDatetime($data["startDatetime"]);
+        // Atualizar datas
+        if (isset($data["startDate"]) && isset($data["startTime"])) {
+            $event->setStartDatetime($data["startDate"], $data["startTime"]);
+            if (!$event->getStartDatetime()) {
+                $this->call(400, "bad_request", "Data/hora de início inválida", "error")->back();
+                return;
+            }
         }
-        if (isset($data["endDatetime"])) {
-            $event->setEndDatetime($data["endDatetime"]);
+
+        if (isset($data["endDate"]) && isset($data["endTime"])) {
+            $event->setEndDatetime($data["endDate"], $data["endTime"]);
+            if (!$event->getEndDatetime()) {
+                $this->call(400, "bad_request", "Data/hora de término inválida", "error")->back();
+                return;
+            }
         }
-        if (isset($data["startDatetime"]) && isset($data["endDatetime"])) {
-            $start = strtotime($data["startDatetime"]);
-            $end = strtotime($data["endDatetime"]);
-            if ($start >= $end) {
+
+        // Verificar se data inicial é anterior à data final
+        if ($event->getStartDatetime() && $event->getEndDatetime()) {
+            if ($event->getStartDatetime() >= $event->getEndDatetime()) {
                 $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
                 return;
             }
         }
 
-        if (isset($data["attractions"])) {
-            if (is_string($data["attractions"])) {
-                $data["attractions"] = explode(",", $data["attractions"]);
-            }
-            $event->setAttractions($data["attractions"]);
-        }
+        // Debug para verificar os valores antes do update
+        error_log("Start Datetime: " . ($event->getStartDatetime() ? $event->getStartDatetime()->format('Y-m-d H:i:s') : 'null'));
+        error_log("End Datetime: " . ($event->getEndDatetime() ? $event->getEndDatetime()->format('Y-m-d H:i:s') : 'null'));
 
+        // Backup das atrações
         $attractionsBackup = $event->getAttractions();
         $event->setAttractions([]);
 
@@ -179,29 +190,21 @@ class Events extends Api
             return;
         }
 
+        // Restaura as atrações
         $event->setAttractions($attractionsBackup);
         $event->findById($data["id"]);
-
-        $attractions = [];
-        foreach ($event->getAttractions() as $attractionId) {
-            $attraction = new Attraction();
-            if ($attraction->findById($attractionId)) {
-                $attractions[] = [
-                    'id' => $attraction->getId(),
-                    'name' => $attraction->getName()
-                ];
-            }
-        }
 
         $response = [
             "id" => $event->getId(),
             "title" => $event->getTitle(),
             "description" => $event->getDescription(),
             "location" => $event->getLocation(),
-            "startDatetime" => $event->getStartDatetime(),
-            "endDatetime" => $event->getEndDatetime(),
+            "startDate" => $event->getStartDate(),
+            "startTime" => $event->getStartTime(),
+            "endDate" => $event->getEndDate(),
+            "endTime" => $event->getEndTime(),
             "organizerId" => $event->getOrganizerId(),
-            "attractions" => $attractions,
+            "attractions" => $event->getAttractions()
         ];
 
         $this->call(200, "success", "Evento atualizado com sucesso", "success")->back($response);
