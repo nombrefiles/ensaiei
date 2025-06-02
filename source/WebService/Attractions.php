@@ -10,12 +10,6 @@ use ValueError;
 
 class Attractions extends Api
 {
-    public function listAttractions(): void
-    {
-        $attraction = new Attraction();
-        $this->call(200, "success", "Lista de atrações", "success")
-            ->back($attraction->findAll());
-    }
 
     public function listAttractionById(array $data): void
     {
@@ -318,10 +312,36 @@ class Attractions extends Api
             return;
         }
 
+        // Buscar informações do evento
+        $event = new Event();
+        if (!$event->findById($data["eventId"])) {
+            $this->call(404, "not_found", "Evento não encontrado", "error")->back();
+            return;
+        }
+
         $attraction = new Attraction();
         $attractionsList = $attraction->findByEventId($data["eventId"]);
 
-        $response = [];
+
+        if (empty($attractionsList)) {
+            $responseData = [
+                "event" => [
+                    "id" => $event->getId(),
+                    "title" => $event->getTitle(),
+                    "attractions" => "Evento sem nenhuma atração."
+            ]
+            ];
+
+            $this->call(
+                200,
+                "success",
+                "Lista de atrações do evento recuperada com sucesso",
+                "success"
+            )->back($responseData);
+            return;
+        }
+
+        $attractions = [];
         foreach ($attractionsList as $attraction) {
             $performers = [];
             foreach ($attraction->getPerformers() as $performerId) {
@@ -333,16 +353,24 @@ class Attractions extends Api
                     ];
                 }
             }
+
+            $attractions[] = [
+                "id" => $attraction->getId(),
+                "name" => $attraction->getName(),
+                "type" => $attraction->getType(),
+                "startDatetime" => $attraction->getStartDatetime(),
+                "endDatetime" => $attraction->getEndDatetime(),
+                "specificLocation" => $attraction->getSpecificLocation(),
+                "performers" => $performers
+            ];
         }
 
-        $response[] = [
-            "id" => $attraction->getId(),
-            "name" => $attraction->getName(),
-            "type" => $attraction->getType(),
-            "startDatetime" => $attraction->getStartDatetime(),
-            "endDatetime" => $attraction->getEndDatetime(),
-            "specificLocation" => $attraction->getSpecificLocation(),
-            "performers" => $performers
+        $responseData = [
+            "event" => [
+                "id" => $event->getId(),
+                "title" => $event->getTitle(),
+                "attractions" => $attractions
+            ]
         ];
 
         $this->call(
@@ -350,6 +378,6 @@ class Attractions extends Api
             "success",
             "Lista de atrações do evento recuperada com sucesso",
             "success"
-        )->back($response);
+        )->back($responseData);
     }
 }
