@@ -4,6 +4,7 @@ namespace Source\WebService;
 
 use Source\Enums\Type;
 use Source\Models\Attraction;
+use Source\Models\Event;
 use Source\Models\User;
 use ValueError;
 
@@ -49,8 +50,9 @@ class Attractions extends Api
             "id" => $attraction->getId(),
             "name" => $attraction->getName(),
             "type" => $attraction->getType(),
-            "startDatetime" => $attraction->getStartDatetime(),
-            "endDatetime" => $attraction->getEndDatetime(),
+            "date" => $attraction->getStartDate(),
+            "startTime" => $attraction->getStartTime(),
+            "endTime" => $attraction->getEndTime(),
             "specificLocation" => $attraction->getSpecificLocation(),
             "performers" => $performers,
         ];
@@ -61,15 +63,14 @@ class Attractions extends Api
     {
         $this->auth();
 
-        if (empty($data["name"]) || empty($data["startDatetime"]) || empty($data["endDatetime"]) || empty($data["specificLocation"])) {
+        if (empty($data["name"]) || empty($data["date"]) || empty($data["startTime"]) || empty($data["endTime"]) || empty($data["specificLocation"])) {
             $this->call(400, "bad_request", "Todos os campos são obrigatórios", "error")->back();
             return;
         }
 
-        $start = strtotime($data["startDatetime"]);
-        $end = strtotime($data["endDatetime"]);
-        if ($start >= $end) {
-            $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
+        $event = new Event();
+        if (!$event->findById($data["eventId"])) {
+            $this->call(404, "not_found", "Evento não encontrado", "error")->back();
             return;
         }
 
@@ -80,37 +81,49 @@ class Attractions extends Api
             return;
         }
 
-        if (empty($data["performers"])) {
-            $data["performers"] = [$this->userAuth->id];
-        } else {
-            if (is_string($data["performers"])) {
-                $data["performers"] = explode(",", $data["performers"]);
-            }
+        $attraction = new Attraction();
+        $attraction->setName($data["name"]);
+        $attraction->setType($type);
+        $attraction->setEventId($data["eventId"]);
+        $attraction->setStartDatetime($data["date"], $data["startTime"]);
+        $attraction->setEndDatetime($data["date"], $data["endTime"]);
+        $attraction->setSpecificLocation($data["specificLocation"]);
 
-            if (!is_array($data["performers"])) {
-                $this->call(400, "bad_request", "Campo 'performers' deve ser um array ou string separada por vírgulas", "error")->back();
-                return;
-            }
-
-            $data["performers"][] = $this->userAuth->id;
-        }
-
-        if (!$this->userAuth) {
-            $this->call(401, "unauthorized", "Usuário não autenticado", "error")->back();
+        // Verifica se a data/hora da atração está dentro do período do evento
+        if ($attraction->getStartDatetime() < $event->getStartDatetime() || 
+            $attraction->getEndDatetime() > $event->getEndDatetime()) {
+            $this->call(400, "bad_request", "A atração deve ocorrer dentro do período do evento", "error")->back();
             return;
         }
 
-        $attraction = new Attraction(
-            null,
-            $data["name"],
-            $type,
-            $data["eventId"],
-            $data["startDatetime"],
-            $data["endDatetime"],
-            $data["specificLocation"],
-            $data["performers"],
-            false
-        );
+        if ($attraction->getStartDatetime() >= $attraction->getEndDatetime()) {
+            $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
+            return;
+        }
+
+        // Inicializa array de performers com o ID do usuário autenticado
+        $performerIds = [$this->userAuth->id];
+        
+        // Processa performers adicionais se fornecidos
+        if (!empty($data["performers"])) {
+            $performerUsernames = is_string($data["performers"]) ? 
+                explode(",", $data["performers"]) : 
+                $data["performers"];
+
+            // Verifica se cada username existe e obtém seus IDs
+            foreach ($performerUsernames as $username) {
+                $performer = new User();
+                if ($performer->findByUsername(trim($username))) {
+                    $performerIds[] = $performer->getId();
+                } else {
+                    $this->call(400, "bad_request", "Usuário não encontrado: " . $username, "error")->back();
+                    return;
+                }
+            }
+        }
+
+        // Remove duplicatas e atualiza os performers
+        $attraction->setPerformers(array_unique($performerIds));
 
         if (!$attraction->insertWithPerformers()) {
             $this->call(500, "internal_server_error", $attraction->getErrorMessage(), "error")->back();
@@ -120,6 +133,9 @@ class Attractions extends Api
         $response = [
             "id" => $attraction->getId(),
             "name" => $attraction->getName(),
+            "date" => $attraction->getStartDate(),
+            "startTime" => $attraction->getStartTime(),
+            "endTime" => $attraction->getEndTime(),
             "performers" => $attraction->getPerformers()
         ];
 
@@ -170,6 +186,19 @@ class Attractions extends Api
         if (isset($data["startDatetime"]) && isset($data["endDatetime"])) {
             $start = strtotime($data["startDatetime"]);
             $end = strtotime($data["endDatetime"]);
+            
+            // Verifica se a nova data/hora está dentro do período do evento
+            $event = new Event();
+            if ($event->findById($attraction->getEventId())) {
+                $eventStart = $event->getStartDatetime()->getTimestamp();
+                $eventEnd = $event->getEndDatetime()->getTimestamp();
+                
+                if ($start < $eventStart || $end > $eventEnd) {
+                    $this->call(400, "bad_request", "A atração deve ocorrer dentro do período do evento", "error")->back();
+                    return;
+                }
+            }
+
             if ($start >= $end) {
                 $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
                 return;
@@ -277,43 +306,36 @@ class Attractions extends Api
         $this->call(200, "success", "Atração deletada com sucesso", "success")->back($response);
     }
 
-public function listAttractionsByEvent(array $data): void 
-{
-    if (!isset($data["eventId"])) {
-        $this->call(400, "bad_request", "ID do evento não fornecido", "error")->back();
-        return;
-    }
+    public function listAttractionsByEvent(array $data): void 
+    {
+        if (!isset($data["eventId"])) {
+            $this->call(400, "bad_request", "ID do evento não fornecido", "error")->back();
+            return;
+        }
 
-    if (!filter_var($data["eventId"], FILTER_VALIDATE_INT)) {
-        $this->call(400, "bad_request", "ID do evento inválido", "error")->back();
-        return;
-    }
+        if (!filter_var($data["eventId"], FILTER_VALIDATE_INT)) {
+            $this->call(400, "bad_request", "ID do evento inválido", "error")->back();
+            return;
+        }
 
-    $attraction = new Attraction();
-    $stmt = Connect::getInstance()->prepare("
-        SELECT * FROM attractions 
-        WHERE eventId = :eventId AND deleted = false
-    ");
-    $stmt->bindParam(":eventId", $data["eventId"]);
-    $stmt->execute();
-    
-    $attractions = [];
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $attraction = new Attraction();
-        $attraction->findById($row["id"]);
-        
-        $performers = [];
-        foreach ($attraction->getPerformers() as $performerId) {
-            $performer = new User();
-            if ($performer->findById($performerId)) {
-                $performers[] = [
-                    'id' => $performer->getId(),
-                    'name' => $performer->getName()
-                ];
+        $attractionsList = $attraction->findByEventId($data["eventId"]);
+
+        $response = [];
+        foreach ($attractionsList as $attraction) {
+            $performers = [];
+            foreach ($attraction->getPerformers() as $performerId) {
+                $performer = new User();
+                if ($performer->findById($performerId)) {
+                    $performers[] = [
+                        'id' => $performer->getId(),
+                        'name' => $performer->getName()
+                    ];
+                }
             }
         }
 
-        $attractions[] = [
+        $response[] = [
             "id" => $attraction->getId(),
             "name" => $attraction->getName(),
             "type" => $attraction->getType(),
@@ -322,13 +344,12 @@ public function listAttractionsByEvent(array $data): void
             "specificLocation" => $attraction->getSpecificLocation(),
             "performers" => $performers
         ];
-    }
 
-    $this->call(
-        200, 
-        "success", 
-        "Lista de atrações do evento recuperada com sucesso", 
-        "success"
-    )->back($attractions);
-}
+        $this->call(
+            200,
+            "success",
+            "Lista de atrações do evento recuperada com sucesso",
+            "success"
+        )->back($response);
+    }
 }

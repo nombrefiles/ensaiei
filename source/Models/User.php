@@ -47,18 +47,23 @@ class User
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function findByUsername($username)
+    public function findByUsername(string $username): bool
     {
-        $stmt = Connect::getInstance()->prepare("SELECT * FROM users WHERE username = :username LIMIT 1");
-        $stmt->bindParam(":username", $username);
-        $stmt->execute();
-
-        if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $this->fill($user);
-            return true;
+        try {
+            $stmt = Connect::getInstance()
+                ->prepare("SELECT * FROM users WHERE username = :username LIMIT 1");
+            $stmt->bindValue(":username", $username);
+            $stmt->execute();
+            
+            if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) { // Modificado aqui: FETCH_ASSOC em vez de FETCH_OBJ
+                $this->fill($user);
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            $this->errorMessage = "Erro ao buscar usuário: " . $e->getMessage();
+            return false;
         }
-
-        return false;
     }
 
     public function findById($id)

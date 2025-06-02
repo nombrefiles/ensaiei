@@ -41,7 +41,10 @@ $route->group("/attraction");
 
 $route->get("/", "Attractions:listAttractions"); // ok
 $route->get("/{id}", "Attractions:listAttractionById"); // ok
+
 //$route->get("/{search}", "Plays:listPlayByName"); // FAZER
+
+$route->get("/event/{eventId}", "Attractions:listAttractionByEventId");
 
 $route->post("/{eventId}/add", "Attractions:createAttraction"); // ok
 
@@ -60,9 +63,9 @@ $route->get("/{id}", "Events:listEventById"); // funciona
 
 $route->post("/add", "Events:createEvent"); // funciona
 
-$route->put("/update/{id}", "Events:updateEvent"); // ok
+$route->put("/update/{id}", "Events:updateEvent"); // funciona
 
-$route->delete("/delete/{id}", "Events:deleteEvent");  // ok
+$route->delete("/delete/{id}", "Events:deleteEvent");  // funciona
 
 $route->group("null");
 

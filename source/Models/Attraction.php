@@ -7,6 +7,7 @@ use PDO;
 use Source\Core\Connect;
 use Source\Core\Model;
 use Source\Enums\Type;
+use Source\Utils\DateBr;
 
 class Attraction extends Model
 {
@@ -79,9 +80,23 @@ class Attraction extends Model
         return $this->startDatetime;
     }
 
-    public function setStartDatetime($startDatetime): void
-    {
-        $this->startDatetime = $startDatetime;
+    public function setStartDatetime($date, ?string $time = null): void {
+        if ($date instanceof DateTime) {
+            $this->startDatetime = $date;
+            return;
+        }
+        $datetime = DateBr::convertToDateTime($date, $time);
+        if ($datetime) {
+            $this->startDatetime = $datetime;
+        }
+    }
+
+    public function getStartDate(): string {
+        return $this->startDatetime ? $this->startDatetime->format('d/m/Y') : '';
+    }
+
+    public function getStartTime(): string {
+        return $this->startDatetime ? $this->startDatetime->format('H:i') : '';
     }
 
     public function getEndDatetime()
@@ -89,9 +104,23 @@ class Attraction extends Model
         return $this->endDatetime;
     }
 
-    public function setEndDatetime($endDatetime): void
-    {
-        $this->endDatetime = $endDatetime;
+    public function setEndDatetime($date, ?string $time = null): void {
+        if ($date instanceof DateTime) {
+            $this->endDatetime = $date;
+            return;
+        }
+        $datetime = DateBr::convertToDateTime($date, $time);
+        if ($datetime) {
+            $this->endDatetime = $datetime;
+        }
+    }
+
+    public function getEndDate(): string {
+        return $this->endDatetime ? $this->endDatetime->format('d/m/Y') : '';
+    }
+
+    public function getEndTime(): string {
+        return $this->endDatetime ? $this->endDatetime->format('H:i') : '';
     }
 
     public function getSpecificLocation()
@@ -154,41 +183,40 @@ class Attraction extends Model
         $conn->beginTransaction();
 
         try {
-
             $stmt = $conn->prepare("
             INSERT INTO attractions (name, type, eventId, startDatetime, endDatetime, specificLocation)
             VALUES (?, ?, ?, ?, ?, ?)
         ");
-            $stmt->execute([
-                $this->name,
-                $this->type,
-                $this->eventId,
-                $this->startDatetime,
-                $this->endDatetime,
-                $this->specificLocation
-            ]);
+        $stmt->execute([
+            $this->name,
+            $this->type->value, // Modificação aqui: usar ->value para obter o valor do enum
+            $this->eventId,
+            $this->startDatetime->format('Y-m-d H:i:s'), // Formatação explícita do DateTime
+            $this->endDatetime->format('Y-m-d H:i:s'),   // Formatação explícita do DateTime
+            $this->specificLocation
+        ]);
 
-            $this->id = $conn->lastInsertId();
+        $this->id = $conn->lastInsertId();
 
-            if (!empty($this->performers) && is_array($this->performers)) {
-                $stmtPerformer = $conn->prepare("
+        if (!empty($this->performers) && is_array($this->performers)) {
+            $stmtPerformer = $conn->prepare("
                 INSERT INTO attractions_performers (attractionId, userId)
                 VALUES (?, ?)
             ");
 
-                foreach ($this->performers as $performerId) {
-                    $stmtPerformer->execute([$performerId, $this->id]);
-                }
+            foreach ($this->performers as $performerId) {
+                $stmtPerformer->execute([$this->id, $performerId]); // Correção na ordem dos parâmetros
             }
-
-            $conn->commit();
-            return true;
-        } catch (\PDOException $e) {
-            $conn->rollBack();
-            $this->errorMessage = $e->getMessage();
-            return false;
         }
+
+        $conn->commit();
+        return true;
+    } catch (\PDOException $e) {
+        $conn->rollBack();
+        $this->errorMessage = $e->getMessage();
+        return false;
     }
+}
 
     public function updateWithPerformers(): bool
     {
@@ -251,4 +279,23 @@ class Attraction extends Model
         $this->specificLocation = $data["specificLocation"] ?? null;
     }
 
+    public function findByEventId(int $eventId): array
+    {
+        $stmt = Connect::getInstance()->prepare("
+        SELECT * FROM attractions 
+        WHERE eventId = :eventId AND deleted = false
+    ");
+        $stmt->bindParam(":eventId", $eventId);
+        $stmt->execute();
+
+        $attractions = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $attraction = new Attraction();
+            $attraction->findById($row["id"]);
+
+            $attractions[] = $attraction;
+        }
+
+        return $attractions;
+    }
 }
