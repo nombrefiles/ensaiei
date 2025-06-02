@@ -1,7 +1,8 @@
 <?php
 
-namespace source\Core;
+namespace Source\Core;
 
+use DateTime;
 use Source\Core\Connect;
 use PDO;
 use PDOException;
@@ -24,7 +25,7 @@ abstract class Model
             $property->setAccessible(true);
             $name = $property->getName();
             $value = $property->getValue($this);
-            if ($name !== "table" && $name !== "errorMessage") {
+            if ($name !== "table" && $name !== "errorMessage" && $name !== "attractions") {
                 $columns[] = $name;
                 $placeholders[] = ":{$name}";
                 $values[$name] = $value;
@@ -45,6 +46,9 @@ abstract class Model
                 if(is_int($value)) {
                     $stmt->bindValue($column, $value, PDO::PARAM_INT);
                     continue;
+                }
+                if ($value instanceof DateTime) {
+                    $value = $value->format('Y-m-d H:i:s');
                 }
                 $stmt->bindValue($column, $value);
 
@@ -132,12 +136,19 @@ abstract class Model
                 if ($reflection->hasProperty($column)) {
                     $property = $reflection->getProperty($column);
                     $property->setAccessible(true);
+                    
+                    // Verifica se a propriedade é do tipo DateTime
+                    $type = $property->getType();
+                    if ($type && $type->getName() === 'DateTime' && $value !== null) {
+                        $value = new DateTime($value);
+                    }
+                    
                     $property->setValue($this, $value);
                 }
             }
             return true;
         } catch (PDOException $e) {
-            $this->errorMessage = "Erro ao inserir o registro: {$e->getMessage()}";
+            $this->errorMessage = "Erro ao buscar o registro: {$e->getMessage()}";
             return false;
         }
     }

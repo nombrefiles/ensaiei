@@ -53,11 +53,12 @@ $route->group("null");
 
 $route->group("/event");
 
-$route->get("/", "Events:listEvents"); // ok
-$route->get("/{id}", "Events:listEventById"); // ok
+$route->get("/", "Events:listEvents"); // funciona
+$route->get("/{id}", "Events:listEventById"); // funciona
+
 //$route->get("/{search}", "Plays:listPlayByName"); // FAZER
 
-$route->post("/add", "Events:createEvent"); // ok
+$route->post("/add", "Events:createEvent"); // funciona
 
 $route->put("/update/{id}", "Events:updateEvent"); // ok
 

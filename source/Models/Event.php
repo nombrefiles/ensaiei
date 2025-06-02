@@ -10,29 +10,29 @@ use Source\Core\Model;
 use Source\Utils\DateBr;
 
 class Event extends Model {
-    private $id;
-    private $title;
-    private $description;
-    private $location;
-    private $latitude;
-    private $longitude;
-    private $startDatetime;
-    private $endDatetime;
-    private $deleted;
-    private $organizerId;
+    private ?int $id = null;
+    private ?string $title = null;
+    private ?string $description = null;
+    private ?string $location = null;
+    private ?float $latitude = null;
+    private ?float $longitude = null;
+    private ?DateTime $startDatetime = null;
+    private ?DateTime $endDatetime = null;
+    private ?bool $deleted = null;
+    private ?int $organizerId = null;
     private array $attractions = [];
 
     public function __construct(
-        int $id = null,
-        string $title = null,
-        string $description = null,
-        string $location = null,
-        float $latitude = null,
-        float $longitude = null,
-        DateTime $startDatetime = null,
-        DateTime $endDatetime = null,
-        bool $deleted = null,
-        int $organizerId = null
+        ?int $id = null,
+        ?string $title = null,
+        ?string $description = null,
+        ?string $location = null,
+        ?float $latitude = null,
+        ?float $longitude = null,
+        ?DateTime $startDatetime = null,
+        ?DateTime $endDatetime = null,
+        ?bool $deleted = false,
+        ?int $organizerId = null
     ) {
         $this->table = "events";
         $this->id = $id;
@@ -47,11 +47,11 @@ class Event extends Model {
         $this->organizerId = $organizerId;
     }
 
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
     }
 
-    public function getTitle(): string {
+    public function getTitle(): ?string {
         return $this->title;
     }
 
@@ -71,24 +71,24 @@ class Event extends Model {
         return $this->longitude;
     }
 
-    public function getStartDatetime(): DateTime {
+    public function getStartDatetime(): ?DateTime {
         return $this->startDatetime;
     }
 
-    public function getEndDatetime(): DateTime {
+    public function getEndDatetime(): ?DateTime {
         return $this->endDatetime;
     }
 
-    public function isDeleted(): bool {
+    public function isDeleted(): ?bool {
         return $this->deleted;
     }
 
-    public function getOrganizerId(): int {
+    public function getOrganizerId(): ?int {
         return $this->organizerId;
     }
 
     public function getAttractions(): array {
-        if (empty($this->attractions)) {
+        if (empty($this->attractions) && $this->id) {
             $this->loadAttractions();
         }
         return $this->attractions;
@@ -111,11 +111,11 @@ class Event extends Model {
     }
 
     // Setters
-    public function setId(int $id): void {
+    public function setId(?int $id): void {
         $this->id = $id;
     }
 
-    public function setTitle(string $title): void {
+    public function setTitle(?string $title): void {
         $this->title = $title;
     }
 
@@ -135,26 +135,34 @@ class Event extends Model {
         $this->longitude = $longitude;
     }
 
-    public function setStartDatetime(string $date, ?string $time = null): void {
+    // Aceita tanto (data, hora) quanto um único datetime string/DateTime
+    public function setStartDatetime($date, ?string $time = null): void {
+        if ($date instanceof DateTime) {
+            $this->startDatetime = $date;
+            return;
+        }
         $datetime = DateBr::convertToDateTime($date, $time);
         if ($datetime) {
             $this->startDatetime = $datetime;
         }
     }
 
-
-    public function setEndDatetime(string $date, ?string $time = null): void {
+    public function setEndDatetime($date, ?string $time = null): void {
+        if ($date instanceof DateTime) {
+            $this->endDatetime = $date;
+            return;
+        }
         $datetime = DateBr::convertToDateTime($date, $time);
         if ($datetime) {
             $this->endDatetime = $datetime;
         }
     }
 
-    public function setDeleted(bool $deleted): void {
+    public function setDeleted(?bool $deleted): void {
         $this->deleted = $deleted;
     }
 
-    public function setOrganizerId(int $organizerId): void {
+    public function setOrganizerId(?int $organizerId): void {
         $this->organizerId = $organizerId;
     }
 
@@ -163,18 +171,19 @@ class Event extends Model {
     }
 
     private function loadAttractions(): void {
+        if (!$this->id) {
+            $this->attractions = [];
+            return;
+        }
         try {
             $stmt = Connect::getInstance()->prepare("
                 SELECT * FROM attractions 
                 WHERE eventId = :eventId 
                 AND deleted = false
             ");
-
             $stmt->bindValue(":eventId", $this->id, PDO::PARAM_INT);
             $stmt->execute();
-
             $this->attractions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
             $this->errorMessage = "Erro ao carregar atrações do evento: " . $e->getMessage();
             $this->attractions = [];
@@ -182,7 +191,9 @@ class Event extends Model {
     }
 
     public function addAttraction(array $attraction): void {
-        $this->attractions[] = $attraction;
+        if (isset($attraction['id'], $attraction['name'])) {
+            $this->attractions[] = $attraction;
+        }
     }
 
     public function removeAttraction(int $attractionId): void {
