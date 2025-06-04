@@ -73,7 +73,6 @@ abstract class Model
         $columns = [];
         $values = [];
 
-        // Lista de propriedades que devem ser ignoradas no UPDATE
         $ignoredProperties = ['table', 'errorMessage', 'performers', 'attractions'];
 
         foreach ($properties as $property) {
@@ -81,7 +80,6 @@ abstract class Model
             $name = $property->getName();
             $value = $property->getValue($this);
 
-            // Ignora propriedades que não devem ser incluídas na query
             if (!in_array($name, $ignoredProperties)) {
                 $columns[] = "{$name} = :{$name}";
                 $values[$name] = $value;
@@ -138,8 +136,7 @@ abstract class Model
                 if ($reflection->hasProperty($column)) {
                     $property = $reflection->getProperty($column);
                     $property->setAccessible(true);
-                    
-                    // Verifica se a propriedade é do tipo DateTime
+
                     $type = $property->getType();
                     if ($type && $type->getName() === 'DateTime' && $value !== null) {
                         $value = new DateTime($value);

@@ -5,10 +5,10 @@ namespace Source\Core;
 use PDO;
 use PDOException;
 
-const CONF_DB_HOST = "localhost"; // localhost
+const CONF_DB_HOST = "localhost";
 const CONF_DB_NAME = "ENSAIEI";
 const CONF_DB_USER = "root";
-const CONF_DB_PASS = ""; // nada
+const CONF_DB_PASS = "";
 
 abstract class Connect
 {
@@ -32,7 +32,6 @@ abstract class Connect
                     self::OPTIONS
                 );
             } catch (PDOException $exception) {
-                //redirect("/ops/problemas");
                 echo "Problemas ao Conectar! ";
                 echo $exception->getMessage();
             }

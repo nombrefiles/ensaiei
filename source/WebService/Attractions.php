@@ -83,7 +83,6 @@ class Attractions extends Api
         $attraction->setEndDatetime($data["date"], $data["endTime"]);
         $attraction->setSpecificLocation($data["specificLocation"]);
 
-        // Verifica se a data/hora da atração está dentro do período do evento
         if ($attraction->getStartDatetime() < $event->getStartDatetime() || 
             $attraction->getEndDatetime() > $event->getEndDatetime()) {
             $this->call(400, "bad_request", "A atração deve ocorrer dentro do período do evento", "error")->back();
@@ -95,16 +94,13 @@ class Attractions extends Api
             return;
         }
 
-        // Inicializa array de performers com o ID do usuário autenticado
         $performerIds = [$this->userAuth->id];
-        
-        // Processa performers adicionais se fornecidos
+
         if (!empty($data["performers"])) {
             $performerUsernames = is_string($data["performers"]) ? 
                 explode(",", $data["performers"]) : 
                 $data["performers"];
 
-            // Verifica se cada username existe e obtém seus IDs
             foreach ($performerUsernames as $username) {
                 $performer = new User();
                 if ($performer->findByUsername(trim($username))) {
@@ -116,7 +112,6 @@ class Attractions extends Api
             }
         }
 
-        // Remove duplicatas e atualiza os performers
         $attraction->setPerformers(array_unique($performerIds));
 
         if (!$attraction->insertWithPerformers()) {
@@ -180,8 +175,7 @@ class Attractions extends Api
         if (isset($data["startDatetime"]) && isset($data["endDatetime"])) {
             $start = strtotime($data["startDatetime"]);
             $end = strtotime($data["endDatetime"]);
-            
-            // Verifica se a nova data/hora está dentro do período do evento
+
             $event = new Event();
             if ($event->findById($attraction->getEventId())) {
                 $eventStart = $event->getStartDatetime()->getTimestamp();
@@ -312,7 +306,6 @@ class Attractions extends Api
             return;
         }
 
-        // Buscar informações do evento
         $event = new Event();
         if (!$event->findById($data["eventId"])) {
             $this->call(404, "not_found", "Evento não encontrado", "error")->back();

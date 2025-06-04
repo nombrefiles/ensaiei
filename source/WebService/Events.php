@@ -127,7 +127,6 @@ class Events extends Api
             return;
         }
 
-        // Atualizar campos básicos
         if (isset($data["title"])) {
             if (empty($data["title"])) {
                 $this->call(400, "bad_request", "Título do evento não pode ser vazio", "error")->back();
@@ -152,7 +151,6 @@ class Events extends Api
             $event->setDescription($data["description"]);
         }
 
-        // Atualizar datas
         if (isset($data["startDate"]) && isset($data["startTime"])) {
             $event->setStartDatetime($data["startDate"], $data["startTime"]);
             if (!$event->getStartDatetime()) {
@@ -169,7 +167,6 @@ class Events extends Api
             }
         }
 
-        // Verificar se data inicial é anterior à data final
         if ($event->getStartDatetime() && $event->getEndDatetime()) {
             if ($event->getStartDatetime() >= $event->getEndDatetime()) {
                 $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
@@ -177,11 +174,7 @@ class Events extends Api
             }
         }
 
-        // Debug para verificar os valores antes do update
-        error_log("Start Datetime: " . ($event->getStartDatetime() ? $event->getStartDatetime()->format('Y-m-d H:i:s') : 'null'));
-        error_log("End Datetime: " . ($event->getEndDatetime() ? $event->getEndDatetime()->format('Y-m-d H:i:s') : 'null'));
 
-        // Backup das atrações
         $attractionsBackup = $event->getAttractions();
         $event->setAttractions([]);
 
@@ -190,7 +183,6 @@ class Events extends Api
             return;
         }
 
-        // Restaura as atrações
         $event->setAttractions($attractionsBackup);
         $event->findById($data["id"]);
 

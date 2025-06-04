@@ -110,7 +110,6 @@ class Event extends Model {
         return $this->endDatetime ? $this->endDatetime->format('H:i:s') : '';
     }
 
-    // Setters
     public function setId(?int $id): void {
         $this->id = $id;
     }
@@ -135,7 +134,6 @@ class Event extends Model {
         $this->longitude = $longitude;
     }
 
-    // Aceita tanto (data, hora) quanto um único datetime string/DateTime
     public function setStartDatetime($date, ?string $time = null): void {
         if ($date instanceof DateTime) {
             $this->startDatetime = $date;

@@ -55,7 +55,7 @@ class User
             $stmt->bindValue(":username", $username);
             $stmt->execute();
             
-            if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) { // Modificado aqui: FETCH_ASSOC em vez de FETCH_OBJ
+            if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $this->fill($user);
                 return true;
             }
@@ -215,8 +215,6 @@ class User
     {
         return $this->errorMessage;
     }
-
-    // ===== SETTERS =====
 
     public function setRole($role)
     {

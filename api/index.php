@@ -39,11 +39,10 @@ $route->delete("/delete", "Users:deleteUser"); // funciona
 /* ATTRACTIONS */
 $route->group("/attraction");
 
-$route->get("/", "Attractions:listAttractions"); // ok
-$route->get("/{id}", "Attractions:listAttractionById"); // ok
-$route->get("/event/{eventId}", "Attractions:listAttractionsByEvent"); // Correção aqui
-$route->post("/{eventId}/add", "Attractions:createAttraction"); // ok
-$route->put("/update/{eventId}/{id}", "Attractions:updateAttraction"); // ok
+$route->get("/{id}", "Attractions:listAttractionById"); // funciona
+$route->get("/event/{eventId}", "Attractions:listAttractionsByEvent"); // funciona
+$route->post("/{eventId}/add", "Attractions:createAttraction"); // funciona
+$route->put("/update/{id}", "Attractions:updateAttraction"); // ok
 $route->delete("/delete/{id}", "Attractions:deleteAttraction");  // ok
 
 $route->group("null");

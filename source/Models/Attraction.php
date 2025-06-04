@@ -92,11 +92,27 @@ class Attraction extends Model
     }
 
     public function getStartDate(): string {
-        return $this->startDatetime ? $this->startDatetime->format('d/m/Y') : '';
+        if (!$this->startDatetime) {
+            return '';
+        }
+        
+        if (is_string($this->startDatetime)) {
+            $this->startDatetime = new DateTime($this->startDatetime);
+        }
+        
+        return $this->startDatetime->format('d/m/Y');
     }
 
     public function getStartTime(): string {
-        return $this->startDatetime ? $this->startDatetime->format('H:i') : '';
+        if (!$this->startDatetime) {
+            return '';
+        }
+        
+        if (is_string($this->startDatetime)) {
+            $this->startDatetime = new DateTime($this->startDatetime);
+        }
+        
+        return $this->startDatetime->format('H:i');
     }
 
     public function getEndDatetime()
@@ -116,11 +132,27 @@ class Attraction extends Model
     }
 
     public function getEndDate(): string {
-        return $this->endDatetime ? $this->endDatetime->format('d/m/Y') : '';
+        if (!$this->endDatetime) {
+            return '';
+        }
+        
+        if (is_string($this->endDatetime)) {
+            $this->endDatetime = new DateTime($this->endDatetime);
+        }
+        
+        return $this->endDatetime->format('d/m/Y');
     }
 
     public function getEndTime(): string {
-        return $this->endDatetime ? $this->endDatetime->format('H:i') : '';
+        if (!$this->endDatetime) {
+            return '';
+        }
+        
+        if (is_string($this->endDatetime)) {
+            $this->endDatetime = new DateTime($this->endDatetime);
+        }
+        
+        return $this->endDatetime->format('H:i');
     }
 
     public function getSpecificLocation()
@@ -152,8 +184,6 @@ class Attraction extends Model
     {
         $this->deleted = $deleted;
     }
-
-    // metodos
 
     public function findById(int $id): bool
     {
@@ -189,10 +219,10 @@ class Attraction extends Model
         ");
         $stmt->execute([
             $this->name,
-            $this->type->value, // Modificação aqui: usar ->value para obter o valor do enum
+            $this->type->value,
             $this->eventId,
-            $this->startDatetime->format('Y-m-d H:i:s'), // Formatação explícita do DateTime
-            $this->endDatetime->format('Y-m-d H:i:s'),   // Formatação explícita do DateTime
+            $this->startDatetime->format('Y-m-d H:i:s'),
+            $this->endDatetime->format('Y-m-d H:i:s'),
             $this->specificLocation
         ]);
 
@@ -205,7 +235,7 @@ class Attraction extends Model
             ");
 
             foreach ($this->performers as $performerId) {
-                $stmtPerformer->execute([$this->id, $performerId]); // Correção na ordem dos parâmetros
+                $stmtPerformer->execute([$this->id, $performerId]);
             }
         }
 
@@ -224,7 +254,6 @@ class Attraction extends Model
         try {
             $conn->beginTransaction();
 
-            // Atualiza os dados principais da atração
             $stmt = $conn->prepare("
             UPDATE attractions 
             SET name = ?, 
