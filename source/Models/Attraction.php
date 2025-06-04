@@ -248,13 +248,15 @@ class Attraction extends Model
     }
 }
 
-    public function updateWithPerformers(): bool
-    {
-        $conn = \Source\Core\Connect::getInstance();
-        try {
-            $conn->beginTransaction();
+public function updateWithPerformers(): bool
+{
+    $conn = \Source\Core\Connect::getInstance();
+    try {
+        $conn->beginTransaction();
 
-            $stmt = $conn->prepare("
+        error_log("Iniciando atualização com performers: " . print_r($this->performers, true));
+
+        $stmt = $conn->prepare("
             UPDATE attractions 
             SET name = ?, 
                 type = ?, 
@@ -267,46 +269,66 @@ class Attraction extends Model
 
         $stmt->execute([
             $this->name,
-            $this->type,
+            $this->type->value,
             $this->eventId,
-            $this->startDatetime,
-            $this->endDatetime,
+            $this->startDatetime instanceof DateTime ? $this->startDatetime->format('Y-m-d H:i:s') : $this->startDatetime,
+            $this->endDatetime instanceof DateTime ? $this->endDatetime->format('Y-m-d H:i:s') : $this->endDatetime,
             $this->specificLocation,
             $this->id
         ]);
 
+        error_log("Deletando performers antigos para attractionId: " . $this->id);
         $stmtDelete = $conn->prepare("DELETE FROM attractions_performers WHERE attractionId = ?");
         $stmtDelete->execute([$this->id]);
 
         if (!empty($this->performers) && is_array($this->performers)) {
+            error_log("Inserindo novos performers: " . print_r($this->performers, true));
             $stmtInsert = $conn->prepare("INSERT INTO attractions_performers (attractionId, userId) VALUES (?, ?)");
             
             foreach ($this->performers as $performerId) {
+                error_log("Inserindo performer ID: " . $performerId);
                 $stmtInsert->execute([$this->id, $performerId]);
             }
         }
 
         $conn->commit();
+        error_log("Commit realizado com sucesso");
         return true;
 
     } catch (\PDOException $e) {
         $conn->rollBack();
+        error_log("Erro na atualização: " . $e->getMessage());
         $this->errorMessage = "Erro ao atualizar atração: " . $e->getMessage();
         return false;
     }
 }
 
-    private function fill(array $data)
-    {
-        $this->id = $data["id"] ?? null;
-        $this->name = $data["name"] ?? null;
-        $this->type = $data["type"] ?? Type::OTHER;
-        $this->eventId = $data["eventId"] ?? null;
-        $this->performers = $data["performers"] ?? null;
-        $this->startDatetime = $data["startDatetime"] ?? null;
-        $this->endDatetime = $data["endDatetime"] ?? null;
-        $this->specificLocation = $data["specificLocation"] ?? null;
+private function fill(array $data)
+{
+    $this->id = $data["id"] ?? null;
+    $this->name = $data["name"] ?? null;
+    
+    // Tratamento especial para o type
+    if (isset($data["type"]) && !empty($data["type"])) {
+        try {
+            $this->type = Type::from($data["type"]);
+        } catch (\ValueError $e) {
+            $this->type = Type::OTHER;
+        }
+    } else {
+        $this->type = Type::OTHER;
     }
+    
+    $this->eventId = $data["eventId"] ?? null;
+    $this->startDatetime = isset($data["startDatetime"]) && !empty($data["startDatetime"]) 
+        ? new DateTime($data["startDatetime"]) 
+        : null;
+    $this->endDatetime = isset($data["endDatetime"]) && !empty($data["endDatetime"]) 
+        ? new DateTime($data["endDatetime"]) 
+        : null;
+    $this->specificLocation = $data["specificLocation"] ?? null;
+    $this->performers = $data["performers"] ?? null;
+}
 
     public function findByEventId(int $eventId): array
     {

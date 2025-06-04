@@ -141,114 +141,114 @@ class Attractions extends Api
             return;
         }
 
-        if (!filter_var($data["id"], FILTER_VALIDATE_INT)) {
-            $this->call(400, "bad_request", "ID inválido", "error")->back();
-            return;
-        }
-
         $attraction = new Attraction();
         if (!$attraction->findById($data["id"])) {
             $this->call(404, "not_found", "Atração não encontrada", "error")->back();
             return;
         }
 
-        if (!in_array($this->userAuth->id, $attraction->getPerformers())) {
-            $this->call(403, "forbidden", "Você não tem permissão para atualizar essa atração", "error")->back();
+        // Carrega o evento para validações
+        $event = new Event();
+        if (!$event->findById($attraction->getEventId())) {
+            $this->call(404, "not_found", "Evento não encontrado", "error")->back();
             return;
         }
 
-        if (isset($data["name"]) && empty($data["name"])) {
-            $this->call(400, "bad_request", "Nome da atração não pode ser vazio", "error")->back();
-            return;
-        }
-
-        if (isset($data["type"])) {
-            try {
-                $type = Type::from($data["type"]);
-                $attraction->setType($type);
-            } catch (ValueError $e) {
-                $this->call(400, "bad_request", "Tipo de atração inválido", "error")->back();
-                return;
-            }
-        }
-
-        if (isset($data["startDatetime"]) && isset($data["endDatetime"])) {
-            $start = strtotime($data["startDatetime"]);
-            $end = strtotime($data["endDatetime"]);
-
-            $event = new Event();
-            if ($event->findById($attraction->getEventId())) {
-                $eventStart = $event->getStartDatetime()->getTimestamp();
-                $eventEnd = $event->getEndDatetime()->getTimestamp();
-                
-                if ($start < $eventStart || $end > $eventEnd) {
-                    $this->call(400, "bad_request", "A atração deve ocorrer dentro do período do evento", "error")->back();
-                    return;
-                }
-            }
-
-            if ($start >= $end) {
-                $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
-                return;
-            }
-        }
-
+        // Atualiza os campos existentes
         if (isset($data["name"])) {
             $attraction->setName($data["name"]);
-        }
-        if (isset($data["startDatetime"])) {
-            $attraction->setStartDatetime($data["startDatetime"]);
-        }
-        if (isset($data["endDatetime"])) {
-            $attraction->setEndDatetime($data["endDatetime"]);
         }
         if (isset($data["specificLocation"])) {
             $attraction->setSpecificLocation($data["specificLocation"]);
         }
+        
+        // Atualiza data e hora
+        $startDate = $data["date"] ?? $attraction->getStartDate();
+        $startTime = $data["startTime"] ?? $attraction->getStartTime();
+        $endTime = $data["endTime"] ?? $attraction->getEndTime();
+        
+        $attraction->setStartDatetime($startDate, $startTime);
+        $attraction->setEndDatetime($startDate, $endTime);
 
-        if (isset($data["performers"])) {
-            if (is_string($data["performers"])) {
-                $data["performers"] = explode(",", $data["performers"]);
-            }
-            $attraction->setPerformers($data["performers"]);
-
-            if (!$attraction->updateWithPerformers()) {
-                $this->call(500, "internal_server_error", $attraction->getErrorMessage(), "error")->back();
-                return;
-            }
+        // Validação: Data de início deve ser anterior à data de término
+        if ($attraction->getStartDatetime() >= $attraction->getEndDatetime()) {
+            $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
+            return;
         }
 
-        $performersBackup = $attraction->getPerformers();
-        $attraction->setPerformers(null);
+        // Validação: Atração deve ocorrer dentro do período do evento
+        if ($attraction->getStartDatetime() < $event->getStartDatetime() || 
+            $attraction->getEndDatetime() > $event->getEndDatetime()) {
+            $this->call(400, "bad_request", "A atração deve ocorrer dentro do período do evento", "error")->back();
+            return;
+        }
 
-        if (!$attraction->updateById()) {
+        // Verifica tanto 'performers' quanto 'perfomers' (com erro de digitação)
+        $performersData = null;
+        if (isset($data["performers"])) {
+            $performersData = $data["performers"];
+        } elseif (isset($data["perfomers"])) {
+            $performersData = $data["perfomers"];
+        }
+
+        if ($performersData !== null) {
+            error_log("Performers recebidos: " . print_r($performersData, true));
+            
+            $performers = is_string($performersData) 
+                ? array_map('trim', explode(",", $performersData)) 
+                : $performersData;
+
+            error_log("Performers após processamento: " . print_r($performers, true));
+
+            $validPerformers = [];
+            foreach ($performers as $username) {
+                $performer = new User();
+                if ($performer->findByUsername($username)) {
+                    $validPerformers[] = $performer->getId();
+                    error_log("Performer encontrado: {$username} -> ID: {$performer->getId()}");
+                } else {
+                    error_log("Performer não encontrado: {$username}");
+                    $this->call(400, "bad_request", "Usuário não encontrado: " . $username, "error")->back();
+                    return;
+                }
+            }
+
+            error_log("Performers válidos: " . print_r($validPerformers, true));
+            $attraction->setPerformers($validPerformers);
+        }
+
+        if (!$attraction->updateWithPerformers()) {
             $this->call(500, "internal_server_error", "Erro ao atualizar atração: " . $attraction->getErrorMessage(), "error")->back();
             return;
         }
 
-        $attraction->setPerformers($performersBackup);
+        // Recarrega os dados
         $attraction->findById($data["id"]);
 
+        // Prepara a resposta
         $performers = [];
-        foreach ($attraction->getPerformers() as $performerId) {
-            $performer = new User();
-            if ($performer->findById($performerId)) {
-                $performers[] = [
-                    'id' => $performer->getId(),
-                    'name' => $performer->getName()
-                ];
+        if ($attraction->getPerformers()) {
+            foreach ($attraction->getPerformers() as $performerId) {
+                $performer = new User();
+                if ($performer->findById($performerId)) {
+                    $performers[] = [
+                        'id' => $performer->getId(),
+                        'name' => $performer->getName(),
+                        'username' => $performer->getUsername()
+                    ];
+                }
             }
         }
 
         $response = [
             "id" => $attraction->getId(),
             "name" => $attraction->getName(),
-            "type" => $attraction->getType(),
+            "type" => $attraction->getType()->value,
             "eventId" => $attraction->getEventId(),
-            "startDatetime" => $attraction->getStartDatetime(),
-            "endDatetime" => $attraction->getEndDatetime(),
+            "startDatetime" => $attraction->getStartDatetime() ? $attraction->getStartDatetime()->format('Y-m-d H:i:s') : null,
+            "endDatetime" => $attraction->getEndDatetime() ? $attraction->getEndDatetime()->format('Y-m-d H:i:s') : null,
             "specificLocation" => $attraction->getSpecificLocation(),
-            "performers" => $performers,
+            "performers" => $performers
         ];
 
         $this->call(200, "success", "Atração atualizada com sucesso", "success")->back($response);

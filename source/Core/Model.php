@@ -82,7 +82,11 @@ abstract class Model
 
             if (!in_array($name, $ignoredProperties)) {
                 $columns[] = "{$name} = :{$name}";
-                $values[$name] = $value;
+                if ($value instanceof \UnitEnum) {
+                    $values[$name] = $value->value;
+                } else {
+                    $values[$name] = $value;
+                }
             }
         }
 
