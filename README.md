@@ -6,12 +6,12 @@
 
 
 ## 📑 Sumário
-- [Visão Geral](#visão-geral)
+- [Visão Geral](#visao-geral)
 - [Base URL](#base-url)
 - [Endpoints](#endpoints)
-  - [Usuários](#usuários)
+  - [Usuários](#usuarios)
   - [Eventos](#eventos)
-  - [Atrações](#atrações)
+  - [Atrações](#atracoes)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Banco de Dados](#banco-de-dados)
   - [Tabela `users`](#tabela-users)
@@ -21,15 +21,17 @@
 - [Respostas da API](#respostas-da-api)
 - [Requisitos](#requisitos)
 
+
+
 ---
 
-## 📖 Visão Geral
+## Visão Geral
 
 API RESTful para gerenciamento de eventos e suas atrações, permitindo que usuários possam criar, visualizar, atualizar e excluir eventos e atrações.
 
 ---
 
-## 🌐 Base URL
+## Base URL
 
 ```
 http://localhost/ensaiei/api
@@ -37,9 +39,9 @@ http://localhost/ensaiei/api
 
 ---
 
-## 🔗 Endpoints
+## Endpoints
 
-### 👤 Usuários
+### Usuários
 
 #### 🔐 Login
 ```
@@ -79,7 +81,7 @@ Remove um usuário do sistema.
 
 ---
 
-### 🎫 Eventos
+### Eventos
 
 #### 📋 Listar Eventos
 ```
@@ -120,7 +122,7 @@ Remove um evento do sistema.
 
 ---
 
-### 🎭 Atrações
+### Atrações
 
 #### 🔍 Buscar Atração por ID
 ```
@@ -165,7 +167,7 @@ Remove uma atração do sistema.
 
 ---
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 ensaiei/
@@ -197,9 +199,9 @@ ensaiei/
 
 ---
 
-## 🗃️ Banco de Dados
+## Banco de Dados
 
-### 🔸 Tabela `users`
+### Tabela `users`
 
 | Campo     | Tipo          | Descrição                        |
 |-----------|---------------|----------------------------------|
@@ -215,7 +217,7 @@ ensaiei/
 
 ---
 
-### 🔸 Tabela `events`
+### Tabela `events`
 
 | Campo         | Tipo            | Descrição                        |
 |---------------|-----------------|----------------------------------|
@@ -232,7 +234,7 @@ ensaiei/
 
 ---
 
-### 🔸 Tabela `attractions`
+### Tabela `attractions`
 
 | Campo            | Tipo           | Descrição                        |
 |------------------|----------------|----------------------------------|
@@ -247,7 +249,7 @@ ensaiei/
 
 ---
 
-### 🔸 Tabela `attractions_performers`
+### Tabela `attractions_performers`
 
 | Campo        | Tipo | Descrição                   |
 |--------------|------|-----------------------------|
@@ -257,7 +259,7 @@ ensaiei/
 
 ---
 
-## 📦 Respostas da API
+## Respostas da API
 
 Todas as respostas seguem o padrão JSON:
 
@@ -284,7 +286,7 @@ Todas as respostas seguem o padrão JSON:
 
 ---
 
-## ⚙️ Requisitos
+## Requisitos
 
 ### 🔧 Sistema
 - Servidor Web (Apache ou Nginx)
