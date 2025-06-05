@@ -1,6 +1,9 @@
 ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-orange?style=flat-square)
 
-# 📌 API de Gerenciamento de Eventos e Atrações
+# 🎭 Ensaiei
+
+![Texto alternativo](./design/assets/images/telainicial.png)
+
 
 ## 📑 Sumário
 - [Visão Geral](#visão-geral)

@@ -207,4 +207,30 @@ class Event extends Model {
     public function countAttractions(): int {
         return count($this->getAttractions());
     }
+public function updateById(): bool
+{
+    try {
+        $stmt = Connect::getInstance()->prepare("
+            UPDATE {$this->table} 
+            SET title = :title,
+                description = :description,
+                location = :location,
+                startDatetime = :startDatetime,
+                endDatetime = :endDatetime
+            WHERE id = :id
+        ");
+
+        $stmt->bindValue(":title", $this->title, \PDO::PARAM_STR);
+        $stmt->bindValue(":description", $this->description, \PDO::PARAM_STR);
+        $stmt->bindValue(":location", $this->location, \PDO::PARAM_STR);
+        $stmt->bindValue(":startDatetime", $this->startDatetime ? $this->startDatetime->format('Y-m-d H:i:s') : null, \PDO::PARAM_STR);
+        $stmt->bindValue(":endDatetime", $this->endDatetime ? $this->endDatetime->format('Y-m-d H:i:s') : null, \PDO::PARAM_STR);
+        $stmt->bindValue(":id", $this->id, \PDO::PARAM_INT);
+
+        return $stmt->execute();
+    } catch (\PDOException $e) {
+        $this->errorMessage = $e->getMessage();
+        return false;
+    }
+}
 }

@@ -41,6 +41,7 @@ $route->group("/attraction");
 
 $route->get("/{id}", "Attractions:listAttractionById"); // funciona
 $route->get("/event/{eventId}", "Attractions:listAttractionsByEvent"); // funciona
+$route->get("/event/{eventId}/type/{type}", "Attractions:listAttractionsByEvent"); // falta fazer o type
 $route->post("/{eventId}/add", "Attractions:createAttraction"); // funciona
 $route->put("/update/{id}", "Attractions:updateAttraction"); // ok
 $route->delete("/delete/{id}", "Attractions:deleteAttraction");  // ok

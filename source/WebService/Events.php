@@ -127,6 +127,7 @@ class Events extends Api
             return;
         }
 
+        // Atualiza campos básicos se fornecidos
         if (isset($data["title"])) {
             if (empty($data["title"])) {
                 $this->call(400, "bad_request", "Título do evento não pode ser vazio", "error")->back();
@@ -151,6 +152,11 @@ class Events extends Api
             $event->setDescription($data["description"]);
         }
 
+        // Lógica de atualização das datas
+        $currentStartDatetime = $event->getStartDatetime();
+        $currentEndDatetime = $event->getEndDatetime();
+
+        // Atualiza data/hora de início se fornecidos
         if (isset($data["startDate"]) && isset($data["startTime"])) {
             $event->setStartDatetime($data["startDate"], $data["startTime"]);
             if (!$event->getStartDatetime()) {
@@ -159,6 +165,7 @@ class Events extends Api
             }
         }
 
+        // Atualiza data/hora de término se fornecidos
         if (isset($data["endDate"]) && isset($data["endTime"])) {
             $event->setEndDatetime($data["endDate"], $data["endTime"]);
             if (!$event->getEndDatetime()) {
@@ -167,23 +174,21 @@ class Events extends Api
             }
         }
 
-        if ($event->getStartDatetime() && $event->getEndDatetime()) {
-            if ($event->getStartDatetime() >= $event->getEndDatetime()) {
-                $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
-                return;
-            }
+        // Validação final das datas
+        if ($event->getStartDatetime() >= $event->getEndDatetime()) {
+            // Restaura as datas originais em caso de erro
+            $event->setStartDatetime($currentStartDatetime);
+            $event->setEndDatetime($currentEndDatetime);
+            $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
+            return;
         }
-
-
-        $attractionsBackup = $event->getAttractions();
-        $event->setAttractions([]);
 
         if (!$event->updateById()) {
             $this->call(500, "internal_server_error", "Erro ao atualizar evento: " . $event->getErrorMessage(), "error")->back();
             return;
         }
 
-        $event->setAttractions($attractionsBackup);
+        // Recarrega o evento para garantir que temos os dados atualizados
         $event->findById($data["id"]);
 
         $response = [
@@ -195,8 +200,7 @@ class Events extends Api
             "startTime" => $event->getStartTime(),
             "endDate" => $event->getEndDate(),
             "endTime" => $event->getEndTime(),
-            "organizerId" => $event->getOrganizerId(),
-            "attractions" => $event->getAttractions()
+            "organizerId" => $event->getOrganizerId()
         ];
 
         $this->call(200, "success", "Evento atualizado com sucesso", "success")->back($response);
