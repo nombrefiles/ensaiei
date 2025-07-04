@@ -2,7 +2,7 @@
 
 namespace Source\Web;
 
-class App
+class App extends Controller
 {
     public function __construct()
     {

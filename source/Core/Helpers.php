@@ -1,51 +1,10 @@
 <?php
 
-namespace Source\Core;
+/**
+ * Funções comuns de ajuda para o sistema.
+ */
 
-use PDO;
-use PDOException;
-
-/*const CONF_DB_HOST = "mysql"; // localhost
-const CONF_DB_NAME = "db-inf-3am";
-const CONF_DB_USER = "root";
-const CONF_DB_PASS = "asdf1234"; // nada*/
-
-abstract class Connect
+function url(string $path = null): string
 {
-    private const OPTIONS = [
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-        PDO::ATTR_CASE => PDO::CASE_NATURAL
-    ];
-
-    private static $instance;
-
-    public static function getInstance(): ?PDO
-    {
-        if (empty(self::$instance)) {
-            try {
-                self::$instance = new PDO(
-                    "mysql:host=" . CONF_DB_HOST . ";dbname=" . CONF_DB_NAME,
-                    CONF_DB_USER,
-                    CONF_DB_PASS,
-                    self::OPTIONS
-                );
-            } catch (PDOException $exception) {
-                //redirect("/ops/problemas");
-                echo "Problemas ao Conectar! ";
-                echo $exception->getMessage();
-            }
-        }
-
-        return self::$instance;
-    }
-
-    final private function __construct()
-    {
-    }
-
-    private function __clone()
-    {
-    }
+    return CONF_URL_BASE . $path;
 }

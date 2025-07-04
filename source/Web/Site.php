@@ -16,31 +16,31 @@ class Site extends Controller
 
     public function about(): void
     {
-        echo "SOBRE NÓS";
+        echo $this->view->render("about", []);
     }
 
     public function contact(): void
     {
-        echo "CONTATOOO";
+        echo $this->view->render("contact", []);
     }
 
     public function faqs(): void
     {
-        echo "perguntinhas...";
+        echo $this->view->render("faqs", []);
     }
 
-    public function logIn(): void
+    public function login(): void
     {
-        echo "#logando";
+        echo $this->view->render("login", []);
     }
 
-    public function sigIn(): void
+    public function register(): void
     {
-        echo "cadastro";
+        echo $this->view->render("register", []);
     }
 
     public function error(array $data): void
     {
-        echo "ERO {$data["errcode"]}...";
+        echo "ERRO {$data["errcode"]}...";
     }
 }

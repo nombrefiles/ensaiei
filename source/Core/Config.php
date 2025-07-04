@@ -4,7 +4,7 @@
  * Configutação do endereço base do site.
  */
 
-const CONF_URL_BASE = "http://localhost:8080/acme-manha/"; // URL base do site, geralmente localhost em desenvolvimento
+const CONF_URL_BASE = "http://localhost/ensaiei-main/"; // URL base do site, geralmente localhost em desenvolvimento
 
 /**
  * Configuração de constantes do banco de dados.

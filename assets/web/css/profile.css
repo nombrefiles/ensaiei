@@ -1,0 +1,74 @@
+main {
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.foto-perfil {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #e5005a;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-family: 'playfull', serif;
+    color: #222;
+    margin-bottom: 10px;
+    font-weight: normal;
+    line-height: 1.2;
+}
+
+.arroba {
+    color: #e5005a;
+    font-size: 0.9rem;
+    margin: 5px 0;
+    font-family: jakarta, sans-serif;
+}
+
+.seguidores {
+    font-size: 0.8rem;
+    color: #555;
+    font-family: jakarta, sans-serif;
+}
+
+h2 {
+    font-size: larger;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-family: 'playfull', serif;
+
+}
+
+.bio {
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 30px;
+    font-family: jakarta, sans-serif;
+}
+
+.seguir {
+    background: #e5005a;
+    color: white;
+    padding: 12px 0;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-family: jakarta, sans-serif;
+}

@@ -1,5 +1,8 @@
+<?php
+$this->layout("theme", []);
+?>
 
-    <div class="faq-section">
+   <div class="faq-section">
         <h2>Sobre nós</h2>
 
         <div class="faq-item">
@@ -27,22 +30,11 @@
             </div>
         </div>
     </div>
-<script>
-    function toggleFAQ(element) {
-        const content = element.nextElementSibling;
-        const arrow = element.querySelector('.arrow');
 
-        if (content.classList.contains('show')) {
-            content.classList.remove('show');
-            arrow.style.transform = 'rotate(0deg)';
-        } else {
-            document.querySelectorAll('.faq-content').forEach(el => el.classList.remove('show'));
-            document.querySelectorAll('.arrow').forEach(a => a.style.transform = 'rotate(0deg)');
-            content.classList.add('show');
-            arrow.style.transform = 'rotate(180deg)';
-        }
-    }
-</script>
+    <?php  $this->start("specific-css"); ?>
+<link rel="stylesheet" href="<?= url("assets/web/css/about.css"); ?>">
+    <?php $this->end(); ?>
 
-</body>
-</html>
+    <?php  $this->start("specific-script"); ?>
+<script src="<?= url("assets/web/js/about.js"); ?>"></script>
+<?php $this->end(); ?>
