@@ -16,13 +16,11 @@
         <img src="design/assets/images/bicolor.png" alt="Ensaiei" class="logo">
     </div>
     <div class="topnav-right">
-        <div class="add-button">+</div>
         <nav>
-            <a href="profile.html">perfil</a>
-            <a href="profile.html">sobre</a>
-            <a href="profile.html">faq</a>
-            <a href="profile.html">entrar</a>
-            <a href="profile.html">cadastro</a>
+            <a href="<?=url("/sobre")?>">sobre</a>
+            <a href="<?=url("/faqs")?>">faq</a>
+            <a href="<?=url("/login")?>">entrar</a>
+            <a href="<?=url("/cadastro")?>">cadastro</a>
         </nav>
     </div>
 </div>

@@ -12,18 +12,26 @@ $route->namespace("Source\Web");
 // Rotas amigáveis da área pública
 $route->get("/", "Site:home");
 $route->get("/sobre", "Site:about");
-$route->get("/contato", "Site:contact");
 $route->get("/faqs","Site:faqs");
 $route->get("/login","Site:login");
 $route->get("/cadastro","Site:register");
 
 // Rotas amigáveis da área restrita
 $route->group("/app");
-$route->get("/", "App:home");
+$route->get("/perfil", "App:profile");
+$route->get("/eventos","App:events");
+$route->get("/bye","App:logout");
+$route->get("/sobre", "App:about");
+$route->get("/faqs","App:faqs");
 $route->group(null);
 
 $route->group("/admin");
 $route->get("/", "Admin:home");
+$route->get("/perfil", "Admin:profile");
+$route->get("/eventos","Admin:events");
+$route->get("/bye","Admin:logout");
+$route->get("/sobre", "App:about");
+$route->get("/faqs","App:faqs");
 $route->group(null);
 
 $route->get("/ops/{errcode}", "Site:error");

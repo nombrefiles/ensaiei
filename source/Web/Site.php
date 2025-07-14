@@ -19,11 +19,6 @@ class Site extends Controller
         echo $this->view->render("about", []);
     }
 
-    public function contact(): void
-    {
-        echo $this->view->render("contact", []);
-    }
-
     public function faqs(): void
     {
         echo $this->view->render("faqs", []);

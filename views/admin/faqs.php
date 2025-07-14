@@ -1,30 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>FAQ - Ensaiei</title>
-    <link rel="stylesheet" href="../css/faq.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter&display=swap" rel="stylesheet">
-</head>
-<body>
+<?php
+$this->layout("theme", []);
+?>
 
-<div class="topnav">
-    <div class="topnav-left">
-        <img src="../assets/images/bicolor.png" alt="Ensaiei" class="logo">
-    </div>
-    <div class="topnav-right">
-        <div class="add-button">+</div>
-        <nav>
-            <a href="plays.html">peças</a>
-            <a href="profile.php">perfil</a>
-            <a href="about.html">sobre</a>
-            <a href="faq.html">faq</a>
-        </nav>
-    </div>
-</div>
-
-<div class="container">
-    <div class="faq-section">
+ <div class="faq-section">
         <h2>Conta e acesso</h2>
 
         <div class="faq-item">
@@ -98,24 +76,11 @@
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    function toggleFAQ(element) {
-        const content = element.nextElementSibling;
-        const arrow = element.querySelector('.arrow');
+    <?php  $this->start("specific-css"); ?>
+<link rel="stylesheet" href="<?= url("assets/web/css/faqs.css"); ?>">
+    <?php $this->end(); ?>
 
-        if (content.classList.contains('show')) {
-            content.classList.remove('show');
-            arrow.style.transform = 'rotate(0deg)';
-        } else {
-            document.querySelectorAll('.faq-content').forEach(el => el.classList.remove('show'));
-            document.querySelectorAll('.arrow').forEach(a => a.style.transform = 'rotate(0deg)');
-            content.classList.add('show');
-            arrow.style.transform = 'rotate(180deg)';
-        }
-    }
-</script>
-
-</body>
-</html>
+    <?php  $this->start("specific-script"); ?>
+<script src="<?= url("assets/web/js/faqs.js"); ?>"></script>
+<?php $this->end(); ?>

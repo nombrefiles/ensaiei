@@ -11,52 +11,32 @@ class App extends Controller
 
     public function profile(): void
     {
-        echo "PERFIL";
-    }
-
-    public function home(): void
-    {
-        echo $this->view->render("home", []);
+        echo $this->view->render("profile", []);
     }
 
     public function about(): void
     {
-        echo "SOBRE NÓS";
-    }
-
-    public function contact(): void
-    {
-        echo "CONTATOOO";
+        echo $this->view->render("about", []);
     }
 
     public function faqs(): void
     {
-        echo "perguntinhas...";
-    }
-
-    public function logIn(): void
-    {
-        echo "#logando";
-    }
-
-    public function sigIn(): void
-    {
-        echo "cadastro";
+        echo $this->view->render("faqs", []);
     }
 
     public function events(): void
     {
-        echo "seus eventos.... MEUS?";
+        echo $this->view->render("events", []);
     }
 
-    public function attractions(array $data): void
+    public function logOut(): void
     {
-        echo "ATRAÇÕES";
+        echo $this->view->render("logout", []);
     }
 
     public function error(array $data): void
     {
-        echo "ERO {$data["errcode"]}...";
+        echo "ERRO {$data["errcode"]}...";
     }
 
 }

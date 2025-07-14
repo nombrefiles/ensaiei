@@ -1,0 +1,74 @@
+main {
+    display: flex;
+}
+
+.menu-lateral {
+    width: 200px;
+    border-right: 1px solid #ddd;
+    padding: 16px;
+}
+
+.menu-lateral h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.menu-lateral ul {
+    list-style: none;
+}
+
+.menu-lateral li {
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.menu-lateral li.ativo {
+    background: #f8c1d6;
+    border-radius: 4px;
+}
+
+.conteudo {
+    flex: 1;
+    padding: 24px;
+}
+
+.conteudo h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.codigo {
+    font-size: 14px;
+    color: #999;
+}
+
+.direcao {
+    margin-bottom: 16px;
+}
+
+.direcao a {
+    color: #333;
+    text-decoration: underline;
+}
+
+.editar-btn, .baixar-btn {
+    background: #f8c1d6;
+    border: none;
+    padding: 8px 16px;
+    margin: 8px 0 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.conteudo h2 {
+    font-size: 18px;
+    margin-top: 16px;
+    margin-bottom: 4px;
+}
+
+.descricao {
+    margin-bottom: 8px;
+}
