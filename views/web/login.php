@@ -6,8 +6,8 @@ $this->layout("theme", []);
       <img src="design/assets/images/logoSolo.png" alt="Logo" width="40">
       <h2>Entrar</h2>
     </nav>
-    <div class="form-box">
-      <form>
+    <div class="form-box" id="form-login">
+      <form method="POST">
         <label for="username">Username ou e-mail</label>
         <input type="text" id="username" name="username" required>
 

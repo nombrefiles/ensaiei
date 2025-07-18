@@ -17,11 +17,11 @@
     </div>
     <div class="topnav-right">
         <nav>
-            <a href="<?=url("app/perfil")?>">perfil</a>
-            <a href="<?=url("app/eventos")?>">eventos</a>
-            <a href="<?=url("app/sobre")?>">sobre</a>
-            <a href="<?=url("app/faqs")?>">faq</a>
-            <a href="<?=url("app/logout")?>">logout</a>
+            <a href="<?=url("admin/perfil")?>">perfil</a>
+            <a href="<?=url("admin/eventos")?>">eventos</a>
+            <a href="<?=url("admin/sobre")?>">sobre</a>
+            <a href="<?=url("admin/faqs")?>">faq</a>
+            <a href="<?=url("admin/logout")?>">logout</a>
         </nav>
     </div>
 </div>
