@@ -2,8 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>FAQ - Ensaiei</title>
-    <link rel="stylesheet" href="../css/about.css">
+    <title>Ensaiei</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= url("assets/web/css/theme.css") ?>">
 

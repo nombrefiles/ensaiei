@@ -87,12 +87,6 @@ header img {
     transition: color 0.3s ease;
 }
 
-.topnav-right nav a:nth-child(3) {
-    color: #e91e63;
-    font-weight: bold;
-    font-family: 'jakarta-bold', sans-serif;
-}
-
 .topnav-right nav a:hover {
     color: #e91e63;
 }
