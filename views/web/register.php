@@ -1,7 +1,6 @@
 <?php
 $this->layout("theme", []);
 ?>
-    // TIRAR FOTO BIO E USER E COLOCAR NO LOGIN
 <nav class="top">
       <img src="design/assets/images/logoSolo.png" alt="Logo" width="40">
       <h2>Criar conta</h2>

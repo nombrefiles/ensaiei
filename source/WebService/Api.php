@@ -19,7 +19,7 @@ class Api
     protected function call (int $code, string $status = null, string $message = null, $type = null): Api
     {
         http_response_code($code);
-        if(!empty($status)){
+        if (!empty($status)) {
             $this->response = [
                 "code" => $code,
                 "type" => $type,
@@ -57,7 +57,18 @@ class Api
         }
 
         $this->userAuth = $decoded->data;
-
     }
 
+    protected function getRequestData(): array
+    {
+        $contentType = $this->headers["Content-Type"] ?? $this->headers["content-type"] ?? null;
+
+        if (strpos($contentType, "application/json") !== false) {
+            $rawInput = file_get_contents("php://input");
+            $data = json_decode($rawInput, true);
+            return is_array($data) ? $data : [];
+        }
+
+        return $_POST ?: $_REQUEST;
+    }
 }

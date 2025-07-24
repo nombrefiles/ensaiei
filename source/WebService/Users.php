@@ -182,16 +182,28 @@ class Users extends Api
         $this->call(200, "success", "Usuário atualizado com sucesso", "success")->back($response);
     }
 
-    public function login(array $data): void
+    public function login(array $data = []): void
     {
-        if (empty($data["user"]) && empty($data["password"])) {
+        // Garante que dados sejam lidos corretamente mesmo via JSON
+        if (empty($data)) {
+            $data = $this->getRequestData();
+        }
+
+        error_log("Dados recebidos no login: " . print_r($data, true));
+
+        if (empty($data["user"]) || empty($data["password"])) {
             $this->call(400, "bad_request", "Credenciais inválidas", "error")->back();
             return;
         }
 
         $user = new User();
+        $found = $user->findByUsername($data["user"]);
 
-        if (!$user->findByUsername($data["user"]) && !$user->findByEmail($data["user"])) {
+        if (!$found) {
+            $found = $user->findByEmail($data["user"]);
+        }
+
+        if (!$found) {
             $this->call(401, "unauthorized", "Usuário não encontrado", "error")->back();
             return;
         }
@@ -210,6 +222,7 @@ class Users extends Api
             }
 
             $this->call(200, "success", "Usuário reativado com sucesso", "success")->back();
+            return;
         }
 
         $jwt = new JWTToken();
