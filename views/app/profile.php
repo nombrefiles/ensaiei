@@ -4,6 +4,8 @@ $this->layout("theme", []);
 
     <section class="card">
         <img class="foto-perfil" src="" alt="Foto de perfil">
+        <label for="photoInput" class="upload-btn">+</label>
+        <input type="file" id="photoInput" accept="image/*" style="display: none;">
         <h1>Carregando...</h1>
         <p class="arroba">@carregando</p>
         <h2>Biografia</h2>

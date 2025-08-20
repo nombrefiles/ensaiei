@@ -4,6 +4,7 @@ namespace Source\WebService;
 
 use Exception;
 use PDO;
+use SorFabioSantos\Uploader\Uploader;
 use Source\Core\Connect;
 use Source\Models\User;
 use Source\Core\JWTToken;
@@ -102,6 +103,33 @@ class Users extends Api
 
         include $profilePath;
     }
+
+
+    public function updatePhoto (): void
+    {
+        $this->auth();
+
+        $photo = (!empty($_FILES["photo"]["name"]) ? $_FILES["photo"] : null);
+
+        $upload = new Uploader();
+        $path = $upload->Image($photo);
+        if(!$path) {
+            $this->call(400, "bad_request", $upload->getMessage(), "error")->back();
+            return;
+        }
+
+        $user = new User();
+        $user->findByEmail($this->userAuth->email);
+        $user->setPhoto($path);
+        if(!$user->updateById()){
+            $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
+            return;
+        }
+
+        $this->call(200, "success", "Foto atualizada com sucesso", "success")->back();
+
+    }
+
 
     public function updateUser(array $data): void
     {
@@ -262,5 +290,27 @@ class Users extends Api
         }
 
         $this->call(200, "success", "Usuário deletado com sucesso", "success")->back();
+    }
+
+    public function getLoggedUser(): void
+    {
+        $this->auth();
+        $user = new User();
+
+        if (!$user->findById($this->userAuth->id)) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        $response = [
+            "id" => $user->getId(),
+            "name" => $user->getName(),
+            "username" => $user->getUsername(),
+            "email" => $user->getEmail(),
+            "photo" => $user->getPhoto() ?? "../assets/images/default-profile.png",
+            "bio" => $user->getBio() ?? "Eu amo teatro!"
+        ];
+
+        $this->call(200, "success", "Perfil carregado com sucesso", "success")->back($response);
     }
 }

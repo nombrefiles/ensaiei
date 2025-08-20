@@ -1,74 +1,56 @@
-main {
-    display: flex;
-}
+h1 {
+    font-size: 32px;
+    margin-bottom: 5px;
+  }
 
-.menu-lateral {
-    width: 200px;
-    border-right: 1px solid #ddd;
-    padding: 16px;
-}
-
-.menu-lateral h3 {
-    font-size: 16px;
-    margin-bottom: 8px;
-}
-
-.menu-lateral ul {
-    list-style: none;
-}
-
-.menu-lateral li {
-    padding: 6px 8px;
-    margin-bottom: 4px;
-    cursor: pointer;
-}
-
-.menu-lateral li.ativo {
-    background: #f8c1d6;
-    border-radius: 4px;
-}
-
-.conteudo {
-    flex: 1;
-    padding: 24px;
-}
-
-.conteudo h1 {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
-
-.codigo {
+  .subtitle {
+    color: #666;
     font-size: 14px;
-    color: #999;
-}
+    margin-bottom: 20px;
+  }
 
-.direcao {
-    margin-bottom: 16px;
-}
-
-.direcao a {
-    color: #333;
+  .subtitle a {
+    color: #000;
     text-decoration: underline;
-}
+  }
 
-.editar-btn, .baixar-btn {
-    background: #f8c1d6;
+  .edit-btn {
+    background: #f9a8c0;
     border: none;
-    padding: 8px 16px;
-    margin: 8px 0 16px;
-    border-radius: 4px;
+    padding: 10px 30px;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
-}
+    margin-bottom: 25px;
+  }
 
-.conteudo h2 {
+  .section {
+    margin-bottom: 25px;
+  }
+
+  .section h2 {
     font-size: 18px;
-    margin-top: 16px;
-    margin-bottom: 4px;
-}
-
-.descricao {
+    font-weight: 600;
     margin-bottom: 8px;
-}
+  }
+
+  .section p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .section span {
+    font-weight: 600;
+  }
+
+  .script-btn {
+    margin-top: 10px;
+    background: #f9a8c0;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 500;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }

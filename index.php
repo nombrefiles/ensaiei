@@ -25,6 +25,7 @@ $route->get("/sobre", "App:about");
 $route->get("/faqs","App:faqs");
 $route->group(null);
 
+
 $route->group("/admin");
 $route->get("/", "Admin:home");
 $route->get("/perfil", "Admin:profile");

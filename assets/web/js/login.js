@@ -34,7 +34,8 @@ document.getElementById("login-form").addEventListener("submit", async function 
             return;
         }
 
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.data.token);
+
         window.location.href = "app/perfil";
 
     } catch (err) {

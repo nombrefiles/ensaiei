@@ -26,23 +26,23 @@ nav{
 @font-face{
     font-family: 'playfull-italic';
 
-    src: url("../assets/PlayfairDisplay-ExtraBoldItalic.ttf");
+    src: url("http://localhost/ensaiei-main/design/assets/PlayfairDisplay-ExtraBoldItalic.ttf");
 }
 
 @font-face{
     font-family: 'playfull';
 
-    src: url("../assets/PlayfairDisplay-SemiBold.ttf");
+    src: url("http://localhost/ensaiei-main/design/assets/PlayfairDisplay-SemiBold.ttf");
 }
 
 @font-face {
     font-family: 'jakarta';
-    src: url("../assets/PlusJakartaSans-Regular.ttf");
+    src: url("http://localhost/ensaiei-main/design/assets/PlusJakartaSans-Regular.ttf");
 }
 
 @font-face {
     font-family: 'jakarta-bold';
-    src: url("../assets/PlusJakartaSans-SemiBold.ttf");
+    src: url("http://localhost/ensaiei-main/design/assets/PlusJakartaSans-SemiBold.ttf");
 }
 
 nav{
