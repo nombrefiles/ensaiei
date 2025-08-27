@@ -322,7 +322,7 @@ class Users extends Api
             "name" => $user->getName(),
             "username" => $user->getUsername(),
             "email" => $user->getEmail(),
-            "photo" => IMAGE_DIR . $user->getPhoto() ?? "../assets/images/default-profile.png",
+            "photo" => "http://localhost/ensaiei-main" . IMAGE_DIR . $user->getPhoto() ?? "../assets/images/default-profile.png",
             "bio" => $user->getBio() ?? "Eu amo teatro!"
         ];
 

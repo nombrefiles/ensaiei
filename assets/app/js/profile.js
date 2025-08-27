@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const formData = new FormData();
         formData.append("photo", file);
 
-        try {
+        // try {
             const response = await fetch("http://localhost/ensaiei-main/api/users/photo", {
                 method: "POST",
                 headers: {
@@ -63,10 +63,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             document.querySelector(".foto-perfil").src = data.data?.photo || document.querySelector(".foto-perfil").src;
             alert("Foto atualizada com sucesso!");
 
-        } catch (err) {
-            console.error("Erro:", err);
-            alert("Erro de conexão. Tente novamente mais tarde.");
-        }
+        // } catch (err) {
+        //     console.error("Erro:", err);
+        //     alert("Erro de conexão. Tente novamente mais tarde.");
+        // }
     });
 
 });
