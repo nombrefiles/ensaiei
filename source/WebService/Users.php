@@ -105,28 +105,43 @@ class Users extends Api
     }
 
 
-    public function updatePhoto (): void
+    public function updatePhoto(): void
     {
         $this->auth();
 
-        $photo = (!empty($_FILES["photo"]["name"]) ? $_FILES["photo"] : null);
+        if (empty($_FILES["photo"]["name"])) {
+            $this->call(400, "bad_request", "Nenhuma foto enviada", "error")->back();
+            return;
+        }
+
+        $photo = $_FILES["photo"];
 
         $upload = new Uploader();
         $path = $upload->Image($photo);
-        if(!$path) {
+
+        if (!$path) {
             $this->call(400, "bad_request", $upload->getMessage(), "error")->back();
             return;
         }
 
         $user = new User();
-        $user->findByEmail($this->userAuth->email);
-        $user->setPhoto($path);
-        if(!$user->updateById()){
-            $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
+        if (!$user->findByEmail($this->userAuth->email)) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
             return;
         }
 
-        $this->call(200, "success", "Foto atualizada com sucesso", "success")->back();
+        $user->setPhoto($path);
+        if (!$user->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao atualizar foto: " . $user->getErrorMessage(), "error")->back();
+            return;
+        }
+
+        $imageUrl = CONF_URL_BASE . ltrim(IMAGE_DIR, '/') . '/' . $user->getPhoto();
+
+        $this->call(200, "success", "Foto atualizada com sucesso", "success")
+            ->back([
+                "photo" => $imageUrl
+            ]);
 
     }
 
@@ -307,7 +322,7 @@ class Users extends Api
             "name" => $user->getName(),
             "username" => $user->getUsername(),
             "email" => $user->getEmail(),
-            "photo" => $user->getPhoto() ?? "../assets/images/default-profile.png",
+            "photo" => IMAGE_DIR . $user->getPhoto() ?? "../assets/images/default-profile.png",
             "bio" => $user->getBio() ?? "Eu amo teatro!"
         ];
 
