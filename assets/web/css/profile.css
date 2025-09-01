@@ -1,17 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f5f5f5;
+    min-height: 100vh;
+}
+
 main {
     display: flex;
     justify-content: center;
     padding: 60px 20px;
 }
 
+.profile-container {
+    width: 100%;
+    max-width: 400px;
+}
+
 .card {
     background: #fff;
     border-radius: 12px;
     padding: 40px;
-    max-width: 400px;
     width: 100%;
     text-align: center;
     box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.profile-photo-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
 }
 
 .foto-perfil {
@@ -20,88 +44,218 @@ main {
     object-fit: cover;
     border-radius: 50%;
     border: 3px solid #e5005a;
-    margin-bottom: 20px;
+    display: block;
+}
+
+.upload-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e5005a;
+    color: white;
+    font-size: 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.upload-btn:hover {
+    background-color: #ad1330;
 }
 
 h1 {
     margin: 0;
     font-size: 1.6rem;
-    font-family: 'playfull', serif;
+    font-family: 'Playfair Display', serif;
     color: #222;
-    margin-bottom: 10px;
-    font-weight: normal;
+    margin-bottom: 8px;
+    font-weight: 600;
     line-height: 1.2;
 }
 
 .arroba {
     color: #e5005a;
     font-size: 0.9rem;
-    margin: 5px 0;
-    font-family: jakarta, sans-serif;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
 }
 
 .seguidores {
     font-size: 0.8rem;
-    color: #555;
-    font-family: jakarta, sans-serif;
+    color: #666;
+    margin: 8px 0 0 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
 }
 
 h2 {
-    font-size: larger;
+    font-size: 1.1rem;
     margin-top: 30px;
     margin-bottom: 10px;
-    font-family: 'playfull', serif;
-
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
 }
 
 .bio {
     font-size: 0.9rem;
     color: #333;
     margin-bottom: 30px;
-    font-family: jakarta, sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    text-align: left;
+    line-height: 1.4;
 }
 
-.seguir {
+.seguir,
+.edit-profile-btn {
     background: #e5005a;
     color: white;
-    padding: 12px 0;
+    padding: 12px 24px;
     width: 100%;
     border: none;
-    border-radius: 6px;
-    font-size: 1.1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
     cursor: pointer;
-    font-family: jakarta, sans-serif;
-}
-.updatePhoto{
-    background-color: #eee;
-    border-radius: 4px;
-    width: 30px;
-    height: 30px;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: 'jakarta-bold', sans-serif;
-    font-size: 18px;
     transition: background-color 0.3s ease;
-    text-align: center;
-    line-height: 30px;
-    border: #ccc 0.5px solid;
 }
 
-.upload-btn {
-    display: inline-flex;
-    justify-content: center;
+.seguir:hover,
+.edit-profile-btn:hover {
+    background-color: #ad1330;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
     align-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #ad1330;
-    color: white;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
 }
 
-.upload-btn:hover {
-    background-color: #ad1330;
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 {
+    margin: 0 0 16px 0;
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+    outline: none;
+    border-color: #e5005a;
+}
+
+.modal-content textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #e5005a;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #ad1330;
+}
+
+.btn-secondary {
+    background: #f5f5f5;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #e5e5e5;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    main {
+        padding: 20px 16px;
+    }
+
+    .card {
+        padding: 24px;
+    }
+
+    .foto-perfil {
+        width: 120px;
+        height: 120px;
+    }
+
+    .upload-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
 }

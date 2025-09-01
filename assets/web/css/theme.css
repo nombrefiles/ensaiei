@@ -6,22 +6,22 @@
 
 @font-face {
     font-family: 'playfull-italic';
-    src: url("../assets/PlayfairDisplay-ExtraBoldItalic.ttf") format("truetype");
+    src: url("../design/assets/PlayfairDisplay-ExtraBoldItalic.ttf") format("truetype");
 }
 
 @font-face {
     font-family: 'playfull';
-    src: url("../assets/PlayfairDisplay-SemiBold.ttf") format("truetype");
+    src: url("../design/assets/PlayfairDisplay-SemiBold.ttf") format("truetype");
 }
 
 @font-face {
     font-family: 'jakarta';
-    src: url("../assets/PlusJakartaSans-Regular.ttf") format("truetype");
+    src: url("../design/assets/PlusJakartaSans-Regular.ttf") format("truetype");
 }
 
 @font-face {
     font-family: 'jakarta-bold';
-    src: url("../assets/PlusJakartaSans-SemiBold.ttf") format("truetype");
+    src: url("../design/assets/PlusJakartaSans-SemiBold.ttf") format("truetype");
 }
 
 body {
