@@ -1,37 +1,106 @@
-*{
+* {
     position: sticky;
     margin: 0;
     padding: 0;
     color: whitesmoke;
 }
 
-body{
-    background-color: whitesmoke;
+body {
+    background-color: #fff3f5;
 }
 
-nav{
+nav {
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    margin: 20px;
+    align-items: center;
+    font-family: 'jakarta', sans-serif;
+}
+
+nav * {
+    margin-left: 10px;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: x-large;
+    font-family: 'jakarta';
+    width: 30vh;
+}
+
+.e {
+    font-family: 'jakarta-bold';
+}
+
+.logo img {
+    margin-right: 0px;
+}
+
+input {
+    border: none;
+    border-radius: 3px;
+    height: 20px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 250px;
+}
+
+main p {
+    font-family: playfull, serif;
+    font-weight: 500;
+    width: 500px;
+    height: 200px;
+    font-size: 40px;
+    text-align: center;
+    color: crimson;
+    margin-bottom: -60px;
+}
+
+button {
+    border: none;
+    border-radius: 2.5px;
+    height: 48px;
+    width: 200px;
+    font-family: 'jakarta', sans-serif;
+    font-size: 21px;
+    font-weight: normal;
+    background: crimson;
+    margin-top: -60px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ad1330;
 }
 
 .bg {
     position: absolute;
     z-index: -1;
     left: 50%;
-    transform: translate(-50%, -90%);
-    width: 60%;
+    top: -30px;
+    transform: translateX(-50%);
+    width: 45%;
     height: auto;
 }
 
-@font-face{
-    font-family: 'playfull-italic';
 
+/* Fontes personalizadas */
+@font-face {
+    font-family: 'playfull-italic';
     src: url("http://localhost/ensaiei-main/design/assets/PlayfairDisplay-ExtraBoldItalic.ttf");
 }
 
-@font-face{
+@font-face {
     font-family: 'playfull';
-
     src: url("http://localhost/ensaiei-main/design/assets/PlayfairDisplay-SemiBold.ttf");
 }
 
@@ -45,78 +114,15 @@ nav{
     src: url("http://localhost/ensaiei-main/design/assets/PlusJakartaSans-SemiBold.ttf");
 }
 
-nav{
-    justify-content: center;
-    margin: 20px;
-    align-items: center;
-    font-family: 'jakarta', sans-serif;
+.tudo {
+    font-family: 'playfull-italic', serif;
+    color: crimson;
 }
 
-nav *{
-    margin-left: 10px;
-    margin-right: 10px;
-    text-decoration: none;
-}
-
-.logo{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-size: x-large;
-    font-family: 'jakarta';
-    width: 30vh;
-}
-
-.e{
-    font-family: 'jakarta-bold';
-}
-
-.logo img {
-    margin-right: 0px;
-}
-
-input{
-    border: none;
-    border-radius: 3px;
-    height: 20px;
-}
-
-main{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 250px;
-}
-
-main p {
-    font-family: playfull, serif;
-    font-weight: 500;
-    width: 600px;
-    height: 200px;
-    font-size: 55px;
-    text-align: center;
-    color: #222;
-}
-
-button {
-    border: none;
-    border-radius: 4px;
-    height: 50px;
-    width: 300px;
-    font-family: 'jakarta', sans-serif;
-    font-size: 22px;
-    font-weight: normal;
-    background: crimson;
-    margin-top: -30px;
-    cursor: pointer;
+.cadastrar{
     margin-left: 15px;
 }
 
-button:hover{
-    background-color: #ad1330;
-}
-
-.tudo{
-    font-family: 'playfull-italic', serif;
-    color: crimson;
+.entrar{
+    margin-right: 15px;
 }

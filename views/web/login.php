@@ -16,7 +16,7 @@ $this->layout("theme", []);
         <input type="password" id="password" name="password" required>
 
         <button type="submit">Entrar</button>
-        <span>Não tem uma conta? <a href="signin.html">Criar uma conta</a></span>
+        <span>Não tem uma conta? <a href="http://localhost/ensaiei-main/cadastro">Criar uma conta</a></span>
     </form>
 </div>
 

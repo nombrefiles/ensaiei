@@ -6,27 +6,27 @@
 
 @font-face {
     font-family: 'playfull-italic';
-    src: url("../design/assets/PlayfairDisplay-ExtraBoldItalic.ttf") format("truetype");
+    src: url("http://localhost/ensaiei-main/design/assets/PlayfairDisplay-ExtraBoldItalic.ttf");
 }
 
 @font-face {
     font-family: 'playfull';
-    src: url("../design/assets/PlayfairDisplay-SemiBold.ttf") format("truetype");
+    src: url("http://localhost/ensaiei-main/design/assets/PlayfairDisplay-SemiBold.ttf");
 }
 
 @font-face {
     font-family: 'jakarta';
-    src: url("../design/assets/PlusJakartaSans-Regular.ttf") format("truetype");
+    src: url("http://localhost/ensaiei-main/design/assets/PlusJakartaSans-Regular.ttf");
 }
 
 @font-face {
     font-family: 'jakarta-bold';
-    src: url("../design/assets/PlusJakartaSans-SemiBold.ttf") format("truetype");
+    src: url("http://localhost/ensaiei-main/design/assets/PlusJakartaSans-SemiBold.ttf");
 }
 
 body {
     font-family: 'jakarta', sans-serif;
-    background-color: #f8f8f8;
+    background-color: #fff3f5;
     overflow-x: hidden;
 }
 

@@ -50,6 +50,11 @@ class Users extends Api
             return;
         }
 
+        if ($user->findByEmail($data["email"])){
+            $this->call(400, "bad_request", "E-mail já está sendo usado!", "error")->back();
+            return;
+        }
+
         $response = [
             "name" => $user->getName(),
             "email" => $user->getEmail(),

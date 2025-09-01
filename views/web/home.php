@@ -15,8 +15,8 @@
 <main>
     <p>De roteiros a aplausos, <span class="tudo">tudo</span> sob controle.</p>
     <div class="btn">
-        <a href="http://localhost/ensaiei-main/login"><button>Entrar</button></a>
-        <a href="http://localhost/ensaiei-main/cadastro"><button>Cadastre-se</button></a>
+        <a href="http://localhost/ensaiei-main/login"><button class="entrar">Entrar</button></a>
+        <a href="http://localhost/ensaiei-main/cadastro"><button class="cadastrar">Cadastre-se</button></a>
     </div>
 </main>
 <img class="bg" src="http://localhost/ensaiei-main/design/assets/images/cover.png" alt="">
