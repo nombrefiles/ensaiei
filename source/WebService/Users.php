@@ -45,13 +45,13 @@ class Users extends Api
             false
         );
 
-        if (!$user->insert()) {
-            $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
+        if ($user->findByEmail($data["email"])){
+            $this->call(400, "bad_request", "E-mail já está sendo usado!", "error")->back();
             return;
         }
 
-        if ($user->findByEmail($data["email"])){
-            $this->call(400, "bad_request", "E-mail já está sendo usado!", "error")->back();
+        if (!$user->insert()) {
+            $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
             return;
         }
 
