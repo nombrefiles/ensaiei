@@ -198,9 +198,11 @@ class Users extends Api
             }
 
             $existingUser = new User();
-            if ($existingUser->findByUsername($data["username"]) && $existingUser->getId() !== $user->getId()) {
-                $this->call(400, "bad_request", "O username '{$data["username"]}' já está sendo usado por outro usuário", "error")->back();
-                return;
+            if ($this->userAuth->id !== $data["username"]){
+                if ($existingUser->findByUsername($data["username"]) && $existingUser->getId() !== $user->getId()) {
+                    $this->call(400, "bad_request", "O username '{$data["username"]}' já está sendo usado por outro usuário", "error")->back();
+                    return;
+                }
             }
 
             $user->setUsername($data["username"]);
