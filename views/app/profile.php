@@ -15,19 +15,22 @@ $this->layout("theme", []);
             <h2>Biografia</h2>
             <p class="bio">Carregando biografia...</p>
 
-            <button class="seguir" onclick="editProfile()">
+            <button class="edit-profile-btn" onclick="editProfile()">
                 Editar perfil
             </button>
         </section>
     </div>
 
-    <!-- Modal para edição -->
-    <div class="modal hidden">
+    <div class="modal hidden" id="editModal">
         <div class="modal-content">
+            <h3>Editar perfil</h3>
             <input type="text" placeholder="Nome" id="nameInput">
+            <input type="text" placeholder="Nome" id="usernameInput">
             <textarea placeholder="Biografia" id="bioInput"></textarea>
-            <button onclick="saveProfile()">Salvar</button>
-            <button onclick="closeModal()">Cancelar</button>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="saveProfile()">Salvar</button>
+                <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+            </div>
         </div>
     </div>
 

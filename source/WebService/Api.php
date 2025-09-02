@@ -16,7 +16,7 @@ class Api
         $this->headers = getallheaders();
     }
 
-    protected function call (int $code, string $status = null, string $message = null, $type = null): Api
+    protected function call(int $code, string $status = null, string $message = null, $type = null): Api
     {
         http_response_code($code);
         if (!empty($status)) {
@@ -61,14 +61,25 @@ class Api
 
     protected function getRequestData(): array
     {
-        $contentType = $this->headers["Content-Type"] ?? $this->headers["content-type"] ?? null;
+        $rawInput = file_get_contents("php://input");
+        $result = [];
 
-        if (strpos($contentType, "application/json") !== false) {
-            $rawInput = file_get_contents("php://input");
-            $data = json_decode($rawInput, true);
-            return is_array($data) ? $data : [];
+        if (!empty($rawInput)) {
+            $jsonData = json_decode($rawInput, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($jsonData)) {
+                $result = $jsonData;
+            } else {
+                parse_str($rawInput, $parsedData);
+                if (!empty($parsedData)) {
+                    $result = $parsedData;
+                }
+            }
         }
 
-        return $_POST ?: $_REQUEST;
+        if (empty($result)) {
+            $result = array_merge($_GET, $_POST, $_REQUEST);
+        }
+
+        return $result;
     }
 }
