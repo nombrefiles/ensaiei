@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 return;
             }
             document.querySelector(".foto-perfil").src = data.data?.photo || document.querySelector(".foto-perfil").src;
-            alert("Foto atualizada com sucesso!");
         } catch {
             alert("Erro de conexão. Tente novamente mais tarde.");
         }
@@ -90,7 +89,6 @@ async function saveProfile() {
     if (!updateData.name || !updateData.username || !updateData.bio) return;
 
     try {
-        // JSON
         const response1 = await fetch("http://localhost/ensaiei-main/api/users/update", {
             method: "PUT",
             headers: { "Content-Type": "application/json", "token": token },
@@ -104,7 +102,6 @@ async function saveProfile() {
             return;
         }
 
-        // FormData
         const formData = new FormData();
         formData.append('name', updateData.name);
         formData.append('username', updateData.username);
@@ -139,7 +136,7 @@ async function saveProfile() {
             return;
         }
 
-        alert("Erro: Nenhum método de envio funcionou.");
+        alert("Algo de errado aconteceu, tente novamente mais tarde.");
 
     } catch {
         alert("Erro de conexão. Tente novamente mais tarde.");

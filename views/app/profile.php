@@ -25,8 +25,11 @@ $this->layout("theme", []);
         <div class="modal-content">
             <h3>Editar perfil</h3>
             <input type="text" placeholder="Nome" id="nameInput">
-            <input type="text" placeholder="Nome" id="usernameInput">
+            <span id="username-error" class="error"></span>
+            <input type="text" placeholder="Usuário" id="usernameInput">
+            <span id="username-error" class="error"></span>
             <textarea placeholder="Biografia" id="bioInput"></textarea>
+            <span id="username-error" class="error"></span>
             <div class="modal-buttons">
                 <button class="btn-primary" onclick="saveProfile()">Salvar</button>
                 <button class="btn-secondary" onclick="closeModal()">Cancelar</button>

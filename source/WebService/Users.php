@@ -153,37 +153,22 @@ class Users extends Api
 
     public function updateUser(array $data = []): void
     {
-
         $this->auth();
 
         if (empty($data)) {
-            error_log("Parâmetro data vazio, chamando getRequestData()...");
             $data = $this->getRequestData();
-            error_log("Dados após getRequestData(): " . print_r($data, true));
         }
 
         if (!isset($this->userAuth->id)) {
-            error_log("ERRO: userAuth->id não definido");
             $this->call(400, "bad_request", "ID do usuário não encontrado", "error")->back();
             return;
         }
 
-        error_log("User ID autenticado: " . $this->userAuth->id);
-
         $user = new User();
         if (!$user->findById($this->userAuth->id)) {
-            error_log("ERRO: Usuário não encontrado no banco");
             $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
             return;
         }
-
-        error_log("Usuário encontrado: " . $user->getName());
-
-
-        error_log("Processando campos:");
-        error_log("- name: " . (isset($data["name"]) ? $data["name"] : 'não fornecido'));
-        error_log("- bio: " . (isset($data["bio"]) ? $data["bio"] : 'não fornecido'));
-        error_log("- email: " . (isset($data["email"]) ? $data["email"] : 'não fornecido'));
 
         $updateCount = 0;
 
@@ -191,9 +176,7 @@ class Users extends Api
             try {
                 $user->setRole(Role::from($data["idType"]));
                 $updateCount++;
-                error_log("Role atualizado");
             } catch (\ValueError $e) {
-                error_log("ERRO: Role inválido - " . $data["idType"]);
                 $this->call(400, "bad_request", "Tipo de usuário inválido", "error")->back();
                 return;
             }
@@ -201,62 +184,67 @@ class Users extends Api
 
         if (isset($data["name"])) {
             if (empty($data["name"])) {
-                error_log("ERRO: Nome vazio");
                 $this->call(400, "bad_request", "Nome não pode ser vazio", "error")->back();
                 return;
             }
             $user->setName($data["name"]);
             $updateCount++;
-            error_log("Nome atualizado para: " . $data["name"]);
+        }
+
+        if (isset($data["username"])) {
+            if (empty($data["username"])) {
+                $this->call(400, "bad_request", "O campo username não pode estar em branco", "error")->back();
+                return;
+            }
+
+            $existingUser = new User();
+            if ($existingUser->findByUsername($data["username"]) && $existingUser->getId() !== $user->getId()) {
+                $this->call(400, "bad_request", "O username '{$data["username"]}' já está sendo usado por outro usuário", "error")->back();
+                return;
+            }
+
+            $user->setUsername($data["username"]);
+            $updateCount++;
         }
 
         if (isset($data["email"])) {
             if (!filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
-                error_log("ERRO: Email inválido - " . $data["email"]);
                 $this->call(400, "bad_request", "Email inválido", "error")->back();
                 return;
             }
             $user->setEmail($data["email"]);
             $updateCount++;
-            error_log("Email atualizado para: " . $data["email"]);
         }
 
         if (isset($data["password"])) {
             if (empty($data["password"])) {
-                error_log("ERRO: Senha vazia");
                 $this->call(400, "bad_request", "Senha não pode ser vazia", "error")->back();
                 return;
             }
             $user->setPassword(password_hash($data["password"], PASSWORD_DEFAULT));
             $updateCount++;
-            error_log("Senha atualizada");
         }
 
         if (isset($data["photo"])) {
             $user->setPhoto($data["photo"]);
             $updateCount++;
-            error_log("Photo atualizada para: " . $data["photo"]);
         }
 
         if (isset($data["bio"])) {
             if (empty($data["bio"])) {
-                error_log("ERRO: Bio vazia");
                 $this->call(400, "bad_request", "Biografia não pode estar em branco!", "error")->back();
                 return;
             }
             $user->setBio($data["bio"]);
             $updateCount++;
-            error_log("Bio atualizada para: " . $data["bio"]);
         }
 
         if ($updateCount === 0) {
-            error_log("AVISO: Nenhum campo foi atualizado");
             $this->call(400, "bad_request", "Nenhum campo válido para atualização", "error")->back();
             return;
         }
 
         if (!$user->updateById()) {
-            error_log("ERRO: Falha ao salvar no banco - " . $user->getErrorMessage());
             $this->call(500, "internal_server_error", "Erro ao atualizar usuário: " . $user->getErrorMessage(), "error")->back();
             return;
         }
@@ -265,19 +253,19 @@ class Users extends Api
             "id" => $user->getId(),
             "idType" => $user->getRole()?->value,
             "name" => $user->getName(),
+            "username" => $user->getUsername(),
             "email" => $user->getEmail(),
             "photo" => $user->getPhoto(),
             "bio" => $user->getBio(),
-            "username" => $user->getUsername(),
             "deleted" => $user->getDeleted()
         ];
 
         $this->call(200, "success", "Usuário atualizado com sucesso", "success")->back($response);
     }
 
+
     public function login(array $data = []): void
     {
-        // Garante que dados sejam lidos corretamente mesmo via JSON
         if (empty($data)) {
             $data = $this->getRequestData();
         }
