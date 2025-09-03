@@ -136,7 +136,11 @@ async function saveProfile() {
             return;
         }
 
-        alert("Algo de errado aconteceu, tente novamente mais tarde.");
+        const data = await response3.json();
+
+        alert(data.message || "Erro ao atualizar perfil.");
+
+        console.log(data)
 
     } catch {
         alert("Erro de conexão. Tente novamente mais tarde.");
