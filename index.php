@@ -20,9 +20,10 @@ $route->get("/cadastro","Site:register");
 $route->group("/app");
 $route->get("/perfil", "App:profile");
 $route->get("/eventos","App:events");
-$route->get("/bye","App:logout");
+$route->get("/bye","App:logOut");
 $route->get("/sobre", "App:about");
 $route->get("/faqs","App:faqs");
+$route->get("/hi","App:home");
 $route->group(null);
 
 

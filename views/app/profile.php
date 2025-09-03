@@ -38,7 +38,7 @@ $this->layout("theme", []);
     </div>
 
 <?php $this->start("specific-css"); ?>
-    <link rel="stylesheet" href="<?= url("assets/web/css/profile.css"); ?>">
+    <link rel="stylesheet" href="<?= url("assets/app/css/profile.css"); ?>">
 <?php $this->end(); ?>
 
 <?php $this->start("specific-script"); ?>

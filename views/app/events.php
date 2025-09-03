@@ -35,7 +35,7 @@ $this->layout("theme", []);
 </body>
 </html>
 <?php  $this->start("specific-css"); ?>
-<link rel="stylesheet" href="<?= url("assets/web/css/events.css"); ?>">
+<link rel="stylesheet" href="<?= url("assets/app/css/events.css"); ?>">
     <?php $this->end(); ?>
 
     <?php  $this->start("specific-script"); ?>

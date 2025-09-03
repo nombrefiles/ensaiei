@@ -11,7 +11,7 @@
 
 <div class="topnav">
     <div class="topnav-left">
-        <img src="http://localhost/ensaiei-main/design/assets/images/bicolor.png" alt="Ensaiei" class="logo">
+        <a href="hi"><img src="http://localhost/ensaiei-main/design/assets/images/bicolor.png" alt="Ensaiei" class="logo"></a>
     </div>
     <div class="topnav-right">
         <nav>

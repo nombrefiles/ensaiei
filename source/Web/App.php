@@ -33,6 +33,10 @@ class App extends Controller
     {
         echo $this->view->render("logout", []);
     }
+    public function home(): void
+    {
+        echo $this->view->render("logout", []);
+    }
 
     public function error(array $data): void
     {
