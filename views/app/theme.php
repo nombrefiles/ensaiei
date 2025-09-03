@@ -5,8 +5,7 @@
     <title>Ensaiei</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= url("assets/web/css/theme.css") ?>">
-
-<!--// admin do evento -> lista as inscriçoes -> cadastro admin -> perfil do admin-->
+    
 </head>
 <body>
 
@@ -20,7 +19,7 @@
             <a href="<?=url("app/eventos")?>">eventos</a>
             <a href="<?=url("app/sobre")?>">sobre</a>
             <a href="<?=url("app/faqs")?>">faq</a>
-            <a href="<?=url("app/logout")?>">logout</a>
+            <a href="<?=url("app/bye")?>">logout</a>
         </nav>
     </div>
 </div>

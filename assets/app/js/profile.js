@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const token = localStorage.getItem("token");
     if (!token) {
         alert("Você não está logado.");
-        window.location.href = "/";
+        window.location.href = "/ensaiei-main/login";
         return;
     }
     await loadProfile();
