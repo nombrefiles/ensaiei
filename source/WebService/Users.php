@@ -191,6 +191,15 @@ class Users extends Api
             $updateCount++;
         }
 
+        if (isset($data["bio"])) {
+            if (empty($data["bio"])) {
+                $this->call(400, "bad_request", "Biografia não pode ser vazia", "error")->back();
+                return;
+            }
+            $user->setName($data["name"]);
+            $updateCount++;
+        }
+
         if (isset($data["username"])) {
             if (empty($data["username"])) {
                 $this->call(400, "bad_request", "O campo username não pode estar em branco", "error")->back();
@@ -200,7 +209,7 @@ class Users extends Api
             $existingUser = new User();
             if ($this->userAuth->id !== $data["username"]){
                 if ($existingUser->findByUsername($data["username"]) && $existingUser->getId() !== $user->getId()) {
-                    $this->call(400, "bad_request", "O username '{$data["username"]}' já está sendo usado por outro usuário", "error")->back();
+                    $this->call(400, "bad_request", "Usuário indisponível", "error")->back();
                     return;
                 }
             }

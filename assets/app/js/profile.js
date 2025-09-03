@@ -138,7 +138,23 @@ async function saveProfile() {
 
         const data = await response3.json();
 
-        alert(data.message || "Erro ao atualizar perfil.");
+        const messages = document.querySelectorAll(".error")
+
+        if (data.message === "Usuário indisponível"){
+            messages[1].innerHTML = data.message;
+        }
+
+        if (data.message === "O campo username não pode estar em branco"){
+            messages[1].innerHTML = data.message;
+        }
+
+        if (data.message === "Nome não pode ser vazio"){
+            messages[0].innerHTML = data.message;
+        }
+
+        if (data.message === "Biografia não pode ser vazia"){
+            messages[1].innerHTML = data.message;
+        }
 
         console.log(data)
 
