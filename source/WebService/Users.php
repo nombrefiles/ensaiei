@@ -227,15 +227,6 @@ class Users extends Api
             $updateCount++;
         }
 
-        if (isset($data["password"])) {
-            if (empty($data["password"])) {
-                $this->call(400, "bad_request", "Senha não pode ser vazia", "error")->back();
-                return;
-            }
-            $user->setPassword(password_hash($data["password"], PASSWORD_DEFAULT));
-            $updateCount++;
-        }
-
         if (isset($data["photo"])) {
             $user->setPhoto($data["photo"]);
             $updateCount++;
@@ -376,5 +367,40 @@ class Users extends Api
         ];
 
         $this->call(200, "success", "Perfil carregado com sucesso", "success")->back($response);
+    }
+
+    public function changePassword(array $data = []): void
+    {
+        $this->auth();
+        $user = new User();
+
+        if (!$user->findById($this->userAuth->id)) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        if (empty($data["oldPassword"]) || empty($data["newPassword"])) {
+            $this->call(400, "bad_request", "Senhas não podem estar vazias", "error")->back();
+            return;
+        }
+
+        if (!password_verify($data["oldPassword"], $user->getPassword())) {
+            $this->call(401, "unauthorized", "Senha antiga incorreta", "error")->back();
+            return;
+        }
+
+        if (password_verify($data["newPassword"], $user->getPassword())) {
+            $this->call(400, "bad_request", "A nova senha não pode ser igual à antiga", "error")->back();
+            return;
+        }
+
+        $user->setPassword(password_hash($data["newPassword"], PASSWORD_DEFAULT));
+
+        if (!$user->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao atualizar senha", "error")->back();
+            return;
+        }
+
+        $this->call(200, "success", "Senha alterada com sucesso", "success")->back();
     }
 }
