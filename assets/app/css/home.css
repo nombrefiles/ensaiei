@@ -137,17 +137,6 @@
     z-index: 1000;
     backdrop-filter: blur(4px);
     font-family: 'jakarta', sans-serif;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal.show {
-    display: flex !important;
-    opacity: 1 !important;
-}
-
-.modal.hidden {
-    display: none !important;
 }
 
 /* Modal específico para eventos */

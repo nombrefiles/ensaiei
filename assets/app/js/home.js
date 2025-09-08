@@ -1,101 +1,139 @@
-// Dados dos eventos (em produção, viriam da API/banco de dados)
+// Dados dos eventos (adaptados para a estrutura do banco de dados)
 const eventsData = {
     1: {
         title: "Workshop de Fotografia",
-        date: "15 de Outubro, 2025",
+        description: "Um workshop completo sobre técnicas avançadas de fotografia, cobrindo desde conceitos básicos até técnicas profissionais. Ideal para iniciantes e fotógrafos intermediários que desejam aprimorar suas habilidades. Incluído equipamentos para prática e certificado de participação.",
         location: "Centro Cultural - São Paulo",
-        price: "R$ 150,00",
-        time: "14:00",
-        capacity: "30 pessoas",
-        image: "https://via.placeholder.com/300x200",
-        description: "Um workshop completo sobre técnicas avançadas de fotografia, cobrindo desde conceitos básicos até técnicas profissionais. Ideal para iniciantes e fotógrafos intermediários que desejam aprimorar suas habilidades. Incluído equipamentos para prática e certificado de participação."
+        startDatetime: "2025-10-15 14:00:00",
+        endDatetime: "2025-10-15 18:00:00",
+        organizer: "Instituto de Fotografia",
+        attractions: [
+            { name: "Técnicas Avançadas de Fotografia", type: "OTHER" },
+            { name: "Prática com Equipamentos", type: "OTHER" }
+        ],
+        image: "https://via.placeholder.com/300x200"
     },
     2: {
         title: "Concerto de Piano",
-        date: "22 de Outubro, 2025",
+        description: "Uma noite inesquecível com as mais belas peças clássicas interpretadas por renomados pianistas. O repertório inclui obras de Chopin, Beethoven e Mozart. Uma experiência cultural única em um dos teatros mais tradicionais do país.",
         location: "Teatro Municipal - Rio de Janeiro",
-        price: "R$ 80,00",
-        time: "20:00",
-        capacity: "400 pessoas",
-        image: "https://via.placeholder.com/300x200",
-        description: "Uma noite inesquecível com as mais belas peças clássicas interpretadas por renomados pianistas. O repertório inclui obras de Chopin, Beethoven e Mozart. Uma experiência cultural única em um dos teatros mais tradicionais do país."
+        startDatetime: "2025-10-22 20:00:00",
+        endDatetime: "2025-10-22 22:30:00",
+        organizer: "Orquestra Sinfônica do Rio",
+        attractions: [
+            { name: "Concerto de Piano Clássico", type: "MUSIC" },
+            { name: "Obras de Chopin e Beethoven", type: "MUSIC" }
+        ],
+        image: "https://via.placeholder.com/300x200"
     },
     3: {
         title: "Festival de Arte Contemporânea",
-        date: "28 de Outubro, 2025",
+        description: "Evento gratuito apresentando as mais recentes tendências em arte contemporânea. Exposições de artistas locais e nacionais, performances ao vivo e workshops interativos. Uma oportunidade única de conhecer novos talentos e técnicas artísticas.",
         location: "Museu de Arte - Belo Horizonte",
-        price: "Gratuito",
-        time: "10:00",
-        capacity: "200 pessoas",
-        image: "https://via.placeholder.com/300x200",
-        description: "Evento gratuito apresentando as mais recentes tendências em arte contemporânea. Exposições de artistas locais e nacionais, performances ao vivo e workshops interativos. Uma oportunidade única de conhecer novos talentos e técnicas artísticas."
+        startDatetime: "2025-10-28 10:00:00",
+        endDatetime: "2025-10-28 18:00:00",
+        organizer: "Museu de Arte Contemporânea",
+        attractions: [
+            { name: "Exposição de Arte Contemporânea", type: "VISUAL" },
+            { name: "Performances ao Vivo", type: "THEATER" },
+            { name: "Workshops Interativos", type: "OTHER" }
+        ],
+        image: "https://via.placeholder.com/300x200"
     },
     4: {
         title: "Palestra sobre Design UX",
-        date: "5 de Novembro, 2025",
+        description: "Palestra ministrada por especialistas da área sobre as tendências atuais em User Experience Design. Abordagem prática com cases reais e dicas valiosas para profissionais da área. Networking incluído.",
         location: "Auditório Tech - Porto Alegre",
-        price: "R$ 50,00",
-        time: "19:00",
-        capacity: "150 pessoas",
-        image: "https://via.placeholder.com/300x200",
-        description: "Palestra ministrada por especialistas da área sobre as tendências atuais em User Experience Design. Abordagem prática com cases reais e dicas valiosas para profissionais da área. Networking incluído."
+        startDatetime: "2025-11-05 19:00:00",
+        endDatetime: "2025-11-05 21:00:00",
+        organizer: "Tech Community POA",
+        attractions: [
+            { name: "Tendências em UX Design", type: "OTHER" },
+            { name: "Cases Práticos", type: "OTHER" }
+        ],
+        image: "https://via.placeholder.com/300x200"
     },
     5: {
         title: "Exposição de Pintura",
-        date: "10 de Novembro, 2025",
+        description: "Exposição coletiva de pintores baianos contemporâneos. Diversas técnicas e estilos em uma mostra que celebra a rica cultura artística da Bahia. Visita guiada inclusa no ingresso.",
         location: "Galeria Central - Salvador",
-        price: "R$ 25,00",
-        time: "15:00",
-        capacity: "80 pessoas",
-        image: "https://via.placeholder.com/300x200",
-        description: "Exposição coletiva de pintores baianos contemporâneos. Diversas técnicas e estilos em uma mostra que celebra a rica cultura artística da Bahia. Visita guiada inclusa no ingresso."
+        startDatetime: "2025-11-10 15:00:00",
+        endDatetime: "2025-11-10 19:00:00",
+        organizer: "Galeria de Arte da Bahia",
+        attractions: [
+            { name: "Pinturas Contemporâneas", type: "VISUAL" },
+            { name: "Visita Guiada", type: "OTHER" }
+        ],
+        image: "https://via.placeholder.com/300x200"
     },
     6: {
         title: "Show de Jazz",
-        date: "18 de Novembro, 2025",
+        description: "Uma noite especial de jazz com músicos renomados nacionais e internacionais. Ambiente intimista com drinks especiais e petiscos gourmet. Reservas limitadas para uma experiência exclusiva.",
         location: "Blue Note - Brasília",
-        price: "R$ 120,00",
-        time: "21:00",
-        capacity: "120 pessoas",
-        image: "https://via.placeholder.com/300x200",
-        description: "Uma noite especial de jazz com músicos renomados nacionais e internacionais. Ambiente intimista com drinks especiais e petiscos gourmet. Reservas limitadas para uma experiência exclusiva."
+        startDatetime: "2025-11-18 21:00:00",
+        endDatetime: "2025-11-18 23:30:00",
+        organizer: "Blue Note Brasil",
+        attractions: [
+            { name: "Jazz ao Vivo", type: "MUSIC" },
+            { name: "Músicos Internacionais", type: "MUSIC" }
+        ],
+        image: "https://via.placeholder.com/300x200"
     }
 };
+
+// Inicialização quando a página carrega
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Página carregada, inicializando...');
+    loadEvents();
+    setupSearch();
+    setupModalEvents();
+
+    // Adicionar event listeners nos cards manualmente
+    const eventCards = document.querySelectorAll('.event-card');
+    eventCards.forEach((card, index) => {
+        const eventId = index + 1;
+        console.log(`Adicionando listener para card ${eventId}`);
+
+        card.addEventListener('click', function() {
+            console.log(`Card ${eventId} clicado!`);
+            openEventModal(eventId);
+        });
+
+        // Remove o onclick inline se existir
+        card.removeAttribute('onclick');
+    });
+});
 
 // Variáveis globais
 let allEvents = [];
 let filteredEvents = [];
-
-// Inicialização
-document.addEventListener('DOMContentLoaded', function() {
-    loadEvents();
-    setupSearch();
-    setupModalEvents();
-});
 
 // Carrega eventos na página
 function loadEvents() {
     const eventCards = document.querySelectorAll('.event-card');
     allEvents = Array.from(eventCards);
     filteredEvents = [...allEvents];
+    console.log('Eventos carregados:', allEvents.length);
 }
 
 // Configurar funcionalidade de pesquisa
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
 
-    // Pesquisa em tempo real
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase().trim();
-        filterEvents(searchTerm);
-    });
+    if (searchInput) {
+        // Pesquisa em tempo real
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            filterEvents(searchTerm);
+        });
 
-    // Pesquisa ao pressionar Enter
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchEvents();
-        }
-    });
+        // Pesquisa ao pressionar Enter
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchEvents();
+            }
+        });
+    }
 }
 
 // Filtrar eventos
@@ -108,17 +146,17 @@ function filterEvents(searchTerm) {
         allEvents.forEach(card => {
             card.style.display = 'block';
         });
-        eventsGrid.style.display = 'grid';
-        noResults.classList.add('hidden');
+        if (eventsGrid) eventsGrid.style.display = 'grid';
+        if (noResults) noResults.classList.add('hidden');
         return;
     }
 
     let hasResults = false;
 
     allEvents.forEach(card => {
-        const title = card.querySelector('.event-title').textContent.toLowerCase();
-        const location = card.querySelector('.event-location').textContent.toLowerCase();
-        const date = card.querySelector('.event-date').textContent.toLowerCase();
+        const title = card.querySelector('.event-title')?.textContent.toLowerCase() || '';
+        const location = card.querySelector('.event-location')?.textContent.toLowerCase() || '';
+        const date = card.querySelector('.event-date')?.textContent.toLowerCase() || '';
 
         if (title.includes(searchTerm) ||
             location.includes(searchTerm) ||
@@ -132,36 +170,43 @@ function filterEvents(searchTerm) {
 
     // Mostrar/ocultar mensagem de "sem resultados"
     if (hasResults) {
-        eventsGrid.style.display = 'grid';
-        noResults.classList.add('hidden');
+        if (eventsGrid) eventsGrid.style.display = 'grid';
+        if (noResults) noResults.classList.add('hidden');
     } else {
-        eventsGrid.style.display = 'none';
-        noResults.classList.remove('hidden');
+        if (eventsGrid) eventsGrid.style.display = 'none';
+        if (noResults) noResults.classList.remove('hidden');
     }
 }
 
 // Função de pesquisa (chamada pelo botão)
 function searchEvents() {
     const searchInput = document.getElementById('searchInput');
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    filterEvents(searchTerm);
+    if (searchInput) {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        filterEvents(searchTerm);
+    }
 }
 
 // Configurar eventos do modal
 function setupModalEvents() {
     const modal = document.getElementById('eventModal');
 
-    // Fechar modal ao clicar fora dele
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeEventModal();
-        }
-    });
+    if (modal) {
+        // Fechar modal ao clicar fora dele
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeEventModal();
+            }
+        });
+    }
 
     // Fechar modal com ESC
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-            closeEventModal();
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('eventModal');
+            if (modal && modal.style.display === 'flex') {
+                closeEventModal();
+            }
         }
     });
 }
@@ -198,46 +243,85 @@ function translateAttractionType(type) {
 
 // Abrir modal do evento
 function openEventModal(eventId) {
+    console.log('=== ABRINDO MODAL ===');
+    console.log('Event ID:', eventId);
+
     const event = eventsData[eventId];
-    if (!event) return;
+    if (!event) {
+        console.log('ERRO: Evento não encontrado para ID:', eventId);
+        return;
+    }
 
-    // Preencher dados do modal
-    document.getElementById('modalTitle').textContent = event.title;
-    document.getElementById('modalDate').textContent = formatDate(event.startDatetime);
-    document.getElementById('modalTime').textContent = formatTime(event.startDatetime, event.endDatetime);
-    document.getElementById('modalLocation').textContent = event.location;
-    document.getElementById('modalOrganizer').textContent = event.organizer;
-    document.getElementById('modalDescription').textContent = event.description;
-    document.getElementById('modalImage').src = event.image;
+    console.log('Dados do evento encontrado:', event);
 
-    // Preencher atrações
-    const attractionsContainer = document.getElementById('modalAttractions');
-    attractionsContainer.innerHTML = '';
+    // Encontrar elementos do modal
+    const modal = document.getElementById('eventModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDate = document.getElementById('modalDate');
+    const modalTime = document.getElementById('modalTime');
+    const modalLocation = document.getElementById('modalLocation');
+    const modalOrganizer = document.getElementById('modalOrganizer');
+    const modalDescription = document.getElementById('modalDescription');
+    const modalImage = document.getElementById('modalImage');
+    const modalAttractions = document.getElementById('modalAttractions');
 
-    event.attractions.forEach(attraction => {
-        const attractionDiv = document.createElement('div');
-        attractionDiv.className = 'attraction-item';
-        attractionDiv.innerHTML = `
-            <span class="attraction-name">${attraction.name}</span>
-            <span class="attraction-type">${translateAttractionType(attraction.type)}</span>
-        `;
-        attractionsContainer.appendChild(attractionDiv);
+    console.log('Elementos encontrados:', {
+        modal: !!modal,
+        modalTitle: !!modalTitle,
+        modalDate: !!modalDate,
+        modalTime: !!modalTime,
+        modalLocation: !!modalLocation,
+        modalOrganizer: !!modalOrganizer,
+        modalDescription: !!modalDescription,
+        modalImage: !!modalImage,
+        modalAttractions: !!modalAttractions
     });
 
+    if (!modal) {
+        console.log('ERRO: Modal não encontrado!');
+        return;
+    }
+
+    // Preencher dados do modal
+    if (modalTitle) modalTitle.textContent = event.title;
+    if (modalDate) modalDate.textContent = formatDate(event.startDatetime);
+    if (modalTime) modalTime.textContent = formatTime(event.startDatetime, event.endDatetime);
+    if (modalLocation) modalLocation.textContent = event.location;
+    if (modalOrganizer) modalOrganizer.textContent = event.organizer;
+    if (modalDescription) modalDescription.textContent = event.description;
+    if (modalImage) modalImage.src = event.image;
+
+    // Preencher atrações
+    if (modalAttractions) {
+        modalAttractions.innerHTML = '';
+
+        event.attractions.forEach(attraction => {
+            const attractionDiv = document.createElement('div');
+            attractionDiv.className = 'attraction-item';
+            attractionDiv.innerHTML = `
+                <span class="attraction-name">${attraction.name}</span>
+                <span class="attraction-type">${translateAttractionType(attraction.type)}</span>
+            `;
+            modalAttractions.appendChild(attractionDiv);
+        });
+    }
+
     // Mostrar modal
-    const modal = document.getElementById('eventModal');
-    modal.classList.remove('hidden');
-    modal.classList.add('show');
+    modal.style.display = 'flex';
+    modal.style.opacity = '1';
     document.body.style.overflow = 'hidden';
+
+    console.log('Modal exibido! Display:', modal.style.display, 'Opacity:', modal.style.opacity);
 }
 
 // Fechar modal do evento
 function closeEventModal() {
-    console.log('Fechando modal...'); // Debug
+    console.log('=== FECHANDO MODAL ===');
     const modal = document.getElementById('eventModal');
+
     if (modal) {
-        modal.classList.remove('show');
-        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
         document.body.style.overflow = 'auto';
         console.log('Modal fechado');
     }
@@ -245,20 +329,15 @@ function closeEventModal() {
 
 // Inscrever-se no evento
 function registerForEvent() {
-    // Aqui você faria a chamada para a API de inscrição
     alert('Funcionalidade de inscrição será implementada em breve!');
-
-    // Exemplo de implementação:
-    // const eventTitle = document.getElementById('modalTitle').textContent;
-    // console.log('Inscrevendo no evento:', eventTitle);
-
-    // Fechar modal após inscrição
     closeEventModal();
 }
 
 // Função utilitária para limpar pesquisa
 function clearSearch() {
     const searchInput = document.getElementById('searchInput');
-    searchInput.value = '';
-    filterEvents('');
+    if (searchInput) {
+        searchInput.value = '';
+        filterEvents('');
+    }
 }
