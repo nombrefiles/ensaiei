@@ -30,9 +30,10 @@ $this->layout("theme", []);
             <span id="username-error" class="error"></span>
             <textarea placeholder="Biografia" id="bioInput"></textarea>
             <span id="username-error" class="error"></span>
+            <a href="http://localhost/ensaiei-main/app/password">Trocar senha</a>
             <div class="modal-buttons">
                 <button class="btn-primary" onclick="saveProfile()">Salvar</button>
-                <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button class="btn-secondary" onclick="closeModal()">Cancelar</button><br>
             </div>
         </div>
     </div>

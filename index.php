@@ -24,6 +24,7 @@ $route->get("/bye","App:logOut");
 $route->get("/sobre", "App:about");
 $route->get("/faqs","App:faqs");
 $route->get("/hi","App:home");
+$route->get("/password","App:password");
 $route->group(null);
 
 
