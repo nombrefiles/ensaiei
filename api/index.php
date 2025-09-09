@@ -39,7 +39,7 @@ $route->post("/photo", "Users:updatePhoto"); // funciona
 
 $route->get("/perfil", "Users:getLoggedUser"); // funciona
 
-$route->get("/password", "Users:changePassword"); // nao funciona
+$route->put("/password", "Users:changePassword"); // nao funciona
 
 
 /* ATTRACTIONS */

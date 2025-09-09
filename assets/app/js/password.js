@@ -3,6 +3,9 @@ document.getElementById("password-form").addEventListener("submit", async functi
 
     const newPassword = document.getElementById("newPassword").value.trim();
     const oldPassword = document.getElementById("oldPassword").value.trim();
+    const body = new URLSearchParams();
+    body.append("newPassword", newPassword);
+    body.append("oldPassword", oldPassword);
     const token = localStorage.getItem("token");
 
     console.log("tentando a troca de senha com:", { newPassword, oldPassword });
@@ -10,8 +13,11 @@ document.getElementById("password-form").addEventListener("submit", async functi
     try {
         const response = await fetch("http://localhost/ensaiei-main/api/users/password", {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "token": token },
-            body: JSON.stringify({oldPassword, newPassword})
+            headers: {
+                "Content-Type": "application/json",
+                "token": token
+            },
+            body: body
         });
 
         console.log("Resposta HTTP:", response.status, response.statusText);
@@ -29,13 +35,12 @@ document.getElementById("password-form").addEventListener("submit", async functi
         }
 
         if (!response.ok) {
-            alert(data.message || "Email ou senha inválidos");
+            alert(data.message || "Erro ao alterar senha");
             return;
         }
 
-        localStorage.setItem("token", data.data.token);
-
-        window.location.href = "app/perfil";
+        alert(data.message || "Senha alterada com sucesso!");
+        window.location.href = "http://localhost/ensaiei-main/app/perfil";
 
     } catch (err) {
         console.error("Erro ao conectar com o servidor:", err);

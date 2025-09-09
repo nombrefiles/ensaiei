@@ -8,8 +8,8 @@ $this->layout("theme", []);
 
 <div class="form-box">
     <form id="password-form">
-        <label for="password">Senha antiga</label>
-        <input type="text" id="oldPassword" name="oldPassword" required>
+        <label for="password">Senha atual</label>
+        <input type="password" id="oldPassword" name="oldPassword" required>
 
         <label for="password">Nova senha</label>
         <input type="password" id="newPassword" name="newPassword" required>
