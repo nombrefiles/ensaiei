@@ -1,4 +1,3 @@
-// Dados dos eventos (adaptados para a estrutura do banco de dados)
 const eventsData = {
     1: {
         title: "Workshop de Fotografia",
@@ -104,11 +103,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Variáveis globais
 let allEvents = [];
 let filteredEvents = [];
 
-// Carrega eventos na página
 function loadEvents() {
     const eventCards = document.querySelectorAll('.event-card');
     allEvents = Array.from(eventCards);
@@ -116,7 +113,6 @@ function loadEvents() {
     console.log('Eventos carregados:', allEvents.length);
 }
 
-// Configurar funcionalidade de pesquisa
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
 

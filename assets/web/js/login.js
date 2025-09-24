@@ -36,7 +36,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
 
         localStorage.setItem("token", data.data.token);
 
-        window.location.href = "app/perfil";
+        window.location.href = "http://localhost/ensaiei-main/app/hi";
 
     } catch (err) {
         console.error("Erro ao conectar com o servidor:", err);
