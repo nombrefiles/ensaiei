@@ -17,6 +17,9 @@ class User
     private $username;
     private $bio;
     private $deleted;
+    private $emailVerified;
+    private $verificationCode;
+    private $verificationCodeExpires;
     private $errorMessage;
 
     public function __construct(
@@ -28,7 +31,10 @@ class User
         string $photo = null,
         string $username = null,
         string $bio = null,
-        bool $deleted = false
+        bool $deleted = false,
+        bool $emailVerified = false,
+        string $verificationCode = null,
+        string $verificationCodeExpires = null
     ) {
         $this->id = $id;
         $this->role = $role;
@@ -39,6 +45,9 @@ class User
         $this->username = $username;
         $this->bio = $bio;
         $this->deleted = $deleted;
+        $this->emailVerified = $emailVerified;
+        $this->verificationCode = $verificationCode;
+        $this->verificationCodeExpires = $verificationCodeExpires;
     }
 
     public function findAll()
@@ -54,7 +63,7 @@ class User
                 ->prepare("SELECT * FROM users WHERE username = :username LIMIT 1");
             $stmt->bindValue(":username", $username);
             $stmt->execute();
-            
+
             if ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $this->fill($user);
                 return true;
@@ -99,9 +108,9 @@ class User
         try {
             $stmt = Connect::getInstance()->prepare("
                 INSERT INTO users 
-                    (role, name, email, password, photo, username, bio, deleted)
+                    (role, name, email, password, photo, username, bio, deleted, email_verified, verification_code, verification_code_expires)
                 VALUES 
-                    (:role, :name, :email, :password, :photo, :username, :bio, :deleted)
+                    (:role, :name, :email, :password, :photo, :username, :bio, :deleted, :email_verified, :verification_code, :verification_code_expires)
             ");
 
             $stmt->bindValue(":role", $this->role->value);
@@ -112,8 +121,15 @@ class User
             $stmt->bindValue(":username", $this->username);
             $stmt->bindValue(":bio", $this->bio);
             $stmt->bindValue(":deleted", $this->deleted ? 1 : 0, PDO::PARAM_INT);
+            $stmt->bindValue(":email_verified", $this->emailVerified ? 1 : 0, PDO::PARAM_INT);
+            $stmt->bindValue(":verification_code", $this->verificationCode);
+            $stmt->bindValue(":verification_code_expires", $this->verificationCodeExpires);
 
-            return $stmt->execute();
+            if ($stmt->execute()) {
+                $this->id = Connect::getInstance()->lastInsertId();
+                return true;
+            }
+            return false;
         } catch (\PDOException $e) {
             $this->errorMessage = $e->getMessage();
             return false;
@@ -132,7 +148,10 @@ class User
                     photo = :photo,
                     bio = :bio,
                     username = :username,
-                    deleted = :deleted
+                    deleted = :deleted,
+                    email_verified = :email_verified,
+                    verification_code = :verification_code,
+                    verification_code_expires = :verification_code_expires
                 WHERE id = :id
             ");
 
@@ -144,8 +163,23 @@ class User
             $stmt->bindValue(":bio", $this->bio);
             $stmt->bindValue(":username", $this->username);
             $stmt->bindValue(":deleted", $this->deleted ? 1 : 0, PDO::PARAM_INT);
+            $stmt->bindValue(":email_verified", $this->emailVerified ? 1 : 0, PDO::PARAM_INT);
+            $stmt->bindValue(":verification_code", $this->verificationCode);
+            $stmt->bindValue(":verification_code_expires", $this->verificationCodeExpires);
             $stmt->bindValue(":id", $this->id);
 
+            return $stmt->execute();
+        } catch (\PDOException $e) {
+            $this->errorMessage = $e->getMessage();
+            return false;
+        }
+    }
+
+    public function delete()
+    {
+        try {
+            $stmt = Connect::getInstance()->prepare("DELETE FROM users WHERE id = :id");
+            $stmt->bindValue(":id", $this->id);
             return $stmt->execute();
         } catch (\PDOException $e) {
             $this->errorMessage = $e->getMessage();
@@ -164,95 +198,36 @@ class User
         $this->username = $data["username"] ?? null;
         $this->bio      = $data["bio"] ?? null;
         $this->deleted  = isset($data["deleted"]) ? (bool)$data["deleted"] : false;
+        $this->emailVerified = isset($data["email_verified"]) ? (bool)$data["email_verified"] : false;
+        $this->verificationCode = $data["verification_code"] ?? null;
+        $this->verificationCodeExpires = $data["verification_code_expires"] ?? null;
     }
 
-    public function getId()
-    {
-        return $this->id;
-    }
+    // Getters
+    public function getId() { return $this->id; }
+    public function getRole() { return $this->role; }
+    public function getName() { return $this->name; }
+    public function getEmail() { return $this->email; }
+    public function getPassword() { return $this->password; }
+    public function getPhoto() { return $this->photo; }
+    public function getUsername() { return $this->username; }
+    public function getBio() { return $this->bio; }
+    public function getDeleted(): bool { return (bool)$this->deleted; }
+    public function getEmailVerified(): bool { return (bool)$this->emailVerified; }
+    public function getVerificationCode() { return $this->verificationCode; }
+    public function getVerificationCodeExpires() { return $this->verificationCodeExpires; }
+    public function getErrorMessage() { return $this->errorMessage; }
 
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    public function getPhoto()
-    {
-        return $this->photo;
-    }
-
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    public function getBio()
-    {
-        return $this->bio;
-    }
-
-    public function getDeleted(): bool
-    {
-        return (bool)$this->deleted;
-    }
-
-    public function getErrorMessage()
-    {
-        return $this->errorMessage;
-    }
-
-    public function setRole($role)
-    {
-        $this->role = $role;
-    }
-
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
-
-    public function setPhoto($photo)
-    {
-        $this->photo = $photo;
-    }
-
-    public function setUsername($username)
-    {
-        $this->username = $username;
-    }
-
-    public function setBio($bio)
-    {
-        $this->bio = $bio;
-    }
-
-    public function setDeleted($deleted)
-    {
-        $this->deleted = (bool)$deleted;
-    }
+    // Setters
+    public function setRole($role) { $this->role = $role; }
+    public function setName($name) { $this->name = $name; }
+    public function setEmail($email) { $this->email = $email; }
+    public function setPassword($password) { $this->password = $password; }
+    public function setPhoto($photo) { $this->photo = $photo; }
+    public function setUsername($username) { $this->username = $username; }
+    public function setBio($bio) { $this->bio = $bio; }
+    public function setDeleted($deleted) { $this->deleted = (bool)$deleted; }
+    public function setEmailVerified($emailVerified) { $this->emailVerified = (bool)$emailVerified; }
+    public function setVerificationCode($code) { $this->verificationCode = $code; }
+    public function setVerificationCodeExpires($expires) { $this->verificationCodeExpires = $expires; }
 }
