@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     inputs.forEach((input, index) => {
         input.addEventListener("input", function(e) {
-            // Apenas números
             this.value = this.value.replace(/[^0-9]/g, "");
 
             if (this.value.length === 1 && index < inputs.length - 1) {
@@ -47,10 +46,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Auto-focus no primeiro input
     inputs[0].focus();
 
-    // Função para mostrar erro
     function showError(message) {
         errorMessage.textContent = message;
         errorMessage.style.display = "block";
@@ -68,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
         successMessage.style.display = "none";
     }
 
+    // VERIFICAR EMAIL - CORRIGIDO
     verifyForm.addEventListener("submit", async function(e) {
         e.preventDefault();
         clearMessages();
@@ -79,6 +77,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
+        // MUDANÇA: Enviar como application/x-www-form-urlencoded
         const formDataVerify = new URLSearchParams();
         formDataVerify.append("userId", verificationData.userId);
         formDataVerify.append("code", code);
@@ -90,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const response = await fetch("http://localhost/ensaiei-main/api/users/verifyemail", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/x-www-form-urlencoded"  // CORRIGIDO
                 },
                 body: formDataVerify.toString()
             });
@@ -141,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const response = await fetch("http://localhost/ensaiei-main/api/users/resendcode", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/x-www-form-urlencoded"  // CORRIGIDO
                 },
                 body: formDataResend.toString()
             });
@@ -182,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Cancelar registro
+    // CANCELAR REGISTRO - CORRIGIDO
     cancelBtn.addEventListener("click", async function() {
         const confirmed = confirm(
             "Tem certeza que deseja cancelar seu registro?\n\n" +
@@ -201,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const response = await fetch("http://localhost/ensaiei-main/api/users/cancelregistration", {
                 method: "DELETE",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/x-www-form-urlencoded"  // CORRIGIDO
                 },
                 body: formDataDelete.toString()
             });

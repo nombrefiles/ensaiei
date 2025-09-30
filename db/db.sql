@@ -12,9 +12,9 @@ CREATE TABLE `users` (
                          `bio` varchar(300) NOT NULL,
                          `role` ENUM('ADMIN', 'STANDARD') NOT NULL,
                          `deleted` bool DEFAULT FALSE,
-                         `emailVerified` bool DEFAULT FALSE,
-                         `verificationCode` varchar(255) DEFAULT NULL,
-                         `verificationCodeExpires` datetime DEFAULT NULL,
+                         `email_verified` bool DEFAULT FALSE,
+                         `verification_code` varchar(6) DEFAULT NULL,
+                         `verification_code_expires` datetime DEFAULT NULL,
                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 

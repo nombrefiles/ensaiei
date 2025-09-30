@@ -35,7 +35,7 @@ $route->put("/update", "Users:updateUser"); // funciona
 
 $route->delete("/delete", "Users:deleteUser"); // funciona
 
-$route->post("/photo", "Users:updatePhoto"); // funciona
+$route->post("/photo", "Users:updatePhoto"); // funciona???
 
 $route->get("/perfil", "Users:getLoggedUser"); // funciona
 
