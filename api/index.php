@@ -41,11 +41,11 @@ $route->get("/perfil", "Users:getLoggedUser"); // funciona
 
 $route->put("/password", "Users:changePassword"); // funciona
 
-$route->post("/verifyemail", "Users:verifyEmail"); // nao testei
+$route->post("/verifyemail", "Users:verifyEmail"); // funciona
 
-$route->post("/resendcode", "Users:resendVerificationCode"); // nao testei
+$route->post("/resendcode", "Users:resendVerificationCode"); // funciona
 
-$route->delete("/cancelregistration", "Users:cancelRegistration"); // nao testei
+$route->delete("/cancelregistration", "Users:cancelRegistration"); // funciona
 
 
 /* ATTRACTIONS */

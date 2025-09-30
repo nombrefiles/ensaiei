@@ -294,7 +294,7 @@ class Users extends Api
             return;
         }
 
-        $imageUrl = CONF_URL_BASE . ltrim(IMAGE_DIR, '/') . '/' . $user->getPhoto();
+        $imageUrl = CONF_URL_BASE  . '/' . $user->getPhoto();
 
         $this->call(200, "success", "Foto atualizada com sucesso", "success")
             ->back([
@@ -510,7 +510,7 @@ class Users extends Api
             "name" => $user->getName(),
             "username" => $user->getUsername(),
             "email" => $user->getEmail(),
-            "photo" => "http://localhost/ensaiei-main" . IMAGE_DIR . $user->getPhoto() ?? "../assets/images/default-profile.png",
+            "photo" => "http://localhost/ensaiei-main" . $user->getPhoto() ?? "../assets/images/default-profile.png",
             "bio" => $user->getBio() ?? "Eu amo teatro!"
         ];
 
