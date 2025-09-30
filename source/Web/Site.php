@@ -34,6 +34,11 @@ class Site extends Controller
         echo $this->view->render("register", []);
     }
 
+    public function email(): void
+    {
+        echo $this->view->render("email", []);
+    }
+
     public function error(array $data): void
     {
         echo "ERRO {$data["errcode"]}...";

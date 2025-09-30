@@ -14,15 +14,15 @@ class Emailer
         $this->mailer = new PHPMailer(true);
 
         $this->mailer->isSMTP();
-        $this->mailer->Host = 'smtp.gmail.com'; // Ou seu servidor SMTP
+        $this->mailer->Host = 'smtp.gmail.com';
         $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = 'seu-email@gmail.com'; // Seu email
-        $this->mailer->Password = 'sua-senha-app'; // Senha de app do Gmail
+        $this->mailer->Username = 'equipeensaiei@gmail.com';
+        $this->mailer->Password = 'oufw tmih rjbw qlra';
         $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $this->mailer->Port = 587;
         $this->mailer->CharSet = 'UTF-8';
 
-        $this->mailer->setFrom('seu-email@gmail.com', 'Ensaiei');
+        $this->mailer->setFrom('equipeensaiei@gmail.com', 'Equipe Ensaiei 🎭');
     }
 
     public function sendVerificationEmail(string $toEmail, string $toName, string $code): bool
@@ -124,7 +124,7 @@ class Emailer
         <body>
             <div class='container'>
                 <div class='header'>
-                    <h1>🎭 Ensaiei</h1>
+                    <h1>Ensaiei</h1>
                 </div>
                 <div class='content'>
                     <h2>Olá, {$name}!</h2>

@@ -39,7 +39,13 @@ $route->post("/photo", "Users:updatePhoto"); // funciona
 
 $route->get("/perfil", "Users:getLoggedUser"); // funciona
 
-$route->put("/password", "Users:changePassword"); // nao funciona
+$route->put("/password", "Users:changePassword"); // funciona
+
+$route->post("/verifyemail", "Users:verifyEmail"); // nao testei
+
+$route->post("/resendcode", "Users:resendVerificationCode"); // nao testei
+
+$route->delete("/cancelregistration", "Users:cancelRegistration"); // nao testei
 
 
 /* ATTRACTIONS */
@@ -58,8 +64,6 @@ $route->group("/event");
 
 $route->get("/", "Events:listEvents"); // funciona
 $route->get("/{id}", "Events:listEventById"); // funciona
-
-//$route->get("/{search}", "Plays:listPlayByName"); // FAZER
 
 $route->post("/add", "Events:createEvent"); // funciona
 

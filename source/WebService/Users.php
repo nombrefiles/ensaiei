@@ -64,7 +64,6 @@ class Users extends Api
             return;
         }
 
-        // Enviar email de verificação
         $emailer = new Emailer();
         $emailSent = $emailer->sendVerificationEmail(
             $user->getEmail(),
