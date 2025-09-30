@@ -35,7 +35,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
                 "Clique em OK para ir para a página de verificação e inserir o código que enviamos para seu email."
             );
 
-            if (goToVerification)
+            if (goToVerification) {
                 const verificationData = {
                     userId: data.data.userId,
                     email: user.includes('@') ? user : '', // Se for email, usar, senão deixar vazio
