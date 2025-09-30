@@ -28,6 +28,7 @@
     "firebase/php-jwt": "v6.11.1",
     "league/plates": "v3.6.0",
     "ext-pdo": "*",
-    "sorfabiosantos/uploader": "1.0.8"
+    "sorfabiosantos/uploader": "1.0.8",
+    "phpmailer/phpmailer": "^6.11.1"
   }
 }
