@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Recuperar dados do localStorage
     const verificationData = JSON.parse(localStorage.getItem("verificationData"));
 
     if (!verificationData || !verificationData.userId || !verificationData.email) {
@@ -58,7 +57,6 @@ document.addEventListener("DOMContentLoaded", function() {
         successMessage.style.display = "none";
     }
 
-    // Função para mostrar sucesso
     function showSuccess(message) {
         successMessage.textContent = message;
         successMessage.style.display = "block";
@@ -81,19 +79,20 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
+        const formDataVerify = new URLSearchParams();
+        formDataVerify.append("userId", verificationData.userId);
+        formDataVerify.append("code", code);
+
         verifyBtn.disabled = true;
         loading.style.display = "block";
 
         try {
-            const response = await fetch("http://localhost/ensaiei-main/api/users/verify-email", {
+            const response = await fetch("http://localhost/ensaiei-main/api/users/verifyemail", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    userId: verificationData.userId,
-                    code: code
-                })
+                body: formDataVerify.toString()
             });
 
             const data = await response.json();
@@ -135,15 +134,16 @@ document.addEventListener("DOMContentLoaded", function() {
         resendBtn.disabled = true;
         resendBtn.textContent = "Reenviando...";
 
+        const formDataResend = new URLSearchParams();
+        formDataResend.append("userId", verificationData.userId);
+
         try {
-            const response = await fetch("http://localhost/ensaiei-main/api/users/resend-code", {
+            const response = await fetch("http://localhost/ensaiei-main/api/users/resendcode", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    userId: verificationData.userId
-                })
+                body: formDataResend.toString()
             });
 
             const data = await response.json();
@@ -194,15 +194,16 @@ document.addEventListener("DOMContentLoaded", function() {
         cancelBtn.disabled = true;
         cancelBtn.textContent = "Cancelando...";
 
+        const formDataDelete = new URLSearchParams();
+        formDataDelete.append("userId", verificationData.userId);
+
         try {
-            const response = await fetch("http://localhost/ensaiei-main/api/users/cancel-registration", {
+            const response = await fetch("http://localhost/ensaiei-main/api/users/cancelregistration", {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    userId: verificationData.userId
-                })
+                body: formDataDelete.toString()
             });
 
             const data = await response.json();

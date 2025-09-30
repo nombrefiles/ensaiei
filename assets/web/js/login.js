@@ -29,13 +29,31 @@ document.getElementById("login-form").addEventListener("submit", async function 
             return;
         }
 
+        if (response.status === 403 && data.data?.needsVerification) {
+            const goToVerification = confirm(
+                "Seu email ainda não foi verificado.\n\n" +
+                "Clique em OK para ir para a página de verificação e inserir o código que enviamos para seu email."
+            );
+
+            if (goToVerification)
+                const verificationData = {
+                    userId: data.data.userId,
+                    email: user.includes('@') ? user : '', // Se for email, usar, senão deixar vazio
+                };
+
+                localStorage.setItem("verificationData", JSON.stringify(verificationData));
+                window.location.href = "http://localhost/ensaiei-main/verify-email";
+            }
+            return;
+        }
+
         if (!response.ok) {
             alert(data.message || "Email ou senha inválidos");
             return;
         }
 
+        // Login com sucesso
         localStorage.setItem("token", data.data.token);
-
         window.location.href = "http://localhost/ensaiei-main/app/hi";
 
     } catch (err) {
