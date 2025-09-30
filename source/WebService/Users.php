@@ -9,6 +9,7 @@ use Source\Core\Connect;
 use Source\Models\User;
 use Source\Core\JWTToken;
 use Source\Enums\Role;
+use Source\Utils\Emailer;
 
 class Users extends Api
 {
@@ -33,6 +34,16 @@ class Users extends Api
             return;
         }
 
+        $existingUser = new User();
+        if ($existingUser->findByEmail($data["email"])){
+            $this->call(400, "bad_request", "E-mail já está sendo usado!", "error")->back();
+            return;
+        }
+
+        $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+
         $user = new User(
             null,
             $role,
@@ -42,27 +53,171 @@ class Users extends Api
             $data["photo"] ?? "https://upload.wikimedia.org/wikipedia/commons/0/03/Twitter_default_profile_400x400.png",
             $data["username"] ?? null,
             $data["bio"] ?? "Eu amo teatro!",
-            false
+            true,
+            false,
+            $verificationCode,
+            $expiresAt
         );
-
-        if ($user->findByEmail($data["email"])){
-            $this->call(400, "bad_request", "E-mail já está sendo usado!", "error")->back();
-            return;
-        }
 
         if (!$user->insert()) {
             $this->call(500, "internal_server_error", $user->getErrorMessage(), "error")->back();
             return;
         }
 
+        // Enviar email de verificação
+        $emailer = new Emailer();
+        $emailSent = $emailer->sendVerificationEmail(
+            $user->getEmail(),
+            $user->getName(),
+            $verificationCode
+        );
+
+        if (!$emailer) {
+            $user->delete();
+            $this->call(500, "internal_server_error", "Erro ao enviar email de verificação", "error")->back();
+            return;
+        }
+
         $response = [
+            "userId" => $user->getId(),
             "name" => $user->getName(),
             "email" => $user->getEmail(),
             "username" => $user->getUsername(),
+            "message" => "Verifique seu email para ativar a conta"
         ];
 
-        $this->call(201, "created", "Usuário criado com sucesso", "success")
+        $this->call(201, "created", "Usuário criado! Verifique seu email.", "success")
             ->back($response);
+    }
+
+    public function verifyEmail(array $data): void
+    {
+        if (!isset($data["userId"]) || !isset($data["code"])) {
+            $this->call(400, "bad_request", "Dados inválidos", "error")->back();
+            return;
+        }
+
+        $user = new User();
+        if (!$user->findById($data["userId"])) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        if ($user->getEmailVerified()) {
+            $this->call(400, "bad_request", "Email já verificado", "error")->back();
+            return;
+        }
+
+        $now = new \DateTime();
+        $expires = new \DateTime($user->getVerificationCodeExpires());
+
+        if ($now > $expires) {
+            $this->call(400, "bad_request", "Código expirado. Solicite um novo código.", "error")->back();
+            return;
+        }
+
+        if ($user->getVerificationCode() !== $data["code"]) {
+            $this->call(400, "bad_request", "Código inválido", "error")->back();
+            return;
+        }
+
+        $user->setEmailVerified(true);
+        $user->setDeleted(false);
+        $user->setVerificationCode(null);
+        $user->setVerificationCodeExpires(null);
+
+        if (!$user->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao verificar email", "error")->back();
+            return;
+        }
+
+        $jwt = new JWTToken();
+        $token = $jwt->create([
+            "id" => $user->getId(),
+            "email" => $user->getEmail(),
+            "name" => $user->getName()
+        ]);
+
+        $this->call(200, "success", "Email verificado com sucesso!", "success")
+            ->back([
+                "token" => $token,
+                "user" => [
+                    "id" => $user->getId(),
+                    "name" => $user->getName(),
+                    "email" => $user->getEmail(),
+                    "username" => $user->getUsername()
+                ]
+            ]);
+    }
+
+    public function resendVerificationCode(array $data): void
+    {
+        if (!isset($data["userId"])) {
+            $this->call(400, "bad_request", "ID do usuário não fornecido", "error")->back();
+            return;
+        }
+
+        $user = new User();
+        if (!$user->findById($data["userId"])) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        if ($user->getEmailVerified()) {
+            $this->call(400, "bad_request", "Email já verificado", "error")->back();
+            return;
+        }
+
+        $verificationCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+
+        $user->setVerificationCode($verificationCode);
+        $user->setVerificationCodeExpires($expiresAt);
+
+        if (!$user->updateById()) {
+            $this->call(500, "internal_server_error", "Erro ao gerar novo código", "error")->back();
+            return;
+        }
+
+        $emailer = new Emailer();
+        $emailSent = $emailer->sendVerificationEmail(
+            $user->getEmail(),
+            $user->getName(),
+            $verificationCode
+        );
+
+        if (!$emailSent) {
+            $this->call(500, "internal_server_error", "Erro ao enviar email", "error")->back();
+            return;
+        }
+
+        $this->call(200, "success", "Novo código enviado para seu email", "success")->back();
+    }
+
+    public function cancelRegistration(array $data): void
+    {
+        if (!isset($data["userId"])) {
+            $this->call(400, "bad_request", "ID do usuário não fornecido", "error")->back();
+            return;
+        }
+
+        $user = new User();
+        if (!$user->findById($data["userId"])) {
+            $this->call(404, "not_found", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        if ($user->getEmailVerified()) {
+            $this->call(400, "bad_request", "Não é possível cancelar uma conta verificada", "error")->back();
+            return;
+        }
+
+        if (!$user->delete()) {
+            $this->call(500, "internal_server_error", "Erro ao cancelar registro", "error")->back();
+            return;
+        }
+
+        $this->call(200, "success", "Registro cancelado com sucesso", "success")->back();
     }
 
     public function listUserByUsername(array $data): void
@@ -109,7 +264,6 @@ class Users extends Api
         include $profilePath;
     }
 
-
     public function updatePhoto(): void
     {
         $this->auth();
@@ -147,9 +301,7 @@ class Users extends Api
             ->back([
                 "photo" => $imageUrl
             ]);
-
     }
-
 
     public function updateUser(array $data = []): void
     {
@@ -196,7 +348,7 @@ class Users extends Api
                 $this->call(400, "bad_request", "Biografia não pode ser vazia", "error")->back();
                 return;
             }
-            $user->setName($data["name"]);
+            $user->setBio($data["bio"]);
             $updateCount++;
         }
 
@@ -232,15 +384,6 @@ class Users extends Api
             $updateCount++;
         }
 
-        if (isset($data["bio"])) {
-            if (empty($data["bio"])) {
-                $this->call(400, "bad_request", "Biografia não pode estar em branco!", "error")->back();
-                return;
-            }
-            $user->setBio($data["bio"]);
-            $updateCount++;
-        }
-
         if ($updateCount === 0) {
             $this->call(400, "bad_request", "Nenhum campo válido para atualização", "error")->back();
             return;
@@ -265,7 +408,6 @@ class Users extends Api
         $this->call(200, "success", "Usuário atualizado com sucesso", "success")->back($response);
     }
 
-
     public function login(array $data = []): void
     {
         if (empty($data)) {
@@ -288,6 +430,13 @@ class Users extends Api
 
         if (!$found) {
             $this->call(401, "unauthorized", "Usuário não encontrado", "error")->back();
+            return;
+        }
+
+        // Verificar se o email foi verificado
+        if (!$user->getEmailVerified()) {
+            $this->call(403, "forbidden", "Email não verificado. Verifique sua caixa de entrada.", "error")
+                ->back(["userId" => $user->getId(), "needsVerification" => true]);
             return;
         }
 
