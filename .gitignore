@@ -3,3 +3,4 @@
 composer.lock
 /storage
 /out
+/source/Utils/Emailer.php
