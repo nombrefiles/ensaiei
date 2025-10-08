@@ -31,7 +31,7 @@ $route->get("/{username}", "Users:listUserByUsername"); //funciona
 
 $route->post("/add", "Users:createUser"); // funciona
 
-$route->put("/update", "Users:updateUser"); // funciona
+$route->get("/getemail", "Users:checkEmail"); // funciona
 
 $route->delete("/delete", "Users:deleteUser"); // funciona
 

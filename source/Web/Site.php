@@ -43,4 +43,9 @@ class Site extends Controller
     {
         echo "ERRO {$data["errcode"]}...";
     }
+
+    public function pickEmail(): void
+    {
+        echo $this->view->render("pickEmail", []);
+    }
 }

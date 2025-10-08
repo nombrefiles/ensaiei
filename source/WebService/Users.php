@@ -551,4 +551,18 @@ class Users extends Api
 
         $this->call(200, "success", "Senha alterada com sucesso", "success")->back();
     }
+
+    public function checkEmail(): void
+    {
+        $user = new User();
+        $found = $user->findByEmail($this->headers["email"]);
+        if (!$found) {
+            $this->call(404, "not_found", "E-mail não existe", 'error')->back();
+            return;
+        }
+
+        $this->call(200, "success", "E-mail existe!", 'success')->back([
+            "email" => $this->headers["email"]
+        ]);
+    }
 }

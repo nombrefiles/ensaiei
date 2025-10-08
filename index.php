@@ -16,6 +16,8 @@ $route->get("/faqs","Site:faqs");
 $route->get("/login","Site:login");
 $route->get("/cadastro","Site:register");
 $route->get("/email","Site:email");
+$route->get("/pickemail","Site:pickEmail");
+
 
 // Rotas amigáveis da área restrita
 $route->group("/app");
