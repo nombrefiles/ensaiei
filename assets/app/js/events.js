@@ -191,6 +191,7 @@ async function openEditModal(eventId) {
         });
 
         const data = await response.json();
+        console.log('Dados do evento para edição:', data);
 
         if (!response.ok) {
             throw new Error(data.message || 'Erro ao carregar evento');
@@ -203,17 +204,41 @@ async function openEditModal(eventId) {
         document.getElementById('eventDescription').value = event.description || '';
         document.getElementById('eventLocation').value = event.location || '';
 
-        // Formatar datas
+        // Formatar datas - pode vir em diferentes formatos
         if (event.startDate && event.startTime) {
+            // Formato DD/MM/YYYY
             const [day, month, year] = event.startDate.split('/');
-            document.getElementById('eventStartDate').value = `${year}-${month}-${day}`;
+            document.getElementById('eventStartDate').value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
             document.getElementById('eventStartTime').value = event.startTime;
+        } else if (event.startDatetime) {
+            // Formato ISO ou timestamp
+            const startDate = new Date(event.startDatetime);
+            const startYear = startDate.getFullYear();
+            const startMonth = String(startDate.getMonth() + 1).padStart(2, '0');
+            const startDay = String(startDate.getDate()).padStart(2, '0');
+            const startHour = String(startDate.getHours()).padStart(2, '0');
+            const startMinute = String(startDate.getMinutes()).padStart(2, '0');
+
+            document.getElementById('eventStartDate').value = `${startYear}-${startMonth}-${startDay}`;
+            document.getElementById('eventStartTime').value = `${startHour}:${startMinute}`;
         }
 
         if (event.endDate && event.endTime) {
+            // Formato DD/MM/YYYY
             const [day, month, year] = event.endDate.split('/');
-            document.getElementById('eventEndDate').value = `${year}-${month}-${day}`;
+            document.getElementById('eventEndDate').value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
             document.getElementById('eventEndTime').value = event.endTime;
+        } else if (event.endDatetime) {
+            // Formato ISO ou timestamp
+            const endDate = new Date(event.endDatetime);
+            const endYear = endDate.getFullYear();
+            const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+            const endDay = String(endDate.getDate()).padStart(2, '0');
+            const endHour = String(endDate.getHours()).padStart(2, '0');
+            const endMinute = String(endDate.getMinutes()).padStart(2, '0');
+
+            document.getElementById('eventEndDate').value = `${endYear}-${endMonth}-${endDay}`;
+            document.getElementById('eventEndTime').value = `${endHour}:${endMinute}`;
         }
 
         document.getElementById('modalTitle').textContent = 'Editar Evento';
@@ -257,17 +282,25 @@ async function handleSubmit(e) {
     const [startYear, startMonth, startDay] = startDate.split('-');
     const [endYear, endMonth, endDay] = endDate.split('-');
 
-    const eventData = {
-        title: title,
-        description: description,
-        location: location,
-        startDate: `${startDay}/${startMonth}/${startYear}`,
-        startTime: startTime,
-        endDate: `${endDay}/${endMonth}/${endYear}`,
-        endTime: endTime
-    };
+    // Criar URLSearchParams para enviar como form data
+    const formData = new URLSearchParams();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('location', location);
+    formData.append('startDate', `${startDay}/${startMonth}/${startYear}`);
+    formData.append('startTime', startTime);
+    formData.append('endDate', `${endDay}/${endMonth}/${endYear}`);
+    formData.append('endTime', endTime);
 
-    console.log('Enviando dados:', eventData);
+    console.log('Enviando dados:', {
+        title,
+        description,
+        location,
+        startDate: `${startDay}/${startMonth}/${startYear}`,
+        startTime,
+        endDate: `${endDay}/${endMonth}/${endYear}`,
+        endTime
+    });
 
     try {
         const url = currentEventId
@@ -279,10 +312,10 @@ async function handleSubmit(e) {
         const response = await fetch(url, {
             method: method,
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'token': token
             },
-            body: JSON.stringify(eventData)
+            body: formData.toString()
         });
 
         const data = await response.json();
