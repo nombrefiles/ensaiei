@@ -33,6 +33,14 @@ CREATE TABLE `events` (
                           FOREIGN KEY (`organizerId`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+CREATE TABLE `photos` (
+                          `id` int NOT NULL AUTO_INCREMENT,
+                          `url` varchar(255) NOT NULL,
+                          `eventId` int,
+                          PRIMARY KEY (`id`),
+                          FOREIGN KEY (`eventId`) REFERENCES `events` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
 CREATE TABLE `attractions` (
                          `id` int NOT NULL AUTO_INCREMENT,
                          `name` varchar(255) NOT NULL,
