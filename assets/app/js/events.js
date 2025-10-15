@@ -76,13 +76,26 @@ async function loadEvents() {
         });
 
         const data = await response.json();
+        console.log('Resposta da API:', data);
 
         if (!response.ok) {
             throw new Error(data.message || 'Erro ao carregar eventos');
         }
 
-        currentEvents = data.data || data;
-        renderEvents(currentEvents);
+        // A API pode retornar data.data ou diretamente um array
+        let events = [];
+        if (Array.isArray(data)) {
+            events = data;
+        } else if (Array.isArray(data.data)) {
+            events = data.data;
+        } else if (data.data && typeof data.data === 'object') {
+            // Se for um objeto único, transforma em array
+            events = [data.data];
+        }
+
+        console.log('Eventos processados:', events);
+        currentEvents = events;
+        renderEvents(events);
 
     } catch (error) {
         console.error('Erro ao carregar eventos:', error);
@@ -101,7 +114,9 @@ async function loadEvents() {
 function renderEvents(events) {
     const container = document.getElementById('eventsGrid');
 
-    if (!events || events.length === 0) {
+    console.log('Renderizando eventos:', events);
+
+    if (!events || !Array.isArray(events) || events.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">🎭</div>
@@ -113,32 +128,44 @@ function renderEvents(events) {
         return;
     }
 
-    container.innerHTML = events.map(event => `
-        <div class="event-card">
-            <div class="event-card-image">
-                🎭
-            </div>
-            <div class="event-card-body">
-                <h3 class="event-card-title">${event.title || 'Sem título'}</h3>
-                <div class="event-card-info">
-                    <div class="event-info-item">
-                        <strong>📅</strong>
-                        <span>${formatDate(event.startDatetime)}</span>
+    container.innerHTML = events.map(event => {
+        console.log('Processando evento:', event);
+
+        // Formatar data de forma segura
+        let dateDisplay = 'Data não informada';
+        if (event.startDatetime) {
+            dateDisplay = formatDate(event.startDatetime);
+        } else if (event.startDate) {
+            dateDisplay = event.startDate;
+        }
+
+        return `
+            <div class="event-card">
+                <div class="event-card-image">
+                    🎭
+                </div>
+                <div class="event-card-body">
+                    <h3 class="event-card-title">${event.title || 'Sem título'}</h3>
+                    <div class="event-card-info">
+                        <div class="event-info-item">
+                            <strong>📅</strong>
+                            <span>${dateDisplay}</span>
+                        </div>
+                        <div class="event-info-item">
+                            <strong>📍</strong>
+                            <span>${event.location || 'Local não informado'}</span>
+                        </div>
                     </div>
-                    <div class="event-info-item">
-                        <strong>📍</strong>
-                        <span>${event.location || 'Local não informado'}</span>
+                    <p class="event-card-description">${event.description || 'Sem descrição'}</p>
+                    <div class="event-card-actions">
+                        <button class="btn-view" onclick="viewEvent(${event.id})">Ver detalhes</button>
+                        <button class="btn-edit" onclick="openEditModal(${event.id})">Editar</button>
+                        <button class="btn-delete" onclick="deleteEvent(${event.id})">Excluir</button>
                     </div>
                 </div>
-                <p class="event-card-description">${event.description || 'Sem descrição'}</p>
-                <div class="event-card-actions">
-                    <button class="btn-view" onclick="viewEvent(${event.id})">Ver detalhes</button>
-                    <button class="btn-edit" onclick="openEditModal(${event.id})">Editar</button>
-                    <button class="btn-delete" onclick="deleteEvent(${event.id})">Excluir</button>
-                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Abrir modal de criação
@@ -210,24 +237,37 @@ async function handleSubmit(e) {
     e.preventDefault();
 
     const token = localStorage.getItem('token');
-    const formData = new FormData(e.target);
+
+    // Pegar valores diretamente dos inputs
+    const title = document.getElementById('eventTitle').value.trim();
+    const description = document.getElementById('eventDescription').value.trim();
+    const location = document.getElementById('eventLocation').value.trim();
+    const startDate = document.getElementById('eventStartDate').value;
+    const startTime = document.getElementById('eventStartTime').value;
+    const endDate = document.getElementById('eventEndDate').value;
+    const endTime = document.getElementById('eventEndTime').value;
+
+    // Validação manual
+    if (!title || !description || !location || !startDate || !startTime || !endDate || !endTime) {
+        alert('Por favor, preencha todos os campos obrigatórios');
+        return;
+    }
 
     // Converter datas do formato YYYY-MM-DD para DD/MM/YYYY
-    const startDate = formData.get('startDate');
-    const endDate = formData.get('endDate');
-
     const [startYear, startMonth, startDay] = startDate.split('-');
     const [endYear, endMonth, endDay] = endDate.split('-');
 
     const eventData = {
-        title: formData.get('title'),
-        description: formData.get('description'),
-        location: formData.get('location'),
+        title: title,
+        description: description,
+        location: location,
         startDate: `${startDay}/${startMonth}/${startYear}`,
-        startTime: formData.get('startTime'),
+        startTime: startTime,
         endDate: `${endDay}/${endMonth}/${endYear}`,
-        endTime: formData.get('endTime')
+        endTime: endTime
     };
+
+    console.log('Enviando dados:', eventData);
 
     try {
         const url = currentEventId
@@ -246,6 +286,7 @@ async function handleSubmit(e) {
         });
 
         const data = await response.json();
+        console.log('Resposta da API:', data);
 
         if (!response.ok) {
             throw new Error(data.message || 'Erro ao salvar evento');
