@@ -71,6 +71,14 @@ $route->put("/update/{id}", "Events:updateEvent"); // funciona
 
 $route->delete("/delete/{id}", "Events:deleteEvent");  // funciona
 
+$route->get("/event/{eventId}/photos", "EventPhotos:listPhotosByEvent");
+
+$route->post("/event/{eventId}/photos", "EventPhotos:uploadPhotos");
+
+$route->put("/event/photos/{photoId}/main", "EventPhotos:setMainPhoto");
+
+$route->delete("/event/photos/{photoId}", "EventPhotos:deletePhoto");
+
 $route->group("null");
 
 

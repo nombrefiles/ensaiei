@@ -54,9 +54,6 @@ class EventPhoto extends Model
         $this->isMain = $isMain;
     }
 
-    /**
-     * Buscar todas as fotos de um evento
-     */
     public function findByEventId(int $eventId): array {
         try {
             $stmt = Connect::getInstance()->prepare("
@@ -96,7 +93,6 @@ class EventPhoto extends Model
         try {
             Connect::getInstance()->beginTransaction();
 
-            // Remove isMain de todas as fotos do evento
             $stmt = Connect::getInstance()->prepare("
                 UPDATE {$this->table} 
                 SET isMain = 0 
@@ -123,23 +119,18 @@ class EventPhoto extends Model
         }
     }
 
-    /**
-     * Deletar foto (e o arquivo físico)
-     */
     public function deletePhoto(): bool {
         try {
             // Buscar caminho da foto antes de deletar
             if ($this->findById($this->id)) {
                 $photoPath = __DIR__ . '/../../' . $this->photo;
 
-                // Deletar do banco
                 $stmt = Connect::getInstance()->prepare("
                     DELETE FROM {$this->table} WHERE id = :id
                 ");
                 $stmt->bindValue(":id", $this->id, PDO::PARAM_INT);
                 $stmt->execute();
 
-                // Deletar arquivo físico se existir
                 if (file_exists($photoPath)) {
                     unlink($photoPath);
                 }
@@ -153,9 +144,6 @@ class EventPhoto extends Model
         }
     }
 
-    /**
-     * Contar fotos de um evento
-     */
     public function countByEventId(int $eventId): int {
         try {
             $stmt = Connect::getInstance()->prepare("
