@@ -9,7 +9,6 @@ ob_start();
 $route = new Router("http://localhost/ensaiei-main", ":");
 
 $route->namespace("Source\Web");
-// Rotas amigáveis da área pública
 $route->get("/", "Site:home");
 $route->get("/sobre", "Site:about");
 $route->get("/faqs","Site:faqs");
@@ -17,7 +16,7 @@ $route->get("/login","Site:login");
 $route->get("/cadastro","Site:register");
 $route->get("/email","Site:email");
 
-// Rotas amigáveis da área restrita
+
 $route->group("/app");
 $route->get("/perfil", "App:profile");
 $route->get("/eventos","App:events");

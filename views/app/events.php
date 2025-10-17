@@ -17,7 +17,6 @@ $this->layout("theme", []);
         </div>
     </div>
 
-    <!-- Modal de Criar/Editar Evento -->
     <div class="modal" id="eventModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -103,7 +102,6 @@ $this->layout("theme", []);
                         </div>
                     </div>
 
-                    <!-- Área de Upload de Fotos -->
                     <div class="photo-gallery-section">
                         <label>Fotos do Evento</label>
                         <div class="photo-upload-area" id="photoUploadArea">
@@ -128,56 +126,10 @@ $this->layout("theme", []);
                     <button type="button" class="btn-secondary" id="btnCancel">Cancelar</button>
                     <button type="submit" class="btn-primary">Salvar Evento</button>
                 </div>
-            </form> for="eventStartDate">Data de Início *</label>
-            <input
-                    type="date"
-                    id="eventStartDate"
-                    name="startDate"
-                    required
-            >
-        </div>
-
-        <div class="form-group">
-            <label for="eventStartTime">Horário de Início *</label>
-            <input
-                    type="time"
-                    id="eventStartTime"
-                    name="startTime"
-                    required
-            >
+            </form>
         </div>
     </div>
 
-    <div class="form-row">
-        <div class="form-group">
-            <label for="eventEndDate">Data de Término *</label>
-            <input
-                    type="date"
-                    id="eventEndDate"
-                    name="endDate"
-                    required
-            >
-        </div>
-
-        <div class="form-group">
-            <label for="eventEndTime">Horário de Término *</label>
-            <input
-                    type="time"
-                    id="eventEndTime"
-                    name="endTime"
-                    required
-            >
-        </div>
-    </div>
-    </div>
-
-    <div class="modal-footer">
-        <button type="button" class="btn-secondary" id="btnCancel">Cancelar</button>
-        <button type="submit" class="btn-primary">Salvar Evento</button>
-    </div>
-    </form>
-    </div>
-    </div>
 
 <?php $this->start("specific-css"); ?>
     <link rel="stylesheet" href="<?= url("assets/app/css/events.css"); ?>">
