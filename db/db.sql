@@ -36,10 +36,18 @@ CREATE TABLE `events` (
 CREATE TABLE `photos` (
                           `id` int NOT NULL AUTO_INCREMENT,
                           `url` varchar(255) NOT NULL,
-                          `eventId` int,
                           PRIMARY KEY (`id`),
-                          FOREIGN KEY (`eventId`) REFERENCES `events` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE IF NOT EXISTS event_photos (
+                                            id INT AUTO_INCREMENT PRIMARY KEY,
+                                            eventId INT NOT NULL,
+                                            photo VARCHAR(255) NOT NULL,
+                                            isMain BOOLEAN DEFAULT FALSE,
+                                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                            FOREIGN KEY (eventId) REFERENCES events(id) ON DELETE CASCADE,
+                                            INDEX idx_event_id (eventId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `attractions` (
                          `id` int NOT NULL AUTO_INCREMENT,
