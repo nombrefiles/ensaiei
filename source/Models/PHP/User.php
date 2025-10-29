@@ -1,10 +1,11 @@
 <?php
 
-namespace Source\Models;
+namespace Source\Models\PHP;
 
 use PDO;
 use Source\Core\Connect;
 use Source\Enums\Role;
+use Source\Models\PDOException;
 
 class User
 {

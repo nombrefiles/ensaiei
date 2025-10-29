@@ -3,9 +3,9 @@
 namespace Source\WebService;
 
 use Source\Enums\Type;
-use Source\Models\Attraction;
-use Source\Models\Event;
-use Source\Models\User;
+use Source\Models\PHP\Attraction;
+use Source\Models\PHP\Event;
+use Source\Models\PHP\User;
 use ValueError;
 
 class Attractions extends Api

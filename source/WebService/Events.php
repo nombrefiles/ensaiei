@@ -2,9 +2,7 @@
 
 namespace Source\WebService;
 
-use Source\Models\Attraction;
-use Source\Models\Event;
-use Source\Models\User;
+use Source\Models\PHP\Event;
 
 class Events extends Api
 {

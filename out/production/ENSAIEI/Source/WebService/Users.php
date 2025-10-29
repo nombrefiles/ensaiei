@@ -2,11 +2,8 @@
 
 namespace Source\WebService;
 
-use Exception;
-use PDO;
-use Source\Core\Connect;
-use Source\Models\User;
 use Source\Core\JWTToken;
+use Source\Models\PHP\User;
 
 class Users extends Api
 {

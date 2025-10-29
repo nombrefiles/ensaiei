@@ -2,13 +2,10 @@
 
 namespace Source\WebService;
 
-use Exception;
-use PDO;
 use SorFabioSantos\Uploader\Uploader;
-use Source\Core\Connect;
-use Source\Models\User;
 use Source\Core\JWTToken;
 use Source\Enums\Role;
+use Source\Models\PHP\User;
 use Source\Utils\Emailer;
 
 class Users extends Api

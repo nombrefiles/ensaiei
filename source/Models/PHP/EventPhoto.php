@@ -1,6 +1,6 @@
 <?php
 
-namespace Source\Models;
+namespace Source\Models\PHP;
 
 use PDO;
 use Source\Core\Connect;

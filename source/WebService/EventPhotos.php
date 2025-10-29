@@ -2,8 +2,8 @@
 
 namespace Source\WebService;
 
-use Source\Models\Event;
-use Source\Models\EventPhoto;
+use Source\Models\PHP\Event;
+use Source\Models\PHP\EventPhoto;
 
 class EventPhotos extends Api
 {
