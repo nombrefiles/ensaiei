@@ -58,6 +58,7 @@ $this->layout("theme", []);
                         >
                     </div>
 
+                    <!-- DATA E HORA -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="eventStartDate">Data de Início *</label>
@@ -104,11 +105,13 @@ $this->layout("theme", []);
 
                     <div class="photo-gallery-section">
                         <label>Fotos do Evento</label>
+
                         <div class="photo-upload-area" id="photoUploadArea">
                             <div class="upload-icon">📸</div>
-                            <div class="upload-text">Clique ou arraste fotos para fazer upload</div>
-                            <div class="upload-hint">Você pode adicionar múltiplas fotos</div>
+                            <div class="upload-text">Clique ou arraste fotos aqui</div>
+                            <div class="upload-hint">Você pode adicionar múltiplas fotos (JPG, PNG, GIF)</div>
                         </div>
+
                         <input
                                 type="file"
                                 id="photoInput"
@@ -116,8 +119,11 @@ $this->layout("theme", []);
                                 multiple
                                 style="display: none;"
                         >
+
                         <div class="photo-preview-grid" id="photoPreviewGrid">
-                            <p style="text-align: center; color: #999; grid-column: 1/-1;">Nenhuma foto adicionada</p>
+                            <p style="text-align: center; color: #999; grid-column: 1/-1;">
+                                Nenhuma foto adicionada
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -129,7 +135,6 @@ $this->layout("theme", []);
             </form>
         </div>
     </div>
-
 
 <?php $this->start("specific-css"); ?>
     <link rel="stylesheet" href="<?= url("assets/app/css/events.css"); ?>">

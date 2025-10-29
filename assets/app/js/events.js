@@ -1,30 +1,30 @@
-// Formatar data
-function formatDate(dateString) {
-    if (!dateString) return 'Data não informada';
+const API_BASE = "http://localhost/ensaiei-main/api";
+let currentEvents = [];
+let currentEventId = null;
+let currentPhotos = [];
+let newPhotosToUpload = [];
 
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    } catch {
-        return dateString;
+document.addEventListener('DOMContentLoaded', function() {
+    checkAuth();
+    loadEvents();
+    setupEventListeners();
+});
+
+
+function checkAuth() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('Você precisa estar logado para acessar esta página.');
+        window.location.href = '/ensaiei-main/login';
+        return;
     }
 }
 
-// ========== GERENCIAMENTO DE FOTOS ==========
-
-// Selecionar fotos
 function handlePhotoSelect(e) {
     const files = Array.from(e.target.files);
     handlePhotoFiles(files);
 }
 
-// Processar arquivos de fotos
 function handlePhotoFiles(files) {
     files.forEach(file => {
         if (file.type.startsWith('image/')) {
@@ -42,12 +42,13 @@ function handlePhotoFiles(files) {
     });
 }
 
-// Renderizar preview das fotos
 function renderPhotoPreview() {
     const container = document.getElementById('photoPreviewGrid');
     if (!container) return;
 
-    const allPhotos = [...currentPhotos, ...newPhotosToUpload];
+    const currentPhotosArray = Array.isArray(currentPhotos) ? currentPhotos : [];
+    const newPhotosArray = Array.isArray(newPhotosToUpload) ? newPhotosToUpload : [];
+    const allPhotos = [...currentPhotosArray, ...newPhotosArray];
 
     if (allPhotos.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #999; grid-column: 1/-1;">Nenhuma foto adicionada</p>';
@@ -65,7 +66,7 @@ function renderPhotoPreview() {
                 ${isMain ? '<span class="main-badge">Principal</span>' : ''}
                 <div class="photo-actions">
                     ${!isMain && !photo.isNew ? `<button class="photo-action-btn" onclick="setMainPhoto(${photoId})">⭐ Principal</button>` : ''}
-                    <button class="photo-action-btn delete" onclick="${photo.isNew ? `removeNewPhoto(${index - currentPhotos.length})` : `deletePhoto(${photoId})`}">🗑️ Remover</button>
+                    <button class="photo-action-btn delete" onclick="${photo.isNew ? `removeNewPhoto(${index - currentPhotosArray.length})` : `deletePhoto(${photoId})`}">🗑️ Remover</button>
                 </div>
             </div>
         `;
@@ -88,11 +89,19 @@ async function loadEventPhotos(eventId) {
         const data = await response.json();
 
         if (response.ok) {
-            currentPhotos = data.data || data;
+            // Garantir que seja sempre um array
+            currentPhotos = Array.isArray(data) ? data :
+                (data.data && Array.isArray(data.data)) ? data.data : [];
+            renderPhotoPreview();
+        } else {
+            console.error('Erro ao carregar fotos:', data);
+            currentPhotos = [];
             renderPhotoPreview();
         }
     } catch (error) {
         console.error('Erro ao carregar fotos:', error);
+        currentPhotos = [];
+        renderPhotoPreview();
     }
 }
 
@@ -199,27 +208,6 @@ async function uploadNewPhotos(eventId) {
         console.error('Erro ao fazer upload das fotos:', error);
         alert('Erro ao fazer upload das fotos: ' + error.message);
         return false;
-    }
-}const API_BASE = "http://localhost/ensaiei-main/api";
-let currentEvents = [];
-let currentEventId = null;
-let currentPhotos = [];
-let newPhotosToUpload = [];
-
-// Inicialização
-document.addEventListener('DOMContentLoaded', function() {
-    checkAuth();
-    loadEvents();
-    setupEventListeners();
-});
-
-// Verificar autenticação
-function checkAuth() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        alert('Você precisa estar logado para acessar esta página.');
-        window.location.href = '/ensaiei-main/login';
-        return;
     }
 }
 
@@ -344,6 +332,24 @@ async function loadEvents() {
     }
 }
 
+// Formatar data
+function formatDate(dateString) {
+    if (!dateString) return 'Data não informada';
+
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch {
+        return dateString;
+    }
+}
+
 function renderEvents(events) {
     const container = document.getElementById('eventsGrid');
 
@@ -426,7 +432,7 @@ async function loadEventMainPhoto(eventId) {
             const data = await response.json();
             const photos = data.data || data;
 
-            if (photos && photos.length > 0) {
+            if (photos && Array.isArray(photos) && photos.length > 0) {
                 const mainPhoto = photos.find(p => p.isMain) || photos[0];
                 const cardImage = document.querySelector(`#event-card-${eventId} .event-card-image`);
 
@@ -660,23 +666,5 @@ async function deleteEvent(eventId) {
     } catch (error) {
         console.error('Erro ao excluir evento:', error);
         alert('Erro ao excluir evento: ' + error.message);
-    }
-}
-
-// Formatar data
-function formatDate(dateString) {
-    if (!dateString) return 'Data não informada';
-
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    } catch {
-        return dateString;
     }
 }

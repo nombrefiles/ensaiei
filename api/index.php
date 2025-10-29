@@ -16,75 +16,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 use CoffeeCode\Router\Router;
 
-$route = new Router("http://localhost/ensaiei-main/api",":");
+$route = new Router("http://localhost/ensaiei-main/api", ":");
 
 $route->namespace("Source\WebService");
 
 /* USERS */
-
 $route->group("/users");
-
-$route->post("/login", "Users:login"); // funciona
-
-$route->get("/", "Users:listUsers"); // funciona
-$route->get("/{username}", "Users:listUserByUsername"); //funciona
-
-$route->post("/add", "Users:createUser"); // funciona
-
-$route->put("/update", "Users:updateUser"); // funciona
-
-$route->delete("/delete", "Users:deleteUser"); // funciona
-
-$route->post("/photo", "Users:updatePhoto"); // funciona???
-
-$route->get("/perfil", "Users:getLoggedUser"); // funciona
-
-$route->put("/password", "Users:changePassword"); // funciona
-
-$route->post("/verifyemail", "Users:verifyEmail"); // funciona
-
-$route->post("/resendcode", "Users:resendVerificationCode"); // funciona
-
-$route->delete("/cancelregistration", "Users:cancelRegistration"); // funciona
-
+$route->post("/login", "Users:login");
+$route->get("/", "Users:listUsers");
+$route->get("/{username}", "Users:listUserByUsername");
+$route->post("/add", "Users:createUser");
+$route->put("/update", "Users:updateUser");
+$route->delete("/delete", "Users:deleteUser");
+$route->post("/photo", "Users:updatePhoto");
+$route->get("/perfil", "Users:getLoggedUser");
+$route->put("/password", "Users:changePassword");
+$route->post("/verifyemail", "Users:verifyEmail");
+$route->post("/resendcode", "Users:resendVerificationCode");
+$route->delete("/cancelregistration", "Users:cancelRegistration");
+$route->group("null");
 
 /* ATTRACTIONS */
 $route->group("/attraction");
-
-$route->get("/{id}", "Attractions:listAttractionById"); // funciona
-$route->get("/event/{eventId}", "Attractions:listAttractionsByEvent"); // funciona
-$route->get("/event/{eventId}/type/{type}", "Attractions:listAttractionsByEvent"); // falta fazer o type
-$route->post("/{eventId}/add", "Attractions:createAttraction"); // funciona
-$route->put("/update/{id}", "Attractions:updateAttraction"); // ok
-$route->delete("/delete/{id}", "Attractions:deleteAttraction");  // ok
-
+$route->get("/{id}", "Attractions:listAttractionById");
+$route->get("/event/{eventId}", "Attractions:listAttractionsByEvent");
+$route->get("/event/{eventId}/type/{type}", "Attractions:listAttractionsByEvent");
+$route->post("/{eventId}/add", "Attractions:createAttraction");
+$route->put("/update/{id}", "Attractions:updateAttraction");
+$route->delete("/delete/{id}", "Attractions:deleteAttraction");
 $route->group("null");
 
+/* EVENTS */
 $route->group("/event");
+$route->get("/", "Events:listEvents");
+$route->get("/{id}", "Events:listEventById");
+$route->post("/add", "Events:createEvent");
+$route->put("/update/{id}", "Events:updateEvent");
+$route->delete("/delete/{id}", "Events:deleteEvent");
 
-$route->get("/", "Events:listEvents"); // funciona
-$route->get("/{id}", "Events:listEventById"); // funciona
-
-$route->post("/add", "Events:createEvent"); // funciona
-
-$route->put("/update/{id}", "Events:updateEvent"); // funciona
-
-$route->delete("/delete/{id}", "Events:deleteEvent");  // funciona
-
-$route->get("/event/{eventId}/photos", "EventPhotos:listPhotosByEvent");
-
-$route->post("/event/{eventId}/photos", "EventPhotos:uploadPhotos");
-
-$route->put("/event/photos/{photoId}/main", "EventPhotos:setMainPhoto");
-
-$route->delete("/event/photos/{photoId}", "EventPhotos:deletePhoto");
+// Rotas de fotos - DENTRO do grupo /event
+$route->get("/{eventId}/photos", "EventPhotos:listPhotosByEvent");
+$route->post("/{eventId}/photos", "EventPhotos:uploadPhotos");
+$route->put("/photos/{photoId}/main", "EventPhotos:setMainPhoto");
+$route->delete("/photos/{photoId}", "EventPhotos:deletePhoto");
 
 $route->group("null");
-
 
 $route->dispatch();
-
-
 
 if ($route->error()) {
     header('Content-Type: application/json; charset=UTF-8');
@@ -93,9 +71,9 @@ if ($route->error()) {
     echo json_encode([
         "code" => 404,
         "status" => "not_found",
-        "message" => "URL não encontrada"
+        "message" => "URL não encontrada",
+        "requested_route" => $_GET['route'] ?? 'N/A'
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-
 }
 
 ob_end_flush();
