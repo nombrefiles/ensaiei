@@ -204,7 +204,7 @@ export class Attraction {
 
     findById = async function(id) {
         try {
-            const response = await fetch(`/api/attractions/${id}`);
+            const response = await fetch(`/api/attraction/${id}`);
             if (!response.ok) {
                 throw new Error('Erro ao buscar atração');
             }
@@ -219,7 +219,7 @@ export class Attraction {
 
     static findByEventId = async function(eventId) {
         try {
-            const response = await fetch(`/api/events/${eventId}/attractions`);
+            const response = await fetch(`/api/attraction/events/${eventId}/`);
             if (!response.ok) {
                 throw new Error('Erro ao buscar atrações do evento');
             }
@@ -235,13 +235,12 @@ export class Attraction {
         }
     }
 
-    save = async function() {
+    create = async function() {
         try {
-            const url = this.#id ? `/api/attractions/${this.#id}` : '/api/attractions';
-            const method = this.#id ? 'PUT' : 'POST';
+            const url = `/api/attraction/event/${eventId}`;
 
             const response = await fetch(url, {
-                method: method,
+                method: POST,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -263,7 +262,7 @@ export class Attraction {
 
     delete = async function() {
         try {
-            const response = await fetch(`/api/attractions/${this.#id}`, {
+            const response = await fetch(`/api/attraction/${this.#id}`, {
                 method: 'DELETE'
             });
 
