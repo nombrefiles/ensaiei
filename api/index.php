@@ -34,6 +34,8 @@ $route->put("/password", "Users:changePassword");
 $route->post("/verifyemail", "Users:verifyEmail");
 $route->post("/resendcode", "Users:resendVerificationCode");
 $route->delete("/cancelregistration", "Users:cancelRegistration");
+$route-get("/email/{email}", "User:findByEmail");
+$route-get("/id/{id}", "User:findById");
 $route->group("null");
 
 /* ATTRACTIONS */

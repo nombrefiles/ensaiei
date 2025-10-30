@@ -168,7 +168,7 @@ export class User {
 
     findById = async function(id) {
         try {
-            const response = await fetch(`/api/users/${id}`);
+            const response = await fetch(`/api/users/id/${id}`);
             if (!response.ok) {
                 throw new Error('Erro ao buscar usuário');
             }
@@ -183,7 +183,7 @@ export class User {
 
     findByEmail = async function(email) {
         try {
-            const response = await fetch(`/api/users/email/${encodeURIComponent(email)}`);
+            const response = await fetch(`/api/email/${encodeURIComponent(email)}`);
             if (!response.ok) {
                 throw new Error('Erro ao buscar usuário por email');
             }
@@ -198,7 +198,7 @@ export class User {
 
     findByUsername = async function(username) {
         try {
-            const response = await fetch(`/api/users/username/${encodeURIComponent(username)}`);
+            const response = await fetch(`/api/users/${username}`);
             if (!response.ok) {
                 throw new Error('Erro ao buscar usuário por username');
             }
@@ -229,14 +229,14 @@ export class User {
         }
     }
 
-    login = async function(email, password) {
+    login = async function(user, password) {
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch('/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ user, password })
             });
 
             if (!response.ok) {
@@ -258,23 +258,9 @@ export class User {
         }
     }
 
-    static logout = async function() {
-        try {
-            await fetch('/api/auth/logout', {
-                method: 'POST'
-            });
-
-            localStorage.removeItem('authToken');
-            return true;
-        } catch (error) {
-            console.error('Erro no logout:', error);
-            return false;
-        }
-    }
-
     register = async function() {
         try {
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch('/api/users/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -296,38 +282,13 @@ export class User {
         }
     }
 
-    save = async function() {
-        try {
-            const url = this.#id ? `/api/users/${this.#id}` : '/api/users';
-            const method = this.#id ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this.toJSON())
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao salvar usuário');
-            }
-
-            const data = await response.json();
-            if (data.id) this.#id = data.id;
-            return true;
-        } catch (error) {
-            console.error('Erro ao salvar usuário:', error);
-            return false;
-        }
-    }
-
     delete = async function() {
         if (!this.#id) return false;
 
         try {
-            const response = await fetch(`/api/users/${this.#id}`, {
-                method: 'DELETE'
+            const response = await fetch(`/api/users/delete`, {
+                method: 'DELETE',
+                headers: token
             });
 
             if (!response.ok) {
@@ -366,58 +327,12 @@ export class User {
         }
     }
 
-    static requestPasswordReset = async function(email) {
-        try {
-            const response = await fetch('/api/auth/forgot-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email })
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao solicitar recuperação de senha');
-            }
-
-            return true;
-        } catch (error) {
-            console.error('Erro ao solicitar recuperação de senha:', error);
-            return false;
-        }
-    }
-
-    static resetPassword = async function(email, code, newPassword) {
-        try {
-            const response = await fetch('/api/auth/reset-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email,
-                    code,
-                    newPassword
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao redefinir senha');
-            }
-
-            return true;
-        } catch (error) {
-            console.error('Erro ao redefinir senha:', error);
-            return false;
-        }
-    }
-
     uploadPhoto = async function(file) {
         try {
             const formData = new FormData();
             formData.append('photo', file);
 
-            const response = await fetch(`/api/users/${this.#id}/photo`, {
+            const response = await fetch(`/api/users/photo`, {
                 method: 'POST',
                 body: formData
             });
@@ -437,7 +352,7 @@ export class User {
 
     static getCurrentUser = async function() {
         try {
-            const response = await fetch('/api/auth/me');
+            const response = await fetch('/api/users/perfil');
             if (!response.ok) {
                 return null;
             }
