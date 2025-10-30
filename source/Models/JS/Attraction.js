@@ -107,6 +107,7 @@ export class Attraction {
         this.#eventId = eventId;
     }
 
+
     setStartDatetime = function(startDatetime) {
         this.#startDatetime = startDatetime;
     }
