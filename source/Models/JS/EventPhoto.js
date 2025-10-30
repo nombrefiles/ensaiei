@@ -47,22 +47,7 @@ export class EventPhoto {
     setIsMain = function(isMain) {
         this.#isMain = isMain;
     }
-    
-    findById = async function(id) {
-        try {
-            const response = await fetch(`/api/event-photos/${id}`);
-            if (!response.ok) {
-                throw new Error('Erro ao buscar foto');
-            }
-            const data = await response.json();
-            this.fill(data);
-            return true;
-        } catch (error) {
-            console.error('Erro ao buscar foto:', error);
-            return false;
-        }
-    }
-    
+
     static findByEventId = async function(eventId) {
         try {
             const response = await fetch(`/api/events/${eventId}/photos`);
@@ -80,21 +65,7 @@ export class EventPhoto {
             return [];
         }
     }
-    
-    static findMainPhotoByEventId = async function(eventId) {
-        try {
-            const response = await fetch(`/api/events/${eventId}/photos/main`);
-            if (!response.ok) {
-                return null;
-            }
-            const data = await response.json();
-            return data.photo || null;
-        } catch (error) {
-            console.error('Erro ao buscar foto principal:', error);
-            return null;
-        }
-    }
-    
+
     upload = async function(file) {
         try {
             const formData = new FormData();
@@ -102,7 +73,7 @@ export class EventPhoto {
             formData.append('eventId', this.#eventId);
             formData.append('isMain', this.#isMain ? '1' : '0');
 
-            const response = await fetch('/api/event-photos', {
+            const response = await fetch(`/api/events/${eventId}/photos`, {
                 method: 'POST',
                 body: formData
             });
@@ -124,7 +95,7 @@ export class EventPhoto {
         if (!this.#id) return false;
 
         try {
-            const response = await fetch(`/api/event-photos/${this.#id}/set-main`, {
+            const response = await fetch(`/api/events/photos/${this.#id}/main`, {
                 method: 'PUT'
             });
 
@@ -144,7 +115,7 @@ export class EventPhoto {
         if (!this.#id) return false;
 
         try {
-            const response = await fetch(`/api/event-photos/${this.#id}`, {
+            const response = await fetch(`/api/events/photos/${this.#id}`, {
                 method: 'DELETE'
             });
 
@@ -156,20 +127,6 @@ export class EventPhoto {
         } catch (error) {
             console.error('Erro ao deletar foto:', error);
             return false;
-        }
-    }
-
-    static countByEventId = async function(eventId) {
-        try {
-            const response = await fetch(`/api/events/${eventId}/photos/count`);
-            if (!response.ok) {
-                throw new Error('Erro ao contar fotos');
-            }
-            const data = await response.json();
-            return data.total || 0;
-        } catch (error) {
-            console.error('Erro ao contar fotos:', error);
-            return 0;
         }
     }
 

@@ -56,7 +56,7 @@ $route->post("/add", "Events:createEvent");
 $route->put("/update/{id}", "Events:updateEvent");
 $route->delete("/delete/{id}", "Events:deleteEvent");
 
-// Rotas de fotos - DENTRO do grupo /event
+/* EVENTS-PHOTOS */
 $route->get("/{eventId}/photos", "EventPhotos:listPhotosByEvent");
 $route->post("/{eventId}/photos", "EventPhotos:uploadPhotos");
 $route->put("/photos/{photoId}/main", "EventPhotos:setMainPhoto");
