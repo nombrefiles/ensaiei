@@ -146,7 +146,6 @@ class EventPhotos extends Api
 
             error_log("Arquivo movido com sucesso!");
 
-            // Caminho relativo para salvar no banco
             $relativePath = 'storage/images/events/' . $newFileName;
 
             $eventPhoto = new EventPhoto();

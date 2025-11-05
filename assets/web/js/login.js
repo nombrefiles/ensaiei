@@ -38,7 +38,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
             if (goToVerification) {
                 const verificationData = {
                     userId: data.data.userId,
-                    email: user.includes('@') ? user : '', // Se for email, usar, senão deixar vazio
+                    email: user.includes('@') ? user : '', //
                 };
 
                 localStorage.setItem("verificationData", JSON.stringify(verificationData));
@@ -52,7 +52,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
             return;
         }
 
-        // Login com sucesso
+
         localStorage.setItem("token", data.data.token);
         window.location.href = "http://localhost/ensaiei-main/app/hi";
 

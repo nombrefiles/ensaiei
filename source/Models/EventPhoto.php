@@ -101,7 +101,6 @@ class EventPhoto extends Model
             $stmt->bindValue(":eventId", $this->eventId, PDO::PARAM_INT);
             $stmt->execute();
 
-            // Define esta foto como principal
             $stmt = Connect::getInstance()->prepare("
                 UPDATE {$this->table} 
                 SET isMain = 1 
@@ -121,7 +120,6 @@ class EventPhoto extends Model
 
     public function deletePhoto(): bool {
         try {
-            // Buscar caminho da foto antes de deletar
             if ($this->findById($this->id)) {
                 $photoPath = __DIR__ . '/../../' . $this->photo;
 

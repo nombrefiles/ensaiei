@@ -73,7 +73,6 @@ function renderPhotoPreview() {
     }).join('');
 }
 
-// Carregar fotos existentes do evento
 async function loadEventPhotos(eventId) {
     const token = localStorage.getItem('token');
 
@@ -89,7 +88,6 @@ async function loadEventPhotos(eventId) {
         const data = await response.json();
 
         if (response.ok) {
-            // Garantir que seja sempre um array
             currentPhotos = Array.isArray(data) ? data :
                 (data.data && Array.isArray(data.data)) ? data.data : [];
             renderPhotoPreview();
@@ -105,13 +103,11 @@ async function loadEventPhotos(eventId) {
     }
 }
 
-// Remover foto nova (antes de fazer upload)
 function removeNewPhoto(index) {
     newPhotosToUpload.splice(index, 1);
     renderPhotoPreview();
 }
 
-// Definir foto como principal
 async function setMainPhoto(photoId) {
     const token = localStorage.getItem('token');
 
@@ -130,7 +126,6 @@ async function setMainPhoto(photoId) {
             throw new Error(data.message || 'Erro ao definir foto principal');
         }
 
-        // Recarregar fotos
         await loadEventPhotos(currentEventId);
         alert('Foto principal definida com sucesso!');
 
@@ -140,7 +135,6 @@ async function setMainPhoto(photoId) {
     }
 }
 
-// Deletar foto existente
 async function deletePhoto(photoId) {
     if (!confirm('Tem certeza que deseja excluir esta foto?')) {
         return;
@@ -163,7 +157,6 @@ async function deletePhoto(photoId) {
             throw new Error(data.message || 'Erro ao deletar foto');
         }
 
-        // Recarregar fotos
         await loadEventPhotos(currentEventId);
         alert('Foto deletada com sucesso!');
 
@@ -173,7 +166,6 @@ async function deletePhoto(photoId) {
     }
 }
 
-// Fazer upload das novas fotos
 async function uploadNewPhotos(eventId) {
     if (newPhotosToUpload.length === 0) {
         return true;
@@ -211,7 +203,6 @@ async function uploadNewPhotos(eventId) {
     }
 }
 
-// Configurar event listeners
 function setupEventListeners() {
     const createBtn = document.getElementById('btnCreateEvent');
     const modal = document.getElementById('eventModal');
@@ -245,7 +236,6 @@ function setupEventListeners() {
         eventForm.addEventListener('submit', handleSubmit);
     }
 
-    // Upload de fotos
     if (photoInput) {
         photoInput.addEventListener('change', handlePhotoSelect);
     }
@@ -253,7 +243,6 @@ function setupEventListeners() {
     if (photoUploadArea) {
         photoUploadArea.addEventListener('click', () => photoInput.click());
 
-        // Drag and drop
         photoUploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             photoUploadArea.classList.add('dragover');
@@ -273,7 +262,6 @@ function setupEventListeners() {
         });
     }
 
-    // Fechar modal com ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeModal();
@@ -281,7 +269,6 @@ function setupEventListeners() {
     });
 }
 
-// Carregar eventos
 async function loadEvents() {
     const container = document.getElementById('eventsGrid');
     const token = localStorage.getItem('token');
@@ -304,14 +291,12 @@ async function loadEvents() {
             throw new Error(data.message || 'Erro ao carregar eventos');
         }
 
-        // A API pode retornar data.data ou diretamente um array
         let events = [];
         if (Array.isArray(data)) {
             events = data;
         } else if (Array.isArray(data.data)) {
             events = data.data;
         } else if (data.data && typeof data.data === 'object') {
-            // Se for um objeto único, transforma em array
             events = [data.data];
         }
 
@@ -332,7 +317,6 @@ async function loadEvents() {
     }
 }
 
-// Formatar data
 function formatDate(dateString) {
     if (!dateString) return 'Data não informada';
 
@@ -370,7 +354,6 @@ function renderEvents(events) {
     container.innerHTML = events.map(event => {
         console.log('Processando evento:', event);
 
-        // Formatar data de forma segura
         let dateDisplay = 'Data não informada';
         if (event.startDatetime) {
             dateDisplay = formatDate(event.startDatetime);
@@ -378,7 +361,6 @@ function renderEvents(events) {
             dateDisplay = event.startDate;
         }
 
-        // Buscar foto principal (será carregada dinamicamente)
         const cardId = `event-card-${event.id}`;
 
         return `
@@ -409,13 +391,11 @@ function renderEvents(events) {
         `;
     }).join('');
 
-    // Carregar fotos principais de cada evento
     events.forEach(event => {
         loadEventMainPhoto(event.id);
     });
 }
 
-// Carregar foto principal do evento para o card
 async function loadEventMainPhoto(eventId) {
     const token = localStorage.getItem('token');
 
@@ -447,7 +427,6 @@ async function loadEventMainPhoto(eventId) {
     }
 }
 
-// Abrir modal de criação
 function openCreateModal() {
     currentEventId = null;
     currentPhotos = [];
@@ -458,7 +437,6 @@ function openCreateModal() {
     document.getElementById('eventModal').classList.add('active');
 }
 
-// Abrir modal de edição
 async function openEditModal(eventId) {
     currentEventId = eventId;
     currentPhotos = [];
@@ -483,19 +461,15 @@ async function openEditModal(eventId) {
 
         const event = data.data || data;
 
-        // Preencher formulário
         document.getElementById('eventTitle').value = event.title || '';
         document.getElementById('eventDescription').value = event.description || '';
         document.getElementById('eventLocation').value = event.location || '';
 
-        // Formatar datas - pode vir em diferentes formatos
         if (event.startDate && event.startTime) {
-            // Formato DD/MM/YYYY
             const [day, month, year] = event.startDate.split('/');
             document.getElementById('eventStartDate').value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
             document.getElementById('eventStartTime').value = event.startTime;
         } else if (event.startDatetime) {
-            // Formato ISO ou timestamp
             const startDate = new Date(event.startDatetime);
             const startYear = startDate.getFullYear();
             const startMonth = String(startDate.getMonth() + 1).padStart(2, '0');
@@ -508,12 +482,10 @@ async function openEditModal(eventId) {
         }
 
         if (event.endDate && event.endTime) {
-            // Formato DD/MM/YYYY
             const [day, month, year] = event.endDate.split('/');
             document.getElementById('eventEndDate').value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
             document.getElementById('eventEndTime').value = event.endTime;
         } else if (event.endDatetime) {
-            // Formato ISO ou timestamp
             const endDate = new Date(event.endDatetime);
             const endYear = endDate.getFullYear();
             const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
@@ -525,7 +497,6 @@ async function openEditModal(eventId) {
             document.getElementById('eventEndTime').value = `${endHour}:${endMinute}`;
         }
 
-        // Carregar fotos do evento
         await loadEventPhotos(eventId);
 
         document.getElementById('modalTitle').textContent = 'Editar Evento';
@@ -537,7 +508,6 @@ async function openEditModal(eventId) {
     }
 }
 
-// Fechar modal
 function closeModal() {
     document.getElementById('eventModal').classList.remove('active');
     document.getElementById('eventForm').reset();
@@ -546,13 +516,11 @@ function closeModal() {
     newPhotosToUpload = [];
 }
 
-// Submeter formulário
 async function handleSubmit(e) {
     e.preventDefault();
 
     const token = localStorage.getItem('token');
 
-    // Pegar valores diretamente dos inputs
     const title = document.getElementById('eventTitle').value.trim();
     const description = document.getElementById('eventDescription').value.trim();
     const location = document.getElementById('eventLocation').value.trim();
@@ -561,17 +529,14 @@ async function handleSubmit(e) {
     const endDate = document.getElementById('eventEndDate').value;
     const endTime = document.getElementById('eventEndTime').value;
 
-    // Validação manual
     if (!title || !description || !location || !startDate || !startTime || !endDate || !endTime) {
         alert('Por favor, preencha todos os campos obrigatórios');
         return;
     }
 
-    // Converter datas do formato YYYY-MM-DD para DD/MM/YYYY
     const [startYear, startMonth, startDay] = startDate.split('-');
     const [endYear, endMonth, endDay] = endDate.split('-');
 
-    // Criar URLSearchParams para enviar como form data
     const formData = new URLSearchParams();
     formData.append('title', title);
     formData.append('description', description);
@@ -614,10 +579,8 @@ async function handleSubmit(e) {
             throw new Error(data.message || 'Erro ao salvar evento');
         }
 
-        // Se é criação, pegar o ID do evento criado
         const eventId = currentEventId || (data.data && data.data.id);
 
-        // Fazer upload das fotos novas
         if (newPhotosToUpload.length > 0 && eventId) {
             await uploadNewPhotos(eventId);
         }
@@ -632,12 +595,10 @@ async function handleSubmit(e) {
     }
 }
 
-// Ver detalhes do evento
 function viewEvent(eventId) {
     window.location.href = `/ensaiei-main/app/eventos/${eventId}`;
 }
 
-// Deletar evento
 async function deleteEvent(eventId) {
     if (!confirm('Tem certeza que deseja excluir este evento?')) {
         return;

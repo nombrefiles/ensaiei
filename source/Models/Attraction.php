@@ -308,7 +308,6 @@ private function fill(array $data)
     $this->id = $data["id"] ?? null;
     $this->name = $data["name"] ?? null;
     
-    // Tratamento especial para o type
     if (isset($data["type"]) && !empty($data["type"])) {
         try {
             $this->type = Type::from($data["type"]);

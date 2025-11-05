@@ -203,7 +203,6 @@ class User
         $this->verificationCodeExpires = $data["verification_code_expires"] ?? null;
     }
 
-    // Getters
     public function getId() { return $this->id; }
     public function getRole() { return $this->role; }
     public function getName() { return $this->name; }
@@ -218,7 +217,6 @@ class User
     public function getVerificationCodeExpires() { return $this->verificationCodeExpires; }
     public function getErrorMessage() { return $this->errorMessage; }
 
-    // Setters
     public function setRole($role) { $this->role = $role; }
     public function setName($name) { $this->name = $name; }
     public function setEmail($email) { $this->email = $email; }

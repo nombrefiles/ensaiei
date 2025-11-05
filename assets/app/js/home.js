@@ -80,14 +80,12 @@ const eventsData = {
     }
 };
 
-// Inicialização quando a página carrega
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Página carregada, inicializando...');
     loadEvents();
     setupSearch();
     setupModalEvents();
 
-    // Adicionar event listeners nos cards manualmente
     const eventCards = document.querySelectorAll('.event-card');
     eventCards.forEach((card, index) => {
         const eventId = index + 1;
@@ -98,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
             openEventModal(eventId);
         });
 
-        // Remove o onclick inline se existir
         card.removeAttribute('onclick');
     });
 });
@@ -117,13 +114,11 @@ function setupSearch() {
     const searchInput = document.getElementById('searchInput');
 
     if (searchInput) {
-        // Pesquisa em tempo real
         searchInput.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase().trim();
             filterEvents(searchTerm);
         });
 
-        // Pesquisa ao pressionar Enter
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchEvents();
@@ -132,13 +127,11 @@ function setupSearch() {
     }
 }
 
-// Filtrar eventos
 function filterEvents(searchTerm) {
     const eventsGrid = document.getElementById('eventsGrid');
     const noResults = document.getElementById('noResults');
 
     if (!searchTerm) {
-        // Mostrar todos os eventos
         allEvents.forEach(card => {
             card.style.display = 'block';
         });
@@ -164,7 +157,6 @@ function filterEvents(searchTerm) {
         }
     });
 
-    // Mostrar/ocultar mensagem de "sem resultados"
     if (hasResults) {
         if (eventsGrid) eventsGrid.style.display = 'grid';
         if (noResults) noResults.classList.add('hidden');
@@ -174,7 +166,6 @@ function filterEvents(searchTerm) {
     }
 }
 
-// Função de pesquisa (chamada pelo botão)
 function searchEvents() {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
@@ -183,12 +174,10 @@ function searchEvents() {
     }
 }
 
-// Configurar eventos do modal
 function setupModalEvents() {
     const modal = document.getElementById('eventModal');
 
     if (modal) {
-        // Fechar modal ao clicar fora dele
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
                 closeEventModal();
@@ -196,7 +185,6 @@ function setupModalEvents() {
         });
     }
 
-    // Fechar modal com ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             const modal = document.getElementById('eventModal');
@@ -207,7 +195,6 @@ function setupModalEvents() {
     });
 }
 
-// Função para formatar data
 function formatDate(dateTimeString) {
     const date = new Date(dateTimeString);
     return date.toLocaleDateString('pt-BR', {
@@ -217,14 +204,12 @@ function formatDate(dateTimeString) {
     });
 }
 
-// Função para formatar horário
 function formatTime(startDateTime, endDateTime) {
     const start = new Date(startDateTime);
     const end = new Date(endDateTime);
     return `das ${start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} às ${end.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
 }
 
-// Função para traduzir tipo de atração
 function translateAttractionType(type) {
     const types = {
         'MUSIC': 'Música',
@@ -237,7 +222,6 @@ function translateAttractionType(type) {
     return types[type] || type;
 }
 
-// Abrir modal do evento
 function openEventModal(eventId) {
     console.log('=== ABRINDO MODAL ===');
     console.log('Event ID:', eventId);
@@ -250,7 +234,6 @@ function openEventModal(eventId) {
 
     console.log('Dados do evento encontrado:', event);
 
-    // Encontrar elementos do modal
     const modal = document.getElementById('eventModal');
     const modalTitle = document.getElementById('modalTitle');
     const modalDate = document.getElementById('modalDate');
@@ -278,7 +261,6 @@ function openEventModal(eventId) {
         return;
     }
 
-    // Preencher dados do modal
     if (modalTitle) modalTitle.textContent = event.title;
     if (modalDate) modalDate.textContent = formatDate(event.startDatetime);
     if (modalTime) modalTime.textContent = formatTime(event.startDatetime, event.endDatetime);
@@ -287,7 +269,6 @@ function openEventModal(eventId) {
     if (modalDescription) modalDescription.textContent = event.description;
     if (modalImage) modalImage.src = event.image;
 
-    // Preencher atrações
     if (modalAttractions) {
         modalAttractions.innerHTML = '';
 
@@ -302,7 +283,6 @@ function openEventModal(eventId) {
         });
     }
 
-    // Mostrar modal
     modal.style.display = 'flex';
     modal.style.opacity = '1';
     document.body.style.overflow = 'hidden';
@@ -310,7 +290,6 @@ function openEventModal(eventId) {
     console.log('Modal exibido! Display:', modal.style.display, 'Opacity:', modal.style.opacity);
 }
 
-// Fechar modal do evento
 function closeEventModal() {
     console.log('=== FECHANDO MODAL ===');
     const modal = document.getElementById('eventModal');
@@ -323,7 +302,6 @@ function closeEventModal() {
     }
 }
 
-// Inscrever-se no evento
 function registerForEvent() {
     alert('Funcionalidade de inscrição será implementada em breve!');
     closeEventModal();

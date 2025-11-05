@@ -147,22 +147,19 @@ class Attractions extends Api
             return;
         }
 
-        // Carrega o evento para validações
         $event = new Event();
         if (!$event->findById($attraction->getEventId())) {
             $this->call(404, "not_found", "Evento não encontrado", "error")->back();
             return;
         }
 
-        // Atualiza os campos existentes
         if (isset($data["name"])) {
             $attraction->setName($data["name"]);
         }
         if (isset($data["specificLocation"])) {
             $attraction->setSpecificLocation($data["specificLocation"]);
         }
-        
-        // Atualiza data e hora
+
         $startDate = $data["date"] ?? $attraction->getStartDate();
         $startTime = $data["startTime"] ?? $attraction->getStartTime();
         $endTime = $data["endTime"] ?? $attraction->getEndTime();
@@ -170,20 +167,17 @@ class Attractions extends Api
         $attraction->setStartDatetime($startDate, $startTime);
         $attraction->setEndDatetime($startDate, $endTime);
 
-        // Validação: Data de início deve ser anterior à data de término
         if ($attraction->getStartDatetime() >= $attraction->getEndDatetime()) {
             $this->call(400, "bad_request", "Data de início deve ser anterior à data de término", "error")->back();
             return;
         }
 
-        // Validação: Atração deve ocorrer dentro do período do evento
-        if ($attraction->getStartDatetime() < $event->getStartDatetime() || 
+        if ($attraction->getStartDatetime() < $event->getStartDatetime() ||
             $attraction->getEndDatetime() > $event->getEndDatetime()) {
             $this->call(400, "bad_request", "A atração deve ocorrer dentro do período do evento", "error")->back();
             return;
         }
 
-        // Verifica tanto 'performers' quanto 'perfomers' (com erro de digitação)
         $performersData = null;
         if (isset($data["performers"])) {
             $performersData = $data["performers"];
@@ -222,10 +216,8 @@ class Attractions extends Api
             return;
         }
 
-        // Recarrega os dados
         $attraction->findById($data["id"]);
 
-        // Prepara a resposta
         $performers = [];
         if ($attraction->getPerformers()) {
             foreach ($attraction->getPerformers() as $performerId) {

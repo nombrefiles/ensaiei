@@ -432,7 +432,6 @@ class Users extends Api
             return;
         }
 
-        // Verificar se o email foi verificado
         if (!$user->getEmailVerified()) {
             $this->call(403, "forbidden", "Email não verificado. Verifique sua caixa de entrada.", "error")
                 ->back(["userId" => $user->getId(), "needsVerification" => true]);
