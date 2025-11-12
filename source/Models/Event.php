@@ -20,6 +20,10 @@ class Event extends Model {
     private ?DateTime $endDatetime = null;
     private ?bool $deleted = null;
     private ?int $organizerId = null;
+    private ?string $status = 'PENDING';
+    private ?string $rejectionReason = null;
+    private ?DateTime $reviewedAt = null;
+    private ?int $reviewedBy = null;
     private array $attractions = [];
 
     public function __construct(
@@ -32,7 +36,11 @@ class Event extends Model {
         ?DateTime $startDatetime = null,
         ?DateTime $endDatetime = null,
         ?bool $deleted = false,
-        ?int $organizerId = null
+        ?int $organizerId = null,
+        ?string $status = 'PENDING',
+        ?string $rejectionReason = null,
+        ?DateTime $reviewedAt = null,
+        ?int $reviewedBy = null
     ) {
         $this->table = "events";
         $this->id = $id;
@@ -45,47 +53,26 @@ class Event extends Model {
         $this->endDatetime = $endDatetime;
         $this->deleted = $deleted;
         $this->organizerId = $organizerId;
+        $this->status = $status;
+        $this->rejectionReason = $rejectionReason;
+        $this->reviewedAt = $reviewedAt;
+        $this->reviewedBy = $reviewedBy;
     }
 
-    public function getId(): ?int {
-        return $this->id;
-    }
-
-    public function getTitle(): ?string {
-        return $this->title;
-    }
-
-    public function getDescription(): ?string {
-        return $this->description;
-    }
-
-    public function getLocation(): ?string {
-        return $this->location;
-    }
-
-    public function getLatitude(): ?float {
-        return $this->latitude;
-    }
-
-    public function getLongitude(): ?float {
-        return $this->longitude;
-    }
-
-    public function getStartDatetime(): ?DateTime {
-        return $this->startDatetime;
-    }
-
-    public function getEndDatetime(): ?DateTime {
-        return $this->endDatetime;
-    }
-
-    public function isDeleted(): ?bool {
-        return $this->deleted;
-    }
-
-    public function getOrganizerId(): ?int {
-        return $this->organizerId;
-    }
+    public function getId(): ?int { return $this->id; }
+    public function getTitle(): ?string { return $this->title; }
+    public function getDescription(): ?string { return $this->description; }
+    public function getLocation(): ?string { return $this->location; }
+    public function getLatitude(): ?float { return $this->latitude; }
+    public function getLongitude(): ?float { return $this->longitude; }
+    public function getStartDatetime(): ?DateTime { return $this->startDatetime; }
+    public function getEndDatetime(): ?DateTime { return $this->endDatetime; }
+    public function isDeleted(): ?bool { return $this->deleted; }
+    public function getOrganizerId(): ?int { return $this->organizerId; }
+    public function getStatus(): ?string { return $this->status; }
+    public function getRejectionReason(): ?string { return $this->rejectionReason; }
+    public function getReviewedAt(): ?DateTime { return $this->reviewedAt; }
+    public function getReviewedBy(): ?int { return $this->reviewedBy; }
 
     public function getAttractions(): array {
         if (empty($this->attractions) && $this->id) {
@@ -110,28 +97,26 @@ class Event extends Model {
         return $this->endDatetime ? $this->endDatetime->format('H:i:s') : '';
     }
 
-    public function setId(?int $id): void {
-        $this->id = $id;
-    }
+    public function setId(?int $id): void { $this->id = $id; }
+    public function setTitle(?string $title): void { $this->title = $title; }
+    public function setDescription(?string $description): void { $this->description = $description; }
+    public function setLocation(?string $location): void { $this->location = $location; }
+    public function setLatitude(?float $latitude): void { $this->latitude = $latitude; }
+    public function setLongitude(?float $longitude): void { $this->longitude = $longitude; }
+    public function setDeleted(?bool $deleted): void { $this->deleted = $deleted; }
+    public function setOrganizerId(?int $organizerId): void { $this->organizerId = $organizerId; }
+    public function setStatus(?string $status): void { $this->status = $status; }
+    public function setRejectionReason(?string $reason): void { $this->rejectionReason = $reason; }
+    public function setReviewedBy(?int $reviewedBy): void { $this->reviewedBy = $reviewedBy; }
 
-    public function setTitle(?string $title): void {
-        $this->title = $title;
-    }
-
-    public function setDescription(?string $description): void {
-        $this->description = $description;
-    }
-
-    public function setLocation(?string $location): void {
-        $this->location = $location;
-    }
-
-    public function setLatitude(?float $latitude): void {
-        $this->latitude = $latitude;
-    }
-
-    public function setLongitude(?float $longitude): void {
-        $this->longitude = $longitude;
+    public function setReviewedAt($reviewedAt): void {
+        if ($reviewedAt instanceof DateTime) {
+            $this->reviewedAt = $reviewedAt;
+        } elseif (is_string($reviewedAt)) {
+            $this->reviewedAt = new DateTime($reviewedAt);
+        } else {
+            $this->reviewedAt = $reviewedAt;
+        }
     }
 
     public function setStartDatetime($date, ?string $time = null): void {
@@ -154,14 +139,6 @@ class Event extends Model {
         if ($datetime) {
             $this->endDatetime = $datetime;
         }
-    }
-
-    public function setDeleted(?bool $deleted): void {
-        $this->deleted = $deleted;
-    }
-
-    public function setOrganizerId(?int $organizerId): void {
-        $this->organizerId = $organizerId;
     }
 
     public function setAttractions(array $attractions): void {
@@ -207,30 +184,73 @@ class Event extends Model {
     public function countAttractions(): int {
         return count($this->getAttractions());
     }
-public function updateById(): bool
-{
-    try {
-        $stmt = Connect::getInstance()->prepare("
-            UPDATE {$this->table} 
-            SET title = :title,
-                description = :description,
-                location = :location,
-                startDatetime = :startDatetime,
-                endDatetime = :endDatetime
-            WHERE id = :id
-        ");
 
-        $stmt->bindValue(":title", $this->title, \PDO::PARAM_STR);
-        $stmt->bindValue(":description", $this->description, \PDO::PARAM_STR);
-        $stmt->bindValue(":location", $this->location, \PDO::PARAM_STR);
-        $stmt->bindValue(":startDatetime", $this->startDatetime ? $this->startDatetime->format('Y-m-d H:i:s') : null, \PDO::PARAM_STR);
-        $stmt->bindValue(":endDatetime", $this->endDatetime ? $this->endDatetime->format('Y-m-d H:i:s') : null, \PDO::PARAM_STR);
-        $stmt->bindValue(":id", $this->id, \PDO::PARAM_INT);
+    public function updateById(): bool
+    {
+        try {
+            $stmt = Connect::getInstance()->prepare("
+                UPDATE {$this->table} 
+                SET title = :title,
+                    description = :description,
+                    location = :location,
+                    startDatetime = :startDatetime,
+                    endDatetime = :endDatetime,
+                    status = :status,
+                    rejection_reason = :rejection_reason,
+                    reviewed_at = :reviewed_at,
+                    reviewed_by = :reviewed_by
+                WHERE id = :id
+            ");
 
-        return $stmt->execute();
-    } catch (\PDOException $e) {
-        $this->errorMessage = $e->getMessage();
-        return false;
+            $stmt->bindValue(":title", $this->title, PDO::PARAM_STR);
+            $stmt->bindValue(":description", $this->description, PDO::PARAM_STR);
+            $stmt->bindValue(":location", $this->location, PDO::PARAM_STR);
+            $stmt->bindValue(":startDatetime", $this->startDatetime ? $this->startDatetime->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
+            $stmt->bindValue(":endDatetime", $this->endDatetime ? $this->endDatetime->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
+            $stmt->bindValue(":status", $this->status, PDO::PARAM_STR);
+            $stmt->bindValue(":rejection_reason", $this->rejectionReason, PDO::PARAM_STR);
+            $stmt->bindValue(":reviewed_at", $this->reviewedAt ? $this->reviewedAt->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
+            $stmt->bindValue(":reviewed_by", $this->reviewedBy, PDO::PARAM_INT);
+            $stmt->bindValue(":id", $this->id, PDO::PARAM_INT);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            $this->errorMessage = $e->getMessage();
+            return false;
+        }
     }
-}
+
+    public function findById(int $id): bool
+    {
+        try {
+            $stmt = Connect::getInstance()->prepare("SELECT * FROM {$this->table} WHERE id = :id");
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$result) {
+                return false;
+            }
+
+            $this->id = $result['id'];
+            $this->title = $result['title'];
+            $this->description = $result['description'];
+            $this->location = $result['location'];
+            $this->latitude = $result['latitude'];
+            $this->longitude = $result['longitude'];
+            $this->startDatetime = $result['startDatetime'] ? new DateTime($result['startDatetime']) : null;
+            $this->endDatetime = $result['endDatetime'] ? new DateTime($result['endDatetime']) : null;
+            $this->deleted = (bool)$result['deleted'];
+            $this->organizerId = $result['organizerId'];
+            $this->status = $result['status'] ?? 'PENDING';
+            $this->rejectionReason = $result['rejection_reason'] ?? null;
+            $this->reviewedAt = !empty($result['reviewed_at']) ? new DateTime($result['reviewed_at']) : null;
+            $this->reviewedBy = $result['reviewed_by'] ?? null;
+
+            return true;
+        } catch (PDOException $e) {
+            $this->errorMessage = "Erro ao buscar evento: " . $e->getMessage();
+            return false;
+        }
+    }
 }
