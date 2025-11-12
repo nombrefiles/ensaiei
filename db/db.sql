@@ -29,8 +29,11 @@ CREATE TABLE `events` (
                           `endDatetime` datetime NOT NULL,
                           `deleted` bool DEFAULT FALSE,
                           `organizerId` int not null,
+                          `granted` bool DEFAULT FALSE,
+                          `reviewedBy` int not null,
                           PRIMARY KEY (`id`),
-                          FOREIGN KEY (`organizerId`) REFERENCES `users` (`id`)
+                          FOREIGN KEY (`organizerId`) REFERENCES `users` (`id`),
+                          FOREIGN KEY (`reviewedBy`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `photos` (
