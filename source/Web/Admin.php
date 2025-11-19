@@ -9,6 +9,11 @@ class Admin extends Controller
         parent::__construct("admin");
     }
 
+    public function home(): void
+    {
+        echo $this->view->render("home", []);
+    }
+
     public function profile(): void
     {
         echo $this->view->render("profile", []);
@@ -38,5 +43,4 @@ class Admin extends Controller
     {
         echo "ERRO {$data["errcode"]}...";
     }
-
 }
