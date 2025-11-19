@@ -29,7 +29,7 @@ CREATE TABLE `events` (
                           `endDatetime` datetime NOT NULL,
                           `deleted` bool DEFAULT FALSE,
                           `organizerId` int not null,
-                          `granted` bool DEFAULT FALSE,
+                          `status` ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
                           `reviewedBy` int not null,
                           PRIMARY KEY (`id`),
                           FOREIGN KEY (`organizerId`) REFERENCES `users` (`id`),

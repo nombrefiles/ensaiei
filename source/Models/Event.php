@@ -21,8 +21,6 @@ class Event extends Model {
     private ?bool $deleted = null;
     private ?int $organizerId = null;
     private ?string $status = 'PENDING';
-    private ?string $rejectionReason = null;
-    private ?DateTime $reviewedAt = null;
     private ?int $reviewedBy = null;
     private array $attractions = [];
 
@@ -38,8 +36,6 @@ class Event extends Model {
         ?bool $deleted = false,
         ?int $organizerId = null,
         ?string $status = 'PENDING',
-        ?string $rejectionReason = null,
-        ?DateTime $reviewedAt = null,
         ?int $reviewedBy = null
     ) {
         $this->table = "events";
@@ -54,8 +50,6 @@ class Event extends Model {
         $this->deleted = $deleted;
         $this->organizerId = $organizerId;
         $this->status = $status;
-        $this->rejectionReason = $rejectionReason;
-        $this->reviewedAt = $reviewedAt;
         $this->reviewedBy = $reviewedBy;
     }
 
@@ -70,8 +64,6 @@ class Event extends Model {
     public function isDeleted(): ?bool { return $this->deleted; }
     public function getOrganizerId(): ?int { return $this->organizerId; }
     public function getStatus(): ?string { return $this->status; }
-    public function getRejectionReason(): ?string { return $this->rejectionReason; }
-    public function getReviewedAt(): ?DateTime { return $this->reviewedAt; }
     public function getReviewedBy(): ?int { return $this->reviewedBy; }
 
     public function getAttractions(): array {
@@ -106,18 +98,7 @@ class Event extends Model {
     public function setDeleted(?bool $deleted): void { $this->deleted = $deleted; }
     public function setOrganizerId(?int $organizerId): void { $this->organizerId = $organizerId; }
     public function setStatus(?string $status): void { $this->status = $status; }
-    public function setRejectionReason(?string $reason): void { $this->rejectionReason = $reason; }
     public function setReviewedBy(?int $reviewedBy): void { $this->reviewedBy = $reviewedBy; }
-
-    public function setReviewedAt($reviewedAt): void {
-        if ($reviewedAt instanceof DateTime) {
-            $this->reviewedAt = $reviewedAt;
-        } elseif (is_string($reviewedAt)) {
-            $this->reviewedAt = new DateTime($reviewedAt);
-        } else {
-            $this->reviewedAt = $reviewedAt;
-        }
-    }
 
     public function setStartDatetime($date, ?string $time = null): void {
         if ($date instanceof DateTime) {
@@ -196,9 +177,7 @@ class Event extends Model {
                     startDatetime = :startDatetime,
                     endDatetime = :endDatetime,
                     status = :status,
-                    rejection_reason = :rejection_reason,
-                    reviewed_at = :reviewed_at,
-                    reviewed_by = :reviewed_by
+                    reviewedby = :reviewed_by
                 WHERE id = :id
             ");
 
@@ -208,8 +187,6 @@ class Event extends Model {
             $stmt->bindValue(":startDatetime", $this->startDatetime ? $this->startDatetime->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
             $stmt->bindValue(":endDatetime", $this->endDatetime ? $this->endDatetime->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
             $stmt->bindValue(":status", $this->status, PDO::PARAM_STR);
-            $stmt->bindValue(":rejection_reason", $this->rejectionReason, PDO::PARAM_STR);
-            $stmt->bindValue(":reviewed_at", $this->reviewedAt ? $this->reviewedAt->format('Y-m-d H:i:s') : null, PDO::PARAM_STR);
             $stmt->bindValue(":reviewed_by", $this->reviewedBy, PDO::PARAM_INT);
             $stmt->bindValue(":id", $this->id, PDO::PARAM_INT);
 
@@ -243,8 +220,6 @@ class Event extends Model {
             $this->deleted = (bool)$result['deleted'];
             $this->organizerId = $result['organizerId'];
             $this->status = $result['status'] ?? 'PENDING';
-            $this->rejectionReason = $result['rejection_reason'] ?? null;
-            $this->reviewedAt = !empty($result['reviewed_at']) ? new DateTime($result['reviewed_at']) : null;
             $this->reviewedBy = $result['reviewed_by'] ?? null;
 
             return true;

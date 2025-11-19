@@ -62,6 +62,16 @@ $route->delete("/photos/{photoId}", "EventPhotos:deletePhoto");
 
 $route->group("null");
 
+/* ADMIN - APROVAÇÃO DE EVENTOS */
+$route->group("/admin");
+$route->group("/events");
+$route->put("/{id}/approve", "AdminEvents:approveEvent");
+$route->put("/{id}/reject", "AdminEvents:rejectEvent");
+$route->get("/pending", "AdminEvents:listPendingEvents");
+$route->get("/stats", "AdminEvents:getEventStats");
+$route->group("null");
+$route->group("null");
+
 $route->dispatch();
 
 if ($route->error()) {
