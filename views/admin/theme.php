@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <title>Ensaiei</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= url("assets/web/css/theme.css") ?>">
+    <link rel="stylesheet" href="<?= url("assets/admin/css/theme.css") ?>">
 
 </head>
 <body>
 
 <div class="topnav">
     <div class="topnav-left">
-        <img src="http://localhost/ensaiei-main/design/assets/images/bicolor.png" alt="Ensaiei" class="logo">
+        <img src="http://localhost/ensaiei-main/design/assets/images/logobranca.png" alt="Ensaiei" class="logo">
     </div>
     <div class="topnav-right">
         <nav>

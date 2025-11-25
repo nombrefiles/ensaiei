@@ -38,7 +38,7 @@ class Event extends Model {
         ?string $status = 'PENDING',
         ?int $reviewedBy = null
     ) {
-        $this->table = "events";
+        $this->table = "events"; // IMPORTANTE: Definir ANTES de atribuir valores
         $this->id = $id;
         $this->title = $title;
         $this->description = $description;
@@ -53,6 +53,7 @@ class Event extends Model {
         $this->reviewedBy = $reviewedBy;
     }
 
+    // Getters
     public function getId(): ?int { return $this->id; }
     public function getTitle(): ?string { return $this->title; }
     public function getDescription(): ?string { return $this->description; }
@@ -89,6 +90,7 @@ class Event extends Model {
         return $this->endDatetime ? $this->endDatetime->format('H:i:s') : '';
     }
 
+    // Setters
     public function setId(?int $id): void { $this->id = $id; }
     public function setTitle(?string $title): void { $this->title = $title; }
     public function setDescription(?string $description): void { $this->description = $description; }
@@ -166,6 +168,40 @@ class Event extends Model {
         return count($this->getAttractions());
     }
 
+    public function insert(): bool
+    {
+        try {
+            $stmt = Connect::getInstance()->prepare("
+                INSERT INTO {$this->table} 
+                (title, description, location, latitude, longitude, startDatetime, endDatetime, deleted, organizerId, status, reviewedBy)
+                VALUES 
+                (:title, :description, :location, :latitude, :longitude, :startDatetime, :endDatetime, :deleted, :organizerId, :status, :reviewedBy)
+            ");
+
+            $stmt->bindValue(":title", $this->title, PDO::PARAM_STR);
+            $stmt->bindValue(":description", $this->description, PDO::PARAM_STR);
+            $stmt->bindValue(":location", $this->location, PDO::PARAM_STR);
+            $stmt->bindValue(":latitude", $this->latitude);
+            $stmt->bindValue(":longitude", $this->longitude);
+            $stmt->bindValue(":startDatetime", $this->startDatetime ? $this->startDatetime->format('Y-m-d H:i:s') : null);
+            $stmt->bindValue(":endDatetime", $this->endDatetime ? $this->endDatetime->format('Y-m-d H:i:s') : null);
+            $stmt->bindValue(":deleted", $this->deleted ? 1 : 0, PDO::PARAM_INT);
+            $stmt->bindValue(":organizerId", $this->organizerId, PDO::PARAM_INT);
+            $stmt->bindValue(":status", $this->status, PDO::PARAM_STR);
+            $stmt->bindValue(":reviewedBy", $this->reviewedBy, PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                $this->id = Connect::getInstance()->lastInsertId();
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            $this->errorMessage = "Erro ao criar evento: " . $e->getMessage();
+            error_log("Erro SQL detalhado: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function updateById(): bool
     {
         try {
@@ -220,7 +256,7 @@ class Event extends Model {
             $this->deleted = (bool)$result['deleted'];
             $this->organizerId = $result['organizerId'];
             $this->status = $result['status'] ?? 'PENDING';
-            $this->reviewedBy = $result['reviewed_by'] ?? null;
+            $this->reviewedBy = $result['reviewedBy'] ?? null;
 
             return true;
         } catch (PDOException $e) {
