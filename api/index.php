@@ -34,7 +34,7 @@ $route->put("/password", "Users:changePassword");
 $route->post("/verifyemail", "Users:verifyEmail");
 $route->post("/resendcode", "Users:resendVerificationCode");
 $route->delete("/cancelregistration", "Users:cancelRegistration");
-$route->group("null");
+$route->group(null);
 
 /* ATTRACTIONS */
 $route->group("/attraction");
@@ -44,7 +44,7 @@ $route->get("/event/{eventId}/type/{type}", "Attractions:listAttractionsByEvent"
 $route->post("/{eventId}/add", "Attractions:createAttraction");
 $route->put("/update/{id}", "Attractions:updateAttraction");
 $route->delete("/delete/{id}", "Attractions:deleteAttraction");
-$route->group("null");
+$route->group(null);
 
 /* EVENTS */
 $route->group("/event");
@@ -54,24 +54,19 @@ $route->get("/{id}", "Events:listEventById");
 $route->post("/add", "Events:createEvent");
 $route->put("/update/{id}", "Events:updateEvent");
 $route->delete("/delete/{id}", "Events:deleteEvent");
-
-// Rotas de fotos - DENTRO do grupo /event
 $route->get("/{eventId}/photos", "EventPhotos:listPhotosByEvent");
 $route->post("/{eventId}/photos", "EventPhotos:uploadPhotos");
 $route->put("/photos/{photoId}/main", "EventPhotos:setMainPhoto");
 $route->delete("/photos/{photoId}", "EventPhotos:deletePhoto");
 
-$route->group("null");
+$route->group(null);
 
-/* ADMIN - APROVAÇÃO DE EVENTOS */
 $route->group("/admin");
-$route->group("/events");
-$route->put("/{id}/approve", "AdminEvents:approveEvent");
-$route->put("/{id}/reject", "AdminEvents:rejectEvent");
-$route->get("/pending", "AdminEvents:listPendingEvents");
-$route->get("/stats", "AdminEvents:getEventStats");
-$route->group("null");
-$route->group("null");
+$route->put("/events/{id}/approve", "AdminEvents:approveEvent");
+$route->put("/events/{id}/reject", "AdminEvents:rejectEvent");
+$route->get("/events/pending", "AdminEvents:listPendingEvents");
+$route->get("/events/stats", "AdminEvents:getEventStats");
+$route->group(null);
 
 $route->dispatch();
 
