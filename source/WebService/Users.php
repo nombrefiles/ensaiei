@@ -468,6 +468,7 @@ class Users extends Api
                 "user" => [
                     "id" => $user->getId(),
                     "name" => $user->getName(),
+                    "role" => $user->getRole()?->value,
                     "email" => $user->getEmail(),
                     "photo" => $user->getPhoto()
                 ]

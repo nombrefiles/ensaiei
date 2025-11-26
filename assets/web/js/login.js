@@ -54,7 +54,15 @@ document.getElementById("login-form").addEventListener("submit", async function 
 
 
         localStorage.setItem("token", data.data.token);
-        window.location.href = "http://localhost/ensaiei-main/app/hi";
+
+        console.log("DADOS RECEBIDOS:", data);
+        console.log("ROLE RECEBIDA:", data.data.user.role);
+
+        if ((data.data.user.role || "").toUpperCase() === "ADMIN") {
+            window.location.href = "http://localhost/ensaiei-main/admin";
+        } else {
+            window.location.href = "http://localhost/ensaiei-main/app/hi";
+        }
 
     } catch (err) {
         console.error("Erro ao conectar com o servidor:", err);
