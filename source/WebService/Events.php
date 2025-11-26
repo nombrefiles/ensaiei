@@ -15,6 +15,30 @@ class Events extends Api
             ->back($event->findAll());
     }
 
+    // NOVO: Listar apenas eventos do usuário logado
+    public function listMyEvents(): void
+    {
+        $this->auth();
+
+        try {
+            $stmt = \Source\Core\Connect::getInstance()->prepare("
+                SELECT * FROM events 
+                WHERE organizerId = :organizerId 
+                AND deleted = false
+                ORDER BY startDatetime DESC
+            ");
+
+            $stmt->bindValue(":organizerId", $this->userAuth->id, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            $events = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $this->call(200, "success", "Seus eventos", "success")->back($events);
+        } catch (\PDOException $e) {
+            $this->call(500, "internal_server_error", "Erro ao buscar eventos: " . $e->getMessage(), "error")->back();
+        }
+    }
+
     public function listEventById(array $data): void
     {
         if (!isset($data["id"])) {
@@ -45,6 +69,7 @@ class Events extends Api
             "longitude" => $event->getLongitude(),
             "latitude" => $event->getLatitude(),
             "organizer" => $event->getOrganizerId(),
+            "status" => $event->getStatus(),
             "attractions" => $event->getAttractions(),
         ];
         $this->call(200, "success", "Encontrado com sucesso", "success")->back($response);
@@ -110,6 +135,9 @@ class Events extends Api
         error_log("Definindo endDatetime: {$data['endDate']} {$data['endTime']}");
         $event->setEndDatetime($data["endDate"], $data["endTime"] ?? null);
 
+        // Evento criado com status PENDING por padrão
+        $event->setStatus('PENDING');
+
         if (!$event->getStartDatetime() || !$event->getEndDatetime()) {
             error_log("ERRO: Falha ao converter datas");
             error_log("StartDatetime: " . ($event->getStartDatetime() ? $event->getStartDatetime()->format('Y-m-d H:i:s') : 'NULL'));
@@ -147,12 +175,13 @@ class Events extends Api
             "endDatetime" => $event->getEndDatetime()->format('Y-m-d H:i:s'),
             "location" => $event->getLocation(),
             "organizerId" => $event->getOrganizerId(),
+            "status" => $event->getStatus(),
             "attractions" => $event->getAttractions()
         ];
 
         error_log("===== CREATE EVENT - FIM (SUCESSO) =====");
 
-        $this->call(201, "created", "Evento criado com sucesso", "success")
+        $this->call(201, "created", "Evento criado com sucesso e aguardando aprovação", "success")
             ->back($response);
     }
 
@@ -242,7 +271,8 @@ class Events extends Api
             "startTime" => $event->getStartTime(),
             "endDate" => $event->getEndDate(),
             "endTime" => $event->getEndTime(),
-            "organizerId" => $event->getOrganizerId()
+            "organizerId" => $event->getOrganizerId(),
+            "status" => $event->getStatus()
         ];
 
         $this->call(200, "success", "Evento atualizado com sucesso", "success")->back($response);

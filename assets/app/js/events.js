@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
-
 function checkAuth() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -20,6 +19,135 @@ function checkAuth() {
     }
 }
 
+// MODIFICADO: Agora usa endpoint específico para eventos do usuário
+async function loadEvents() {
+    const container = document.getElementById('eventsGrid');
+    const token = localStorage.getItem('token');
+
+    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    try {
+        // MUDANÇA AQUI: Usar endpoint que retorna apenas eventos do usuário logado
+        const response = await fetch(`${API_BASE}/event/my`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        });
+
+        const data = await response.json();
+        console.log('Resposta da API:', data);
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Erro ao carregar eventos');
+        }
+
+        let events = [];
+        if (Array.isArray(data)) {
+            events = data;
+        } else if (Array.isArray(data.data)) {
+            events = data.data;
+        } else if (data.data && typeof data.data === 'object') {
+            events = [data.data];
+        }
+
+        console.log('Eventos processados:', events);
+        currentEvents = events;
+        renderEvents(events);
+
+    } catch (error) {
+        console.error('Erro ao carregar eventos:', error);
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">⚠️</div>
+                <h3>Erro ao carregar eventos</h3>
+                <p>${error.message}</p>
+                <button class="btn-primary" onclick="loadEvents()">Tentar novamente</button>
+            </div>
+        `;
+    }
+}
+
+function renderEvents(events) {
+    const container = document.getElementById('eventsGrid');
+
+    console.log('Renderizando eventos:', events);
+
+    if (!events || !Array.isArray(events) || events.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🎭</div>
+                <h3>Você ainda não criou nenhum evento</h3>
+                <p>Comece criando seu primeiro evento!</p>
+                <button class="btn-primary" onclick="openCreateModal()">Criar primeiro evento</button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = events.map(event => {
+        console.log('Processando evento:', event);
+
+        let dateDisplay = 'Data não informada';
+        if (event.startDatetime) {
+            dateDisplay = formatDate(event.startDatetime);
+        } else if (event.startDate) {
+            dateDisplay = event.startDate;
+        }
+
+        // Badge de status
+        let statusBadge = '';
+        let statusClass = '';
+
+        if (event.status === 'PENDING') {
+            statusBadge = '<span class="status-badge status-pending">Aguardando Aprovação</span>';
+            statusClass = 'event-pending';
+        } else if (event.status === 'APPROVED') {
+            statusBadge = '<span class="status-badge status-approved">Aprovado</span>';
+            statusClass = 'event-approved';
+        } else if (event.status === 'REJECTED') {
+            statusBadge = '<span class="status-badge status-rejected">Rejeitado</span>';
+            statusClass = 'event-rejected';
+        }
+
+        const cardId = `event-card-${event.id}`;
+
+        return `
+            <div class="event-card ${statusClass}" id="${cardId}">
+                <div class="event-card-image no-photo">
+                    🎭
+                </div>
+                <div class="event-card-body">
+                    ${statusBadge}
+                    <h3 class="event-card-title">${event.title || 'Sem título'}</h3>
+                    <div class="event-card-info">
+                        <div class="event-info-item">
+                            <strong>📅</strong>
+                            <span>${dateDisplay}</span>
+                        </div>
+                        <div class="event-info-item">
+                            <strong>📍</strong>
+                            <span>${event.location || 'Local não informado'}</span>
+                        </div>
+                    </div>
+                    <p class="event-card-description">${event.description || 'Sem descrição'}</p>
+                    <div class="event-card-actions">
+                        <button class="btn-view" onclick="viewEvent(${event.id})">Ver detalhes</button>
+                        <button class="btn-edit" onclick="openEditModal(${event.id})">Editar</button>
+                        <button class="btn-delete" onclick="deleteEvent(${event.id})">Excluir</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    events.forEach(event => {
+        loadEventMainPhoto(event.id);
+    });
+}
+
+// Resto do código permanece igual...
 function handlePhotoSelect(e) {
     const files = Array.from(e.target.files);
     handlePhotoFiles(files);
@@ -269,133 +397,6 @@ function setupEventListeners() {
     });
 }
 
-async function loadEvents() {
-    const container = document.getElementById('eventsGrid');
-    const token = localStorage.getItem('token');
-
-    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
-    try {
-        const response = await fetch(`${API_BASE}/event/`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'token': token
-            }
-        });
-
-        const data = await response.json();
-        console.log('Resposta da API:', data);
-
-        if (!response.ok) {
-            throw new Error(data.message || 'Erro ao carregar eventos');
-        }
-
-        let events = [];
-        if (Array.isArray(data)) {
-            events = data;
-        } else if (Array.isArray(data.data)) {
-            events = data.data;
-        } else if (data.data && typeof data.data === 'object') {
-            events = [data.data];
-        }
-
-        console.log('Eventos processados:', events);
-        currentEvents = events;
-        renderEvents(events);
-
-    } catch (error) {
-        console.error('Erro ao carregar eventos:', error);
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">⚠️</div>
-                <h3>Erro ao carregar eventos</h3>
-                <p>${error.message}</p>
-                <button class="btn-primary" onclick="loadEvents()">Tentar novamente</button>
-            </div>
-        `;
-    }
-}
-
-function formatDate(dateString) {
-    if (!dateString) return 'Data não informada';
-
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    } catch {
-        return dateString;
-    }
-}
-
-function renderEvents(events) {
-    const container = document.getElementById('eventsGrid');
-
-    console.log('Renderizando eventos:', events);
-
-    if (!events || !Array.isArray(events) || events.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">🎭</div>
-                <h3>Nenhum evento criado ainda</h3>
-                <p>Comece criando seu primeiro evento!</p>
-                <button class="btn-primary" onclick="openCreateModal()">Criar primeiro evento</button>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = events.map(event => {
-        console.log('Processando evento:', event);
-
-        let dateDisplay = 'Data não informada';
-        if (event.startDatetime) {
-            dateDisplay = formatDate(event.startDatetime);
-        } else if (event.startDate) {
-            dateDisplay = event.startDate;
-        }
-
-        const cardId = `event-card-${event.id}`;
-
-        return `
-            <div class="event-card" id="${cardId}">
-                <div class="event-card-image no-photo">
-                    🎭
-                </div>
-                <div class="event-card-body">
-                    <h3 class="event-card-title">${event.title || 'Sem título'}</h3>
-                    <div class="event-card-info">
-                        <div class="event-info-item">
-                            <strong>📅</strong>
-                            <span>${dateDisplay}</span>
-                        </div>
-                        <div class="event-info-item">
-                            <strong>📍</strong>
-                            <span>${event.location || 'Local não informado'}</span>
-                        </div>
-                    </div>
-                    <p class="event-card-description">${event.description || 'Sem descrição'}</p>
-                    <div class="event-card-actions">
-                        <button class="btn-view" onclick="viewEvent(${event.id})">Ver detalhes</button>
-                        <button class="btn-edit" onclick="openEditModal(${event.id})">Editar</button>
-                        <button class="btn-delete" onclick="deleteEvent(${event.id})">Excluir</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    events.forEach(event => {
-        loadEventMainPhoto(event.id);
-    });
-}
-
 async function loadEventMainPhoto(eventId) {
     const token = localStorage.getItem('token');
 
@@ -585,7 +586,7 @@ async function handleSubmit(e) {
             await uploadNewPhotos(eventId);
         }
 
-        alert(currentEventId ? 'Evento atualizado com sucesso!' : 'Evento criado com sucesso!');
+        alert(currentEventId ? 'Evento atualizado com sucesso!' : 'Evento criado com sucesso e aguardando aprovação!');
         closeModal();
         loadEvents();
 
@@ -627,5 +628,22 @@ async function deleteEvent(eventId) {
     } catch (error) {
         console.error('Erro ao excluir evento:', error);
         alert('Erro ao excluir evento: ' + error.message);
+    }
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Data não informada';
+
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch {
+        return dateString;
     }
 }
