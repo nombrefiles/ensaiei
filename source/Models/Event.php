@@ -264,4 +264,15 @@ class Event extends Model {
             return false;
         }
     }
+
+    public function findAll(): array
+    {
+        try {
+            $stmt = Connect::getInstance()->query("SELECT * FROM events INNER JOIN event_photos ON event_photos.eventId = events.id");
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            $this->errorMessage = "Erro ao inserir o registro: {$e->getMessage()}";
+            return [];
+        }
+    }
 }

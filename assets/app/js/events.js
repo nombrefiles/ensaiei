@@ -19,7 +19,7 @@ function checkAuth() {
     }
 }
 
-// MODIFICADO: Agora usa endpoint específico para eventos do usuário
+// CORRIGIDO: Agora usa endpoint específico para eventos do usuário
 async function loadEvents() {
     const container = document.getElementById('eventsGrid');
     const token = localStorage.getItem('token');
@@ -27,7 +27,7 @@ async function loadEvents() {
     container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     try {
-        // MUDANÇA AQUI: Usar endpoint que retorna apenas eventos do usuário logado
+        // ENDPOINT CORRETO: /event/my retorna apenas eventos do usuário logado
         const response = await fetch(`${API_BASE}/event/my`, {
             method: 'GET',
             headers: {
@@ -96,18 +96,18 @@ function renderEvents(events) {
             dateDisplay = event.startDate;
         }
 
-        // Badge de status
+        // CORRIGIDO: Badge de status mais claro
         let statusBadge = '';
         let statusClass = '';
 
         if (event.status === 'PENDING') {
-            statusBadge = '<span class="status-badge status-pending">Aguardando Aprovação</span>';
+            statusBadge = '<span class="status-badge status-pending">⏳ Aguardando Aprovação</span>';
             statusClass = 'event-pending';
         } else if (event.status === 'APPROVED') {
-            statusBadge = '<span class="status-badge status-approved">Aprovado</span>';
+            statusBadge = '<span class="status-badge status-approved">✅ Aprovado</span>';
             statusClass = 'event-approved';
         } else if (event.status === 'REJECTED') {
-            statusBadge = '<span class="status-badge status-rejected">Rejeitado</span>';
+            statusBadge = '<span class="status-badge status-rejected">❌ Rejeitado</span>';
             statusClass = 'event-rejected';
         }
 
@@ -134,20 +134,27 @@ function renderEvents(events) {
                     <p class="event-card-description">${event.description || 'Sem descrição'}</p>
                     <div class="event-card-actions">
                         <button class="btn-view" onclick="viewEvent(${event.id})">Ver detalhes</button>
-                        <button class="btn-edit" onclick="openEditModal(${event.id})">Editar</button>
-                        <button class="btn-delete" onclick="deleteEvent(${event.id})">Excluir</button>
+                        ${event.status !== 'APPROVED' ? `
+                            <button class="btn-edit" onclick="openEditModal(${event.id})">Editar</button>
+                            <button class="btn-delete" onclick="deleteEvent(${event.id})">Excluir</button>
+                        ` : `
+                            <button class="btn-view" style="background: #ddd; color: #666; cursor: not-allowed;" disabled>
+                                Aprovado - Edição bloqueada
+                            </button>
+                        `}
                     </div>
                 </div>
             </div>
         `;
     }).join('');
 
+    // Carregar fotos dos eventos
     events.forEach(event => {
         loadEventMainPhoto(event.id);
     });
 }
 
-// Resto do código permanece igual...
+// Resto das funções permanece igual...
 function handlePhotoSelect(e) {
     const files = Array.from(e.target.files);
     handlePhotoFiles(files);

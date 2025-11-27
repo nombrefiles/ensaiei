@@ -24,17 +24,12 @@ class Admin extends Controller
         echo $this->view->render("about", []);
     }
 
-    public function faqs(): void
-    {
-        echo $this->view->render("faqs", []);
-    }
-
     public function events(): void
     {
         echo $this->view->render("events", []);
     }
 
-    public function logOut(): void
+    public function logout(): void
     {
         echo $this->view->render("logout", []);
     }

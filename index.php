@@ -32,8 +32,6 @@ $route->get("/", "Admin:home");
 $route->get("/perfil", "Admin:profile");
 $route->get("/eventos","Admin:events");
 $route->get("/bye","Admin:logout");
-$route->get("/sobre", "Admin:about");
-$route->get("/faqs","Admin:faqs");
 $route->group(null);
 
 $route->get("/ops/{errcode}", "Site:error");

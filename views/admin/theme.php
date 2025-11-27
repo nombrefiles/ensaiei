@@ -11,15 +11,13 @@
 
 <div class="topnav">
     <div class="topnav-left">
-        <a href=""><img src="http://localhost/ensaiei-main/design/assets/images/logobranca.png" alt="Ensaiei" class="logo"></a>
+        <a href="http://localhost/ensaiei-main/admin"><img src="http://localhost/ensaiei-main/design/assets/images/logobranca.png" alt="Ensaiei" class="logo"></a>
     </div>
     <div class="topnav-right">
         <nav>
             <a href="<?=url("admin/perfil")?>">perfil</a>
             <a href="<?=url("admin/eventos")?>">eventos</a>
-            <a href="<?=url("admin/sobre")?>">sobre</a>
-            <a href="<?=url("admin/faqs")?>">faq</a>
-            <a href="<?=url("admin/logout")?>">logout</a>
+            <a href="<?=url("admin/bye")?>">logout</a>
         </nav>
     </div>
 </div>

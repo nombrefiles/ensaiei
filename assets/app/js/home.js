@@ -38,8 +38,10 @@ async function loadEvents() {
             events = [data.data];
         }
 
-        // Filtrar apenas eventos aprovados
+        // CORRIGIDO: Filtrar APENAS eventos APROVADOS
         events = events.filter(event => event.status === 'APPROVED');
+
+        console.log('Eventos aprovados:', events);
 
         allEvents = events;
         renderEvents(events);
@@ -65,7 +67,7 @@ function renderEvents(events) {
             <div class="empty-state">
                 <div class="empty-state-icon">🎭</div>
                 <h3>Nenhum evento disponível</h3>
-                <p>Novos eventos serão exibidos aqui em breve!</p>
+                <p>Novos eventos aprovados serão exibidos aqui em breve!</p>
             </div>
         `;
         return;
