@@ -27,7 +27,6 @@ async function loadEvents() {
     container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     try {
-        // ENDPOINT CORRETO: /event/my retorna apenas eventos do usuário logado
         const response = await fetch(`${API_BASE}/event/my`, {
             method: 'GET',
             headers: {

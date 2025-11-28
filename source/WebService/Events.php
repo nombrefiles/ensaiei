@@ -15,7 +15,6 @@ class Events extends Api
             ->back($event->findAll());
     }
 
-    // NOVO: Listar apenas eventos do usuário logado
     public function listMyEvents(): void
     {
         $this->auth();
@@ -41,6 +40,7 @@ class Events extends Api
 
     public function listEventById(array $data): void
     {
+
         if (!isset($data["id"])) {
             $this->call(400, "bad_request", "ID inválido", "error")->back();
             return;

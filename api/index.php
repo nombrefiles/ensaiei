@@ -49,8 +49,8 @@ $route->group(null);
 /* EVENTS */
 $route->group("/event");
 $route->get("/", "Events:listEvents");
-$route->get("/my", "Events:listMyEvents");
-$route->get("/{id}", "Events:listEventById");
+$route->get("/my", "Events:listMyEvents");  // ✅ ANTES de /{id}
+$route->get("/{id}", "Events:listEventById"); // Depois das rotas específicas
 $route->post("/add", "Events:createEvent");
 $route->put("/update/{id}", "Events:updateEvent");
 $route->delete("/delete/{id}", "Events:deleteEvent");
