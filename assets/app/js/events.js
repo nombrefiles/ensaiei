@@ -19,15 +19,17 @@ function checkAuth() {
     }
 }
 
-// CORRIGIDO: Agora usa endpoint específico para eventos do usuário
 async function loadEvents() {
     const container = document.getElementById('eventsGrid');
     const token = localStorage.getItem('token');
 
+    console.log('Token encontrado:', token ? 'SIM' : 'NÃO');
+    console.log('URL da requisição:', `${API_BASE}/event/`);
+
     container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     try {
-        const response = await fetch(`${API_BASE}/event/my`, {
+        const response = await fetch(`${API_BASE}/event/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,36 +37,220 @@ async function loadEvents() {
             }
         });
 
+        console.log('Status da resposta:', response.status);
+        console.log('Response ok:', response.ok);
+
         const data = await response.json();
-        console.log('Resposta da API:', data);
+        console.log('Resposta completa da API:', data);
 
         if (!response.ok) {
-            throw new Error(data.message || 'Erro ao carregar eventos');
+            throw new Error(data.message || `Erro ${response.status} ao carregar eventos`);
         }
 
-        let events = [];
+        console.log('=== ESTRUTURA DOS DADOS ===');
+        console.log('Tipo de data:', typeof data);
+        console.log('É array?', Array.isArray(data));
+        console.log('Tem propriedade data?', 'data' in data);
+        if ('data' in data) {
+            console.log('Tipo de data.data:', typeof data.data);
+            console.log('data.data é array?', Array.isArray(data.data));
+        }
+
+        let allEvents = [];
+
         if (Array.isArray(data)) {
-            events = data;
-        } else if (Array.isArray(data.data)) {
-            events = data.data;
+            allEvents = data;
+        } else if (data.data && Array.isArray(data.data)) {
+            allEvents = data.data;
         } else if (data.data && typeof data.data === 'object') {
-            events = [data.data];
+            allEvents = [data.data];
+        } else if (typeof data === 'object' && data !== null) {
+            allEvents = [data];
         }
 
-        console.log('Eventos processados:', events);
-        currentEvents = events;
-        renderEvents(events);
+        console.log('Eventos extraídos:', allEvents);
+        console.log('Quantidade de eventos:', allEvents.length);
+
+        if (allEvents.length === 0) {
+            currentEvents = [];
+            renderEvents([]);
+            return;
+        }
+
+        if (allEvents.length > 0) {
+            console.log('=== PRIMEIRO EVENTO (EXEMPLO) ===');
+            console.log('Evento completo:', allEvents[0]);
+            console.log('Chaves do evento:', Object.keys(allEvents[0]));
+            console.log('organizerId:', allEvents[0].organizerId);
+            console.log('organizer:', allEvents[0].organizer);
+            console.log('userId:', allEvents[0].userId);
+        }
+
+        let userId = await getCurrentUserId();
+        console.log('ID do usuário atual:', userId);
+
+        if (!userId) {
+            console.warn('Não foi possível obter o ID do usuário. Mostrando todos os eventos.');
+            currentEvents = allEvents;
+            renderEvents(allEvents);
+            return;
+        }
+
+        const myEvents = allEvents.filter(event => {
+            if (!event) return false;
+
+            const organizerId = event.organizerId || event.organizer || event.userId || event.user;
+            console.log(`Evento ${event.id} - organizerId: ${organizerId}, Meu ID: ${userId}`);
+
+            return organizerId == userId;
+        });
+
+        console.log('Eventos filtrados (meus eventos):', myEvents);
+        console.log('Quantidade de meus eventos:', myEvents.length);
+
+        currentEvents = myEvents;
+        renderEvents(myEvents);
 
     } catch (error) {
-        console.error('Erro ao carregar eventos:', error);
+        console.error('Erro detalhado ao carregar eventos:', error);
         container.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">⚠️</div>
                 <h3>Erro ao carregar eventos</h3>
                 <p>${error.message}</p>
-                <button class="btn-primary" onclick="loadEvents()">Tentar novamente</button>
+                <div style="margin-top: 15px;">
+                    <button class="btn-primary" onclick="loadEvents()">Tentar novamente</button>
+                    <button class="btn-secondary" onclick="debugAuth()" style="margin-left: 10px;">Debug Auth</button>
+                </div>
             </div>
         `;
+    }
+}
+
+async function getCurrentUserId() {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        console.error('Token não encontrado');
+        return null;
+    }
+
+    try {
+        const tokenPayload = token.split('.')[1];
+        const decodedPayload = atob(tokenPayload);
+        const userData = JSON.parse(decodedPayload);
+        console.log('Dados do token decodificado:', userData);
+
+        if (userData.data && userData.data.id) {
+            console.log('ID encontrado em userData.data.id:', userData.data.id);
+            return userData.data.id;
+        }
+
+        return userData.id || userData.userId || null;
+    } catch (decodeError) {
+        console.warn('Não foi possível decodificar o token:', decodeError);
+
+        try {
+            const userProfile = localStorage.getItem('userProfile');
+            if (userProfile) {
+                const user = JSON.parse(userProfile);
+                console.log('User profile do localStorage:', user);
+                return user.id || user.userId || null;
+            }
+        } catch (localStorageError) {
+            console.warn('Erro ao ler userProfile do localStorage:', localStorageError);
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/users/perfil`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token': token
+                }
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                console.log('Dados do perfil da API:', userData);
+
+                if (userData.data) {
+                    localStorage.setItem('userProfile', JSON.stringify(userData.data));
+                    return userData.data.id || userData.data.userId || null;
+                }
+            }
+        } catch (profileError) {
+            console.error('Erro ao buscar perfil:', profileError);
+        }
+
+        return null;
+    }
+}
+
+async function debugAuth() {
+    const token = localStorage.getItem('token');
+    console.log('=== DEBUG AUTH ===');
+    console.log('Token:', token ? token.substring(0, 50) + '...' : 'NULL');
+
+    if (token) {
+        try {
+            const tokenPayload = token.split('.')[1];
+            const decodedPayload = atob(tokenPayload);
+            const userData = JSON.parse(decodedPayload);
+            console.log('Payload do token:', userData);
+        } catch (e) {
+            console.error('Erro ao decodificar token:', e);
+        }
+    }
+
+    const userProfile = localStorage.getItem('userProfile');
+    console.log('UserProfile no localStorage:', userProfile);
+
+    try {
+        const response = await fetch(`${API_BASE}/users/perfil`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token
+            }
+        });
+        console.log('Resposta do /users/perfil:', response.status, response.statusText);
+        const data = await response.json();
+        console.log('Dados do perfil:', data);
+    } catch (error) {
+        console.error('Erro no teste do /users/perfil:', error);
+    }
+}
+
+async function loadAllEventsAsFallback() {
+    try {
+        const response = await fetch(`${API_BASE}/event/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem('token')
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            let allEvents = [];
+            if (Array.isArray(data)) {
+                allEvents = data;
+            } else if (data.data && Array.isArray(data.data)) {
+                allEvents = data.data;
+            }
+
+            console.log('Fallback - Todos os eventos:', allEvents);
+            currentEvents = allEvents;
+            renderEvents(allEvents);
+        } else {
+            throw new Error(data.message || 'Erro no fallback');
+        }
+    } catch (error) {
+        console.error('Erro no fallback:', error);
+        alert('Não foi possível carregar os eventos: ' + error.message);
     }
 }
 
@@ -95,7 +281,6 @@ function renderEvents(events) {
             dateDisplay = event.startDate;
         }
 
-        // CORRIGIDO: Badge de status mais claro
         let statusBadge = '';
         let statusClass = '';
 
@@ -147,13 +332,11 @@ function renderEvents(events) {
         `;
     }).join('');
 
-    // Carregar fotos dos eventos
     events.forEach(event => {
         loadEventMainPhoto(event.id);
     });
 }
 
-// Resto das funções permanece igual...
 function handlePhotoSelect(e) {
     const files = Array.from(e.target.files);
     handlePhotoFiles(files);

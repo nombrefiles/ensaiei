@@ -20,7 +20,6 @@ $route = new Router("http://localhost/ensaiei-main/api", ":");
 
 $route->namespace("Source\WebService");
 
-/* USERS */
 $route->group("/users");
 $route->post("/login", "Users:login");
 $route->get("/", "Users:listUsers");
@@ -36,7 +35,6 @@ $route->post("/resendcode", "Users:resendVerificationCode");
 $route->delete("/cancelregistration", "Users:cancelRegistration");
 $route->group(null);
 
-/* ATTRACTIONS */
 $route->group("/attraction");
 $route->get("/{id}", "Attractions:listAttractionById");
 $route->get("/event/{eventId}", "Attractions:listAttractionsByEvent");
@@ -46,11 +44,9 @@ $route->put("/update/{id}", "Attractions:updateAttraction");
 $route->delete("/delete/{id}", "Attractions:deleteAttraction");
 $route->group(null);
 
-/* EVENTS */
 $route->group("/event");
 $route->get("/", "Events:listEvents");
-$route->get("/my", "Events:listMyEvents");  // ✅ ANTES de /{id}
-$route->get("/{id}", "Events:listEventById"); // Depois das rotas específicas
+$route->get("/my", "Events:listMyEvents");
 $route->post("/add", "Events:createEvent");
 $route->put("/update/{id}", "Events:updateEvent");
 $route->delete("/delete/{id}", "Events:deleteEvent");
@@ -58,6 +54,7 @@ $route->get("/{eventId}/photos", "EventPhotos:listPhotosByEvent");
 $route->post("/{eventId}/photos", "EventPhotos:uploadPhotos");
 $route->put("/photos/{photoId}/main", "EventPhotos:setMainPhoto");
 $route->delete("/photos/{photoId}", "EventPhotos:deletePhoto");
+$route->get("/{id}", "Events:listEventById");
 
 $route->group(null);
 

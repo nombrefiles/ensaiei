@@ -21,11 +21,11 @@ class Events extends Api
 
         try {
             $stmt = \Source\Core\Connect::getInstance()->prepare("
-                SELECT * FROM events 
-                WHERE organizerId = :organizerId 
-                AND deleted = false
-                ORDER BY startDatetime DESC
-            ");
+            SELECT * FROM events 
+            WHERE organizerId = :organizerId 
+            AND deleted = false
+            ORDER BY startDatetime DESC
+        ");
 
             $stmt->bindValue(":organizerId", $this->userAuth->id, \PDO::PARAM_INT);
             $stmt->execute();
@@ -135,7 +135,6 @@ class Events extends Api
         error_log("Definindo endDatetime: {$data['endDate']} {$data['endTime']}");
         $event->setEndDatetime($data["endDate"], $data["endTime"] ?? null);
 
-        // Evento criado com status PENDING por padrão
         $event->setStatus('PENDING');
 
         if (!$event->getStartDatetime() || !$event->getEndDatetime()) {
